@@ -6,6 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
+import PersonIcon from '@mui/icons-material/Person';
 
 // Загрузка брендов и ароматов из файлов (сгенерировано автоматически)
 type Brand = { name: string; aromas: string[] };
@@ -125,25 +126,14 @@ const App: React.FC = () => {
                   ))}
                 </List>
               </Box>
-              {/* Кнопка прокрутки вниз */}
-              <Box sx={{ width: '100%', position: 'sticky', bottom: 0, zIndex: 10, bgcolor: 'background.paper', pt: 1, pb: 1, display: 'flex', justifyContent: 'center' }}>
-                <IconButton onClick={() => {
-                  const el = document.getElementById('brands-list-scroll');
-                  if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-                }}>
-                  <MenuOpenIcon />
-                </IconButton>
-              </Box>
             </Box>
             {/* User info bottom left */}
-            <Box sx={{ width: '100%', mt: 3, p: 2, borderRadius: 2, bgcolor: 'background.default', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Avatar src={user.avatar} alt={user.name} sx={{ width: 56, height: 56, bgcolor: 'primary.main', fontWeight: 700, mb: 1 }}>
-                  {user.avatar ? '' : user.name[0]}
-                </Avatar>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, textAlign: 'center' }}>{user.name}</Typography>
-                <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center' }}>{user.balance}</Typography>
-              </Box>
+            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 2, mt: 1 }}>
+              <Avatar src={user.avatar} alt={user.name} sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontWeight: 700, mb: 0.5, fontSize: 22 }}>
+                {user.avatar ? '' : user.name[0]}
+              </Avatar>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 14, lineHeight: 1 }}>{user.name}</Typography>
+              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 13, lineHeight: 1 }}>{user.balance}</Typography>
             </Box>
           </Paper>
         )}
