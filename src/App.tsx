@@ -100,40 +100,48 @@ const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ minHeight: '100vh', height: '90vh', overflow: 'hidden', bgcolor: 'background.default', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: isMobile ? 0 : 2 }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: { xs: '100%', sm: 220, md: 280 }, minWidth: isMobile ? '100%' : 220, bgcolor: 'background.paper', p: 2, mr: isMobile ? 0 : 2, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: isMobile ? 'auto' : '100vh', justifyContent: 'space-between' }}>
-            <Box sx={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
-              <IconButton onClick={handleToggleBrandsMenu} sx={{ position: 'absolute', top: 8, left: 8 }}>
+          <Paper elevation={3} sx={{ width: { xs: '100%', sm: 220, md: 280 }, minWidth: isMobile ? '100%' : 220, bgcolor: 'background.paper', p: 2, mr: { sm: 2.5, md: 2.5 }, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start' }}>
+            {/* Кнопка сворачивания меню */}
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
+              <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
                 <MenuOpenIcon />
               </IconButton>
-              <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', textAlign: 'center', width: '100%' }}>
-                Бренды
-              </Typography>
-              <Box sx={{ flex: 1, overflowY: 'auto', maxHeight: isMobile ? '50vh' : '70vh', width: '100%', pr: 1 }} id="brands-list-scroll">
-                <List component="nav" sx={{ width: '100%' }}>
-                  {brands.map((brand, idx) => (
-                    <ListItemButton
-                      key={brand.name}
-                      selected={selectedIndex === idx}
-                      onClick={() => handleBrandClick(idx)}
-                      sx={{ borderRadius: 1, mb: 1, transition: 'background 0.3s', fontWeight: selectedIndex === idx ? 'bold' : 'normal' }}
-                    >
-                      <ListItemText primary={brand.name} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Box>
+              <IconButton onClick={handleBackToSearch}>
+                <SearchIcon />
+              </IconButton>
             </Box>
-            {/* User info bottom left */}
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 2, mt: 1 }}>
-              <Avatar src={user.avatar} alt={user.name} sx={{ width: 40, height: 40, bgcolor: 'primary.main', fontWeight: 700, mb: 0.5, fontSize: 22 }}>
+            {/* Заголовок */}
+            <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', textAlign: 'center', width: '100%', fontSize: 17, letterSpacing: 1, color: 'text.primary' }}>
+              БРЕНДЫ
+            </Typography>
+            {/* Список брендов */}
+            <Box sx={{ flex: 1, overflowY: 'auto', width: '100%', pr: 1, minHeight: 0 }} id="brands-list-scroll">
+              <List component="nav" sx={{ width: '100%' }}>
+                {brands.map((brand, idx) => (
+                  <ListItemButton
+                    key={brand.name}
+                    selected={selectedIndex === idx}
+                    onClick={() => handleBrandClick(idx)}
+                    sx={{ borderRadius: 1, mb: 1, transition: 'background 0.3s', fontWeight: selectedIndex === idx ? 'bold' : 'normal' }}
+                  >
+                    <ListItemText primary={brand.name} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Box>
+            {/* Серый разделитель */}
+            <Box sx={{ width: '100%', height: 2, bgcolor: '#444', my: 1 }} />
+            {/* Профиль — поднят выше */}
+            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 1, mb: 10 }}>
+              <Avatar src={user.avatar} alt={user.name} sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontWeight: 700, mb: 0.5, fontSize: 16 }}>
                 {user.avatar ? '' : user.name[0]}
               </Avatar>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 14, lineHeight: 1 }}>{user.name}</Typography>
-              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 13, lineHeight: 1 }}>{user.balance}</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 12, lineHeight: 1 }}>{user.name}</Typography>
+              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 11, lineHeight: 1 }}>{user.balance}</Typography>
             </Box>
           </Paper>
         )}
@@ -144,10 +152,10 @@ const App: React.FC = () => {
             </IconButton>
           </Box>
         )}
-        {/* Центральная панель: поиск или ароматы */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0 }}>
+        {/* Центральная панель (ароматы) — padding слева и справа, высота 100vh, приклеено к верху: */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0, height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.default', zIndex: 1, px: { xs: 1, sm: 3, md: 5 } }}>
           {selectedIndex === null ? (
-            <Paper elevation={4} sx={{ width: '100%', maxWidth: 500, mt: isMobile ? 2 : 8, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Поиск ароматов
               </Typography>
@@ -171,7 +179,7 @@ const App: React.FC = () => {
             </Paper>
           ) : (
             <Fade in={selectedIndex !== null} timeout={400} unmountOnExit>
-              <Paper elevation={4} sx={{ width: '100%', maxWidth: 900, mt: isMobile ? 2 : 8, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative' }}>
+              <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 {/* Название бренда и кнопка назад на одной высоте */}
                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
                   <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
@@ -247,10 +255,6 @@ const App: React.FC = () => {
             </Fade>
           )}
         </Box>
-      </Box>
-      {/* Footer */}
-      <Box component="footer" sx={{ width: '100%', bgcolor: 'grey.900', color: 'grey.200', py: 2, px: 2, mt: 'auto', textAlign: 'center', fontSize: 15, letterSpacing: 1, borderTop: '1px solid #222', boxShadow: '0 -2px 8px 0 rgba(0,0,0,0.12)' }}>
-        © {new Date().getFullYear()} Brands & Aromas. Все права защищены.
       </Box>
     </Box>
   );
