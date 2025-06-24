@@ -99,12 +99,27 @@ const App: React.FC = () => {
     setBrandsMenuOpen((prev) => !prev);
   };
 
+  // 1. Кастомный слайдер объёма для карточки аромата:
+  const volumeMarks = [30, 50, 500, 1000];
+
+  // 2. Фильтры в поиске:
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const filterOptions = [
+    'TOP', 'Q1', 'Q2', 'МУЖСКИЕ', 'ЖЕНСКИЕ', 'УНИСЕКС',
+    'АПЕЛЬСИН', 'УД', 'ТАБАК', 'МАНДАРИН',
+  ];
+  const handleFilterClick = (filter: string) => {
+    setActiveFilters((prev) => prev.includes(filter)
+      ? prev.filter(f => f !== filter)
+      : [...prev, filter]);
+  };
+
   return (
-    <Box sx={{ minHeight: '100vh', height: '90vh', overflow: 'hidden', bgcolor: 'background.default', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: isMobile ? 0 : 2 }}>
+    <Box sx={{ minHeight: '100vh', height: '90vh', overflow: 'hidden', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0 }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: { xs: '100%', sm: 220, md: 280 }, minWidth: isMobile ? '100%' : 220, bgcolor: 'background.paper', p: 2, mr: { sm: 2.5, md: 2.5 }, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start' }}>
+          <Paper elevation={3} sx={{ width: { xs: '100%', sm: 220, md: 280 }, minWidth: isMobile ? '100%' : 220, bgcolor: '#19191b', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
             {/* Кнопка сворачивания меню */}
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
@@ -152,8 +167,8 @@ const App: React.FC = () => {
             </IconButton>
           </Box>
         )}
-        {/* Центральная панель (ароматы) — padding слева и справа, высота 100vh, приклеено к верху: */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0, height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.default', zIndex: 1, px: { xs: 1, sm: 3, md: 5 } }}>
+        {/* Центральная панель (ароматы) */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0, height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
           {selectedIndex === null ? (
             <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
@@ -173,6 +188,18 @@ const App: React.FC = () => {
                   ),
                 }}
               />
+              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', mb: 2 }}>
+                {filterOptions.map(option => (
+                  <Chip
+                    key={option}
+                    label={option}
+                    clickable
+                    color={activeFilters.includes(option) ? 'primary' : 'default'}
+                    onClick={() => handleFilterClick(option)}
+                    sx={{ fontWeight: 600 }}
+                  />
+                ))}
+              </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
                 Найдите свой любимый аромат или выберите бренд слева
               </Typography>
@@ -198,7 +225,7 @@ const App: React.FC = () => {
                       <Paper
                         key={aroma}
                         elevation={2}
-                        sx={{ flex: '1 1 180px', minWidth: 180, maxWidth: 220, height: 260, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', bgcolor: 'background.default', transition: 'background 0.2s', '&:hover': { bgcolor: 'action.hover' }, p: 1.5, position: 'relative' }}
+                        sx={{ flex: '1 1 200px', minWidth: 200, maxWidth: 250, height: 300, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', bgcolor: 'background.default', transition: 'background 0.2s', '&:hover': { bgcolor: 'action.hover' }, p: 1.5, position: 'relative' }}
                       >
                         {/* Верхняя часть: иконка-плейсхолдер */}
                         <Box sx={{ width: 36, height: 36, mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -206,46 +233,43 @@ const App: React.FC = () => {
                         </Box>
                         {/* Название */}
                         <Typography variant="body2" align="center" sx={{ fontWeight: 600, mb: 0.5, fontSize: 15 }}>{aroma}</Typography>
-                        {/* Вся информация внизу карточки */}
+                        {/* Вся информация */}
                         <Box sx={{ width: '100%', mt: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                           <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
                             <Chip label={`Качество: ${aromaInfo.quality}`} size="small" color="primary" sx={{ fontSize: 11 }} />
                             <Chip label={`Фабрика: ${aromaInfo.factory}`} size="small" sx={{ fontSize: 11 }} />
                           </Stack>
-                          {/* Кастомный слайдер для объёмов */}
-                          <Box sx={{ width: '100%', mb: 0.5, px: 0.5 }}>
-                            <Box sx={{ position: 'relative', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
-                              {/* Насечки (деления) — компактные кликабельные точки с подписями */}
-                              <Box sx={{ position: 'absolute', left: 0, right: 0, top: 0, height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', zIndex: 2 }}>
-                                {aromaInfo.volumes.map((v, idx) => (
-                                  <Box key={v} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: 28 }} onClick={() => handleVolumeSlider(aroma, idx)}>
-                                    <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: idx === volumeIdx ? 'success.main' : 'grey.700', border: idx === volumeIdx ? '2px solid #fff' : '2px solid #b9fbc0', mb: 0.3, transition: 'background 0.3s, border 0.3s' }} />
-                                    <Typography variant="caption" sx={{ color: idx === volumeIdx ? 'success.main' : 'text.secondary', fontWeight: idx === volumeIdx ? 700 : 400, transition: 'color 0.3s', mt: 0.2, fontSize: 11 }}>{v}</Typography>
-                                  </Box>
-                                ))}
-                              </Box>
-                              {/* Градиентная полоса */}
-                              <Box sx={{ position: 'absolute', left: 0, right: 0, top: 38, height: 6, borderRadius: 3, background: 'linear-gradient(90deg, #b9fbc0 0%, #a3f7bf 100%)', opacity: 0.5 }} />
-                              {/* Бегунок */}
-                              <Box
-                                sx={{
-                                  position: 'absolute',
-                                  left: `calc(${dragLeft * 100}% - 12px)`,
-                                  top: 32,
-                                  zIndex: 3,
-                                  transition: 'left 0.4s cubic-bezier(.4,2,.6,1)',
-                                  pointerEvents: 'none',
-                                }}
-                              >
-                                <Box sx={{ width: 28, height: 28, borderRadius: '50%', bgcolor: 'success.light', boxShadow: 2, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }}>
-                                  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
-                                </Box>
-                              </Box>
-                            </Box>
-                          </Box>
                           <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 500 }}>
                             {aromaInfo.price}
                           </Typography>
+                        </Box>
+                        {/* Кастомный слайдер для объёмов — строго в самом низу карточки */}
+                        <Box sx={{ width: '100%', px: 0.5, position: 'relative', minHeight: 50, mt: 1 }}>
+                          <Box sx={{ position: 'absolute', left: 0, right: 0, top: 0, height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', zIndex: 2 }}>
+                            {volumeMarks.map((v, idx) => (
+                              <Box key={v} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: 28 }} onClick={() => handleVolumeSlider(aroma, idx)}>
+                                <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: idx === volumeIdx ? 'success.main' : 'grey.700', border: idx === volumeIdx ? '2px solid #fff' : '2px solid #b9fbc0', mb: 0.3, transition: 'background 0.3s, border 0.3s' }} />
+                                <Typography variant="caption" sx={{ color: idx === volumeIdx ? 'success.main' : 'text.secondary', fontWeight: idx === volumeIdx ? 700 : 400, transition: 'color 0.3s', mt: 0.2, fontSize: 10 }}>{v}</Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                          {/* Градиентная полоса */}
+                          <Box sx={{ position: 'absolute', left: 0, right: 0, top: 38, height: 6, borderRadius: 3, background: 'linear-gradient(90deg, #b9fbc0 0%, #a3f7bf 100%)', opacity: 0.5 }} />
+                          {/* Бегунок */}
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              left: `calc(${dragLeft * 100}% - 12px)`,
+                              top: 32,
+                              zIndex: 3,
+                              transition: 'left 0.4s cubic-bezier(.4,2,.6,1)',
+                              pointerEvents: 'none',
+                            }}
+                          >
+                            <Box sx={{ width: 28, height: 28, borderRadius: '50%', bgcolor: 'success.light', boxShadow: 2, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }}>
+                              <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
+                            </Box>
+                          </Box>
                         </Box>
                       </Paper>
                     );
