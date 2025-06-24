@@ -115,11 +115,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', height: '90vh', overflow: 'hidden', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0 }}>
+    <Box sx={{ minHeight: '100vh', height: '90vh', width: '100vw', overflow: 'hidden', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, width: '100vw' }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: { xs: '100%', sm: 220, md: 280 }, minWidth: isMobile ? '100%' : 220, bgcolor: '#19191b', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
+          <Paper elevation={3} sx={{ width: 300, minWidth: 300, maxWidth: 300, bgcolor: '#000', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
             {/* Кнопка сворачивания меню */}
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
@@ -160,17 +160,21 @@ const App: React.FC = () => {
             </Box>
           </Paper>
         )}
+        {/* Скрытое меню */}
         {!brandsMenuOpen && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mr: isMobile ? 0 : 2, pt: 1 }}>
-            <IconButton onClick={handleToggleBrandsMenu}>
+          <Box sx={{ width: 66, minWidth: 66, maxWidth: 66, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', height: '100vh', bgcolor: 'background.paper', opacity: 0.96, boxShadow: 3, borderRight: '2px solid #222', pt: 2, position: 'relative' }}>
+            <IconButton onClick={handleToggleBrandsMenu} sx={{ mb: 1, ml: 1 }}>
               <MenuIcon />
+            </IconButton>
+            <IconButton onClick={handleBackToSearch} sx={{ ml: 1 }}>
+              <SearchIcon />
             </IconButton>
           </Box>
         )}
         {/* Центральная панель (ароматы) */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0, height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
           {selectedIndex === null ? (
-            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, borderRadius: 0 }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Поиск ароматов
               </Typography>
