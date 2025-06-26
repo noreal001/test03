@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Chip, Stack, Avatar, useMediaQuery, useTheme, Slider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -7,54 +7,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import PersonIcon from '@mui/icons-material/Person';
-
-// Загрузка брендов и ароматов из файлов (сгенерировано автоматически)
-type Brand = { name: string; aromas: string[] };
-const brands: Brand[] = [
-  { name: 'ABDUL SAMAD AL-QURASHI', aromas: ['SAFARI EXTREME'] },
-  { name: 'AFNAN', aromas: ['9PM', 'TRIBUTE BLUE'] },
-  { name: 'AJMAL', aromas: ['AMBER WOOD', 'ARISTOCRAT', 'AURUM', 'MYSTERY'] },
-  { name: 'AL-REHAB', aromas: ['DALAL'] },
-  { name: 'ALEXANDRE J.', aromas: ['IRIS VIOLET', 'MANDARINE SULTANE', 'MORNING MUSCS', 'THE COLLECTOR BLACK MUSCS'] },
-  { name: 'ALFRED DUNHILL', aromas: ['AGAR WOOD', 'DESIRE BLUE', 'DESIRE GOLD EAU DE TOILETTE'] },
-  { name: 'AMOUAGE', aromas: ['ENCLAVE', 'GUIDANCE', 'INTERLUDE BLACK IRIS', 'LOVE TUBEROUSE', 'MEANDER', 'REFLECTION MAN', 'REFLECTION WOMAN'] },
-  { name: 'ANNA SUI', aromas: ['FANTASIA (BLACK FLEUR)', 'LUCKY WISH (SOBLAZN)'] },
-  { name: 'ANTONIO BANDERAS', aromas: ['BLUE SEDUCTION'] },
-  { name: 'ARABIAN OUD', aromas: ['ARABIAN KNIGHT', 'MADAWI GOLD'] },
-  { name: 'ARIANA GRANDE', aromas: ['MOD BLUSH'] },
-  { name: 'ARMAND BASI', aromas: ['IN BLUE', 'IN RED'] },
-  { name: 'ATKINSONS', aromas: ['OUD SAVE THE KING'] },
-  { name: 'ATTAR COLLECTION', aromas: ['AL-RAYHAN', 'AZORA', 'CRYSTAL LOVE FOR HER', 'CRYSTAL LOVE FOR HIM', 'HAYATI', 'KHALTAT NIGHT', 'MUSC CASHMIR'] },
-  { name: 'AVON', aromas: ['TODAY'] },
-  { name: 'AZZARO', aromas: ['CHROME'] },
-  { name: 'BATH & BODY WORKS', aromas: ['BAHAMAS PASSIONFRUIT & BANANA FLOWER', 'WHISKEY RESERVE COLOGNE'] },
-  { name: 'BDK PARFUMS', aromas: ['TABAC ROSE'] },
-  { name: 'BENETTON', aromas: ['WE ARE TRIBE'] },
-  { name: 'BEYONCÉ', aromas: ['CÉ NOIR'] },
-  { name: 'BOADICEA THE VICTORIOUS', aromas: ['ANGELIC', 'AURICA', 'HANUMAN', 'HEROINE'] },
-  { name: 'BOND NO 9', aromas: ['LAFAYETTE STREET', 'NOMAD EAU DE PARFUM'] },
-  { name: 'BOUCHERON', aromas: ["ROSE D'ISPARTA"] },
-  { name: 'BURBERRY', aromas: ['HERO', 'LONDON MAN', 'LONDON WOMAN', 'MY BURBERRY', 'TUDOR ROSE', 'WEEKEND'] },
-  { name: 'BVLGARI', aromas: ['AQVA POUR HOMME', 'JASMINE NOIR', 'LE GEMME ASTREA', 'LE GEMME AZARAN', 'LE GEMME TYGAR', 'OMNIA', 'OMNIA CRYSTALLINE', 'THE NOIR'] },
-  { name: 'BY KILIAN', aromas: ['ANGELS SHARE', 'BAD BOYS ARE NOT GOOD BUT GOOD', 'BLACK PHANTOM MEMENTO MORI', 'GOOD GIRL GONE BAD', 'GOOD GIRL GONE BAD EXTREME', 'INTOXICATED', 'KILLING ME SLOWLY', "L'HEURE VERTE", 'LOVE BY KILIAN', 'OLD FASHIONED', 'PLAYING WITH DEVIL', 'ROLLING IN LOVE', 'ROSES ON ICE', 'STRAIGHT TO HEAVEN: WHITE CRISTAL', 'TO BE A PRINCESS', 'VODKA ON THE ROCKS'] },
-  { name: 'BYREDO', aromas: ["BAL D'AFRIQUE", 'BIBLIOTEQUE', 'BLANCHE', 'DE LOS SANTOS', 'GYPSY WATER', 'LA TULIPE', 'MARIJUANA', 'MOJAVE GOST', 'SUPER CEDR', 'YONG ROSE'] },
-  { name: 'CACHAREL', aromas: ['AMOR AMOR'] },
-  { name: 'CALVIN KLEIN', aromas: ['EUPHORIA MAN', 'EUPHORIA WOMAN'] },
-  { name: 'CANALI', aromas: ['DAL 1934'] },
-  { name: 'CAROLINA HERRERA', aromas: ['212 MAN', '212 VIP MAN', '212 VIP ROSE', '212 VIP WOMAN', 'BAD BOY', 'CH', 'CHIC MAN', 'CHIC WOMAN', 'GOOD GIRL', 'GOOD GIRL BLUSH', 'GOOD GIRL SUPREME', 'MAD WORLD'] },
-  { name: 'CARTIER', aromas: ['LA PANTHERE'] },
-  { name: 'CERRUTI', aromas: ['1881 CERRUTI'] },
-  { name: 'CHANEL', aromas: ['ALLURE HOMME SPORT', 'ALLURE SENSUELLE', 'BLEU DE CHANEL', 'CHANCE', 'CHANCE EAU FRAICHE', 'CHANCE EAU TENDRE', 'CHANCE EAU TENDRE EAU DE PARFUM', 'COCO MADEMOISELLE', 'EGOIST', 'EGOIST PLATINIUM', 'GABRIELLE', 'LE LION DE', 'N5', "NO 1 DE CHANEL L'EAU ROUGE", 'NO.19'] },
-  { name: 'CHLOE', aromas: ['CHLOE EAU DE PARFUM', 'LOVE STORY', 'NOMADE'] },
-  { name: 'CHOPARD', aromas: ['CEDAR MALAKI'] },
-  { name: 'CHOPARD VETIVER', aromas: ["D'HAITI AU THE VERT"] },
-  { name: 'CHRISTIAN LOUBOTIN', aromas: ['LOUBIMAR LEGERE'] },
-  { name: 'CLINIQUE', aromas: ['HAPPY'] },
-  { name: 'CLIVE CHRISTIAN', aromas: ['1872', 'MATSUKITA', 'N1 EXCLUSIVE'] },
-  { name: 'CREED', aromas: ['AVENTUS', 'AVENTUS COLOGNE', 'QUEEN OF SILK', 'SILVER MOUNTAIN', 'VIKING', 'VIKING COLONGE'] },
-  { name: 'DAVIDOFF', aromas: ['COOL WATER'] },
-  { name: 'DIOR', aromas: ['ADDICT', 'AMBRE NUIT', 'DUNE', 'FAHRENHEIT', 'FOREVER AND EVER', 'GRIS DIOR', 'HOMME COLOGNE', 'HOMME SPORT'] },
-];
 
 // Mock info for all aromas (можно расширить под каждый аромат)
 const aromaInfo = {
@@ -70,7 +22,10 @@ const user = {
   avatar: '', // Можно вставить ссылку на фото или оставить пустым для инициалов
 };
 
+type Brand = { name: string; aromas: string[] };
+
 const App: React.FC = () => {
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [brandsMenuOpen, setBrandsMenuOpen] = useState(true);
   const [search, setSearch] = useState('');
@@ -82,6 +37,15 @@ const App: React.FC = () => {
   const handleVolumeSlider = (aroma: string, idx: number) => {
     setSelectedVolumes((prev) => ({ ...prev, [aroma]: idx }));
   };
+
+  useEffect(() => {
+    fetch('/brands.json')
+      .then(res => res.json())
+      .then((data: Brand[]) => {
+        const sorted = data.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+        setBrands(sorted);
+      });
+  }, []);
 
   const handleBrandClick = (index: number) => {
     setSelectedIndex(index);
