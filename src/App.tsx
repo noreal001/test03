@@ -119,7 +119,7 @@ const App: React.FC = () => {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, width: '100vw' }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: 300, minWidth: 300, maxWidth: 300, bgcolor: '#000', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
+          <Paper elevation={3} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: '#000', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box' }}>
             {/* Кнопка сворачивания меню */}
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
@@ -172,9 +172,9 @@ const App: React.FC = () => {
           </Box>
         )}
         {/* Центральная панель (ароматы) */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: '100%', boxSizing: 'border-box' }}>
           {selectedIndex === null ? (
-            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, borderRadius: 0 }}>
+            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, borderRadius: 0, boxSizing: 'border-box' }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Поиск ароматов
               </Typography>
@@ -210,7 +210,7 @@ const App: React.FC = () => {
             </Paper>
           ) : (
             <Fade in={selectedIndex !== null} timeout={400} unmountOnExit>
-              <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto' }}>
+              <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto', boxSizing: 'border-box' }}>
                 {/* Название бренда и кнопка назад на одной высоте */}
                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
                   <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
