@@ -7,6 +7,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import PersonIcon from '@mui/icons-material/Person';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 // Mock info for all aromas (можно расширить под каждый аромат)
 const aromaInfo = {
@@ -37,6 +40,10 @@ const App: React.FC = () => {
   const handleVolumeSlider = (aroma: string, idx: number) => {
     setSelectedVolumes((prev) => ({ ...prev, [aroma]: idx }));
   };
+
+  const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [aromaView, setAromaView] = useState<'cards' | 'list'>('cards');
 
   useEffect(() => {
     fetch('/brands.json')
@@ -78,12 +85,19 @@ const App: React.FC = () => {
       : [...prev, filter]);
   };
 
+  const handleAddToCart = (aroma: string, brand: string, volumeIdx: number) => {
+    setCart(prev => [...prev, { aroma, brand, volume: aromaInfo.volumes[volumeIdx] }]);
+  };
+  const handleRemoveFromCart = (idx: number) => {
+    setCart(prev => prev.filter((_, i) => i !== idx));
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', height: '90vh', width: '100vw', overflow: 'hidden', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, width: '100vw' }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: '#000', p: 2, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box' }}>
+          <Paper elevation={3} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: '#000', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0 }}>
             {/* Кнопка сворачивания меню */}
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
@@ -114,13 +128,13 @@ const App: React.FC = () => {
             </Box>
             {/* Серый разделитель */}
             <Box sx={{ width: '100%', height: 2, bgcolor: '#444', my: 1 }} />
-            {/* Профиль — поднят выше */}
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mt: 1, mb: 10 }}>
-              <Avatar src={user.avatar} alt={user.name} sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontWeight: 700, mb: 0.5, fontSize: 16 }}>
+            {/* Профиль — уменьшен и прижат к низу */}
+            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, left: 0, p: '20px 0 20px 0', bgcolor: '#000' }}>
+              <Avatar src={user.avatar} alt={user.name} sx={{ width: 24, height: 24, bgcolor: 'primary.main', fontWeight: 700, mb: 0.2, fontSize: 13 }}>
                 {user.avatar ? '' : user.name[0]}
               </Avatar>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 12, lineHeight: 1 }}>{user.name}</Typography>
-              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 11, lineHeight: 1 }}>{user.balance}</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 10, lineHeight: 1 }}>{user.name}</Typography>
+              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 9, lineHeight: 1 }}>{user.balance}</Typography>
             </Box>
           </Paper>
         )}
@@ -175,7 +189,7 @@ const App: React.FC = () => {
           ) : (
             <Fade in={selectedIndex !== null} timeout={400} unmountOnExit>
               <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto', boxSizing: 'border-box' }}>
-                {/* Название бренда и кнопка назад на одной высоте */}
+                {/* Переключатель вида */}
                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
                   <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
                     <ArrowBackIcon />
@@ -183,71 +197,133 @@ const App: React.FC = () => {
                   <Typography variant="h6" sx={{ fontWeight: 'bold', flex: 1, minWidth: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {brands[selectedIndex].name}
                   </Typography>
+                  <IconButton onClick={() => setAromaView('cards')} color={aromaView === 'cards' ? 'primary' : 'default'}><ViewModuleIcon /></IconButton>
+                  <IconButton onClick={() => setAromaView('list')} color={aromaView === 'list' ? 'primary' : 'default'}><ViewListIcon /></IconButton>
+                  <Box sx={{ ml: 1, position: 'relative' }}>
+                    <IconButton color="primary" onClick={() => setCartOpen(o => !o)}>
+                      <ShoppingCartIcon sx={{ fontSize: 28 }} />
+                    </IconButton>
+                    {cart.length > 0 && (
+                      <Box sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
+                    )}
+                  </Box>
                 </Box>
                 <Divider sx={{ mb: 2, width: '100%' }} />
-                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: isMobile ? 'center' : 'flex-start', overflowX: isMobile ? 'auto' : 'visible' }}>
-                  {brands[selectedIndex].aromas.map((aroma) => {
-                    const volumeIdx = selectedVolumes[aroma] ?? 0;
-                    const dragLeft = volumeIdx / (aromaInfo.volumes.length - 1);
-                    return (
-                      <Paper
-                        key={aroma}
-                        elevation={2}
-                        sx={{ flex: '1 1 200px', minWidth: 200, maxWidth: 250, height: 300, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', bgcolor: 'background.default', transition: 'background 0.2s', '&:hover': { bgcolor: 'action.hover' }, p: 1.5, position: 'relative' }}
-                      >
-                        {/* Верхняя часть: иконка-плейсхолдер */}
-                        <Box sx={{ width: 36, height: 36, mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <LocalFloristIcon sx={{ fontSize: 28, color: 'text.secondary' }} />
-                        </Box>
-                        {/* Название */}
-                        <Typography variant="body2" align="center" sx={{ fontWeight: 600, mb: 0.5, fontSize: 15 }}>{aroma}</Typography>
-                        {/* Вся информация */}
-                        <Box sx={{ width: '100%', mt: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
-                            <Chip label={`Качество: ${aromaInfo.quality}`} size="small" color="primary" sx={{ fontSize: 11 }} />
-                            <Chip label={`Фабрика: ${aromaInfo.factory}`} size="small" sx={{ fontSize: 11 }} />
-                          </Stack>
-                          <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                            {aromaInfo.price}
-                          </Typography>
-                        </Box>
-                        {/* Кастомный слайдер для объёмов — строго в самом низу карточки */}
-                        <Box sx={{ width: '100%', px: 0.5, position: 'relative', minHeight: 50, mt: 1 }}>
-                          <Box sx={{ position: 'absolute', left: 0, right: 0, top: 0, height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', zIndex: 2 }}>
-                            {volumeMarks.map((v, idx) => (
-                              <Box key={v} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: 28 }} onClick={() => handleVolumeSlider(aroma, idx)}>
-                                <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: idx === volumeIdx ? 'success.main' : 'grey.700', border: idx === volumeIdx ? '2px solid #fff' : '2px solid #b9fbc0', mb: 0.3, transition: 'background 0.3s, border 0.3s' }} />
-                                <Typography variant="caption" sx={{ color: idx === volumeIdx ? 'success.main' : 'text.secondary', fontWeight: idx === volumeIdx ? 700 : 400, transition: 'color 0.3s', mt: 0.2, fontSize: 10 }}>{v}</Typography>
-                              </Box>
-                            ))}
+                {/* Список или карточки ароматов */}
+                {aromaView === 'cards' ? (
+                  <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: isMobile ? 'center' : 'flex-start', overflowX: isMobile ? 'auto' : 'visible' }}>
+                    {brands[selectedIndex].aromas.map((aroma) => {
+                      const volumeIdx = selectedVolumes[aroma] ?? 0;
+                      const dragLeft = volumeIdx / (aromaInfo.volumes.length - 1);
+                      return (
+                        <Paper
+                          key={aroma}
+                          elevation={2}
+                          sx={{ flex: '1 1 200px', minWidth: 200, maxWidth: 250, height: 300, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', bgcolor: 'background.default', transition: 'background 0.2s', '&:hover': { bgcolor: 'action.hover' }, p: 1.5, position: 'relative' }}
+                        >
+                          {/* Верхняя часть: иконка-плейсхолдер */}
+                          <Box sx={{ width: 36, height: 36, mb: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <LocalFloristIcon sx={{ fontSize: 28, color: 'text.secondary' }} />
                           </Box>
-                          {/* Градиентная полоса */}
-                          <Box sx={{ position: 'absolute', left: 0, right: 0, top: 38, height: 6, borderRadius: 3, background: 'linear-gradient(90deg, #b9fbc0 0%, #a3f7bf 100%)', opacity: 0.5 }} />
-                          {/* Бегунок */}
-                          <Box
-                            sx={{
-                              position: 'absolute',
-                              left: `calc(${dragLeft * 100}% - 12px)`,
-                              top: 32,
-                              zIndex: 3,
-                              transition: 'left 0.4s cubic-bezier(.4,2,.6,1)',
-                              pointerEvents: 'none',
-                            }}
-                          >
-                            <Box sx={{ width: 28, height: 28, borderRadius: '50%', bgcolor: 'success.light', boxShadow: 2, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }}>
-                              <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
+                          {/* Название */}
+                          <Typography variant="body2" align="center" sx={{ fontWeight: 600, mb: 0.5, fontSize: 15 }}>{aroma}</Typography>
+                          {/* Вся информация */}
+                          <Box sx={{ width: '100%', mt: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
+                              <Chip label={`Качество: ${aromaInfo.quality}`} size="small" color="primary" sx={{ fontSize: 11 }} />
+                              <Chip label={`Фабрика: ${aromaInfo.factory}`} size="small" sx={{ fontSize: 11 }} />
+                            </Stack>
+                            <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                              {aromaInfo.price}
+                            </Typography>
+                          </Box>
+                          {/* Кастомный слайдер для объёмов — строго в самом низу карточки */}
+                          <Box sx={{ width: '100%', px: 0.5, position: 'relative', minHeight: 50, mt: 1 }}>
+                            <Box sx={{ position: 'absolute', left: 0, right: 0, top: 0, height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', zIndex: 2 }}>
+                              {volumeMarks.map((v, idx) => (
+                                <Box key={v} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: 28 }} onClick={() => handleVolumeSlider(aroma, idx)}>
+                                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: idx === volumeIdx ? 'success.main' : 'grey.700', border: idx === volumeIdx ? '2px solid #fff' : '2px solid #b9fbc0', mb: 0.3, transition: 'background 0.3s, border 0.3s' }} />
+                                  <Typography variant="caption" sx={{ color: idx === volumeIdx ? 'success.main' : 'text.secondary', fontWeight: idx === volumeIdx ? 700 : 400, transition: 'color 0.3s', mt: 0.2, fontSize: 10 }}>{v}</Typography>
+                                </Box>
+                              ))}
+                            </Box>
+                            {/* Градиентная полоса */}
+                            <Box sx={{ position: 'absolute', left: 0, right: 0, top: 38, height: 6, borderRadius: 3, background: 'linear-gradient(90deg, #b9fbc0 0%, #a3f7bf 100%)', opacity: 0.5 }} />
+                            {/* Бегунок */}
+                            <Box
+                              sx={{
+                                position: 'absolute',
+                                left: `calc(${dragLeft * 100}% - 12px)`,
+                                top: 32,
+                                zIndex: 3,
+                                transition: 'left 0.4s cubic-bezier(.4,2,.6,1)',
+                                pointerEvents: 'none',
+                              }}
+                            >
+                              <Box sx={{ width: 28, height: 28, borderRadius: '50%', bgcolor: 'success.light', boxShadow: 2, border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.3s' }}>
+                                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
+                              </Box>
                             </Box>
                           </Box>
-                        </Box>
-                      </Paper>
-                    );
-                  })}
-                </Box>
+                          {/* Кнопка В корзину */}
+                          <Box sx={{ width: '100%', mt: 1, display: 'flex', justifyContent: 'center' }}>
+                            <IconButton color="success" onClick={() => handleAddToCart(aroma, brands[selectedIndex].name, volumeIdx)}>
+                              <ShoppingCartIcon />
+                            </IconButton>
+                          </Box>
+                        </Paper>
+                      );
+                    })}
+                  </Box>
+                ) : (
+                  <List sx={{ width: '100%' }}>
+                    {brands[selectedIndex].aromas.map((aroma) => {
+                      const volumeIdx = selectedVolumes[aroma] ?? 0;
+                      return (
+                        <ListItemButton key={aroma} sx={{ mb: 1, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Typography sx={{ fontWeight: 600 }}>{aroma}</Typography>
+                            <Typography variant="caption" color="text.secondary">{aromaInfo.price} • {aromaInfo.volumes[volumeIdx]}</Typography>
+                          </Box>
+                          <Box>
+                            <IconButton color="success" onClick={() => handleAddToCart(aroma, brands[selectedIndex].name, volumeIdx)}>
+                              <ShoppingCartIcon />
+                            </IconButton>
+                          </Box>
+                        </ListItemButton>
+                      );
+                    })}
+                  </List>
+                )}
               </Paper>
             </Fade>
           )}
         </Box>
       </Box>
+      {/* Выпадающая корзина справа */}
+      {cartOpen && (
+        <Paper elevation={6} sx={{ position: 'fixed', top: 0, right: 0, width: 340, height: '100vh', zIndex: 1999, p: 3, bgcolor: '#181818', color: '#fff', display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ flex: 1, fontWeight: 700 }}>Корзина</Typography>
+            <IconButton onClick={() => setCartOpen(false)}><CloseIcon /></IconButton>
+          </Box>
+          {cart.length === 0 ? (
+            <Typography color="text.secondary">Корзина пуста</Typography>
+          ) : (
+            <List>
+              {cart.map((item, idx) => (
+                <ListItemButton key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 1, mb: 1 }}>
+                  <Box>
+                    <Typography sx={{ fontWeight: 600 }}>{item.aroma}</Typography>
+                    <Typography variant="caption" color="text.secondary">{item.brand}, {item.volume}</Typography>
+                  </Box>
+                  <IconButton size="small" onClick={() => handleRemoveFromCart(idx)}><CloseIcon fontSize="small" /></IconButton>
+                </ListItemButton>
+              ))}
+            </List>
+          )}
+        </Paper>
+      )}
     </Box>
   );
 };
