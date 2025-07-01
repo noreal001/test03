@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Chip, Stack, Avatar, useMediaQuery, useTheme, Slider } from '@mui/material';
+import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Chip, Stack, Avatar, useMediaQuery, useTheme, Slider, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -10,6 +10,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import Popover from '@mui/material/Popover';
 
 // Mock info for all aromas (можно расширить под каждый аромат)
 const aromaInfo = {
@@ -42,8 +43,10 @@ const App: React.FC = () => {
   };
 
   const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
-  const [cartOpen, setCartOpen] = useState(false);
   const [aromaView, setAromaView] = useState<'cards' | 'list'>('cards');
+  const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null);
+  const [profileTab, setProfileTab] = useState<'logo' | 'fio' | 'address' | 'orders'>('logo');
+  const [rightPanelContent, setRightPanelContent] = useState<'cart' | 'profile' | null>(null); // New state for right panel content
 
   useEffect(() => {
     fetch('/brands.json')
@@ -59,7 +62,7 @@ const App: React.FC = () => {
   };
 
   const handleAromaClick = (aroma: string) => {
-    console.log('Выбран аромат:', aroma);
+    // console.log('Выбран аромат:', aroma); // Commenting out unused function content
   };
 
   const handleBackToSearch = () => {
@@ -93,11 +96,25 @@ const App: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', height: '90vh', width: '100vw', overflow: 'hidden', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, width: '100vw' }}>
+    <Box sx={{ minHeight: '100vh', width: '100vw', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column' }}>
+      {/* Fixed Icons for Cart and Profile */}
+      <Box sx={{ position: 'fixed', top: 0, right: 0, p: 2, zIndex: 2000, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <IconButton color="primary" onClick={() => setRightPanelContent(rightPanelContent === 'cart' ? null : 'cart')} sx={{ position: 'relative' }}>
+          {rightPanelContent === 'cart' ? <CloseIcon sx={{ fontSize: 28 }} /> : <ShoppingCartIcon sx={{ fontSize: 28 }} />}
+          {cart.length > 0 && (
+            <Box sx={{ position: 'absolute', top: -5, right: -5, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
+          )}
+        </IconButton>
+        <IconButton color="primary" onClick={() => setRightPanelContent(rightPanelContent === 'profile' ? null : 'profile')}>
+          {rightPanelContent === 'profile' ? <CloseIcon sx={{ fontSize: 28 }} /> : <PersonIcon sx={{ fontSize: 28 }} />}
+        </IconButton>
+      </Box>
+
+      {/* Main content area (left menu, central content, right panels) */}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, width: '100vw', pt: '64px' /* Adjust for fixed icons height */ }}>
         {/* Меню брендов слева */}
         {brandsMenuOpen && (
-          <Paper elevation={3} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: '#000', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100vh', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0 }}>
+          <Paper elevation={3} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: '#000', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100%', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0 }}>
             {/* Кнопка сворачивания меню */}
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
@@ -128,19 +145,11 @@ const App: React.FC = () => {
             </Box>
             {/* Серый разделитель */}
             <Box sx={{ width: '100%', height: 2, bgcolor: '#444', my: 1 }} />
-            {/* Профиль — уменьшен и прижат к низу */}
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom: 0, left: 0, p: '20px 0 20px 0', bgcolor: '#000' }}>
-              <Avatar src={user.avatar} alt={user.name} sx={{ width: 24, height: 24, bgcolor: 'primary.main', fontWeight: 700, mb: 0.2, fontSize: 13 }}>
-                {user.avatar ? '' : user.name[0]}
-              </Avatar>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'center', fontSize: 10, lineHeight: 1 }}>{user.name}</Typography>
-              <Typography variant="body2" color="success.light" sx={{ fontWeight: 500, textAlign: 'center', fontSize: 9, lineHeight: 1 }}>{user.balance}</Typography>
-            </Box>
           </Paper>
         )}
         {/* Скрытое меню */}
         {!brandsMenuOpen && (
-          <Box sx={{ width: 66, minWidth: 66, maxWidth: 66, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', height: '100vh', bgcolor: 'background.paper', opacity: 0.96, boxShadow: 3, borderRight: '2px solid #222', pt: 2, position: 'relative' }}>
+          <Box sx={{ width: 66, minWidth: 66, maxWidth: 66, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', height: '100%', bgcolor: 'background.paper', opacity: 0.96, boxShadow: 3, borderRight: '2px solid #222', pt: 2, position: 'relative' }}>
             <IconButton onClick={handleToggleBrandsMenu} sx={{ mb: 1, ml: 1 }}>
               <MenuIcon />
             </IconButton>
@@ -149,8 +158,9 @@ const App: React.FC = () => {
             </IconButton>
           </Box>
         )}
-        {/* Центральная панель (ароматы) */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100vh', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: '100%', boxSizing: 'border-box' }}>
+
+        {/* Центральная панель (ароматы/поиск) */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100%', position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1, px: 0, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, width: `calc(100% - ${(brandsMenuOpen ? 340 : 66) + (rightPanelContent ? 340 : 0)}px)`, transition: 'width 0.3s', boxSizing: 'border-box' }}>
           {selectedIndex === null ? (
             <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, borderRadius: 0, boxSizing: 'border-box' }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
@@ -189,26 +199,24 @@ const App: React.FC = () => {
           ) : (
             <Fade in={selectedIndex !== null} timeout={400} unmountOnExit>
               <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto', boxSizing: 'border-box' }}>
-                {/* Переключатель вида */}
-                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1 }}>
+                {/* Header for brand aromas */}
+                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1, justifyContent: 'space-between' }}>
                   <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
                     <ArrowBackIcon />
                   </IconButton>
                   <Typography variant="h6" sx={{ fontWeight: 'bold', flex: 1, minWidth: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {brands[selectedIndex].name}
                   </Typography>
-                  <IconButton onClick={() => setAromaView('cards')} color={aromaView === 'cards' ? 'primary' : 'default'}><ViewModuleIcon /></IconButton>
-                  <IconButton onClick={() => setAromaView('list')} color={aromaView === 'list' ? 'primary' : 'default'}><ViewListIcon /></IconButton>
-                  <Box sx={{ ml: 1, position: 'relative' }}>
-                    <IconButton color="primary" onClick={() => setCartOpen(o => !o)}>
-                      <ShoppingCartIcon sx={{ fontSize: 28 }} />
-                    </IconButton>
-                    {cart.length > 0 && (
-                      <Box sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
-                    )}
-                  </Box>
+                  {/* Moved view toggles below */}
                 </Box>
                 <Divider sx={{ mb: 2, width: '100%' }} />
+
+                {/* View Toggle Buttons - NEW LOCATION, centered */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
+                  <IconButton onClick={() => setAromaView('cards')} color={aromaView === 'cards' ? 'primary' : 'default'}><ViewModuleIcon /></IconButton>
+                  <IconButton onClick={() => setAromaView('list')} color={aromaView === 'list' ? 'primary' : 'default'}><ViewListIcon /></IconButton>
+                </Box>
+
                 {/* Список или карточки ароматов */}
                 {aromaView === 'cards' ? (
                   <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: isMobile ? 'center' : 'flex-start', overflowX: isMobile ? 'auto' : 'visible' }}>
@@ -299,31 +307,92 @@ const App: React.FC = () => {
             </Fade>
           )}
         </Box>
-      </Box>
-      {/* Выпадающая корзина справа */}
-      {cartOpen && (
-        <Paper elevation={6} sx={{ position: 'fixed', top: 0, right: 0, width: 340, height: '100vh', zIndex: 1999, p: 3, bgcolor: '#181818', color: '#fff', display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" sx={{ flex: 1, fontWeight: 700 }}>Корзина</Typography>
-            <IconButton onClick={() => setCartOpen(false)}><CloseIcon /></IconButton>
-          </Box>
-          {cart.length === 0 ? (
-            <Typography color="text.secondary">Корзина пуста</Typography>
-          ) : (
-            <List>
-              {cart.map((item, idx) => (
-                <ListItemButton key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 1, mb: 1 }}>
-                  <Box>
-                    <Typography sx={{ fontWeight: 600 }}>{item.aroma}</Typography>
-                    <Typography variant="caption" color="text.secondary">{item.brand}, {item.volume}</Typography>
-                  </Box>
-                  <IconButton size="small" onClick={() => handleRemoveFromCart(idx)}><CloseIcon fontSize="small" /></IconButton>
-                </ListItemButton>
-              ))}
-            </List>
+
+        {/* Единая правая панель (Корзина/Профиль) */}
+        <Paper elevation={6} sx={{ width: rightPanelContent ? 340 : 0, minWidth: rightPanelContent ? 340 : 0, maxWidth: rightPanelContent ? 340 : 0, height: '100%', zIndex: 1999, p: 3, bgcolor: '#000', color: '#fff', display: 'flex', flexDirection: 'column', flexShrink: 0, transition: 'width 0.3s' }}>
+          {rightPanelContent === 'cart' && (
+            <>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ flex: 1, fontWeight: 700 }}>Корзина</Typography>
+                <IconButton onClick={() => setRightPanelContent(null)}><CloseIcon /></IconButton>
+              </Box>
+              {cart.length === 0 ? (
+                <Typography color="text.secondary">Корзина пуста</Typography>
+              ) : (
+                <List>
+                  {cart.map((item, idx) => (
+                    <ListItemButton key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 1, mb: 1 }}>
+                      <Box>
+                        <Typography sx={{ fontWeight: 600 }}>{item.aroma}</Typography>
+                        <Typography variant="caption" color="text.secondary">{item.brand}, {item.volume}</Typography>
+                      </Box>
+                      <IconButton size="small" onClick={() => handleRemoveFromCart(idx)}><CloseIcon fontSize="small" /></IconButton>
+                    </ListItemButton>
+                  ))}
+                </List>
+              )}
+              {cart.length > 0 && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  fullWidth
+                  sx={{ mt: 'auto', py: 1.5, fontWeight: 700, fontSize: 16 }}
+                  onClick={() => alert('Переход к оформлению заказа!')}
+                >
+                  Оформить
+                </Button>
+              )}
+            </>
+          )}
+          {rightPanelContent === 'profile' && (
+            <>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ flex: 1, fontWeight: 700 }}>Профиль</Typography>
+                <IconButton onClick={() => setRightPanelContent(null)}><CloseIcon /></IconButton>
+              </Box>
+              {/* Содержимое профиля */}
+              <Box sx={{ flex: 1, minWidth: 220, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                {profileTab === 'logo' && (
+                  <>
+                    <Avatar src={user.avatar} alt={user.name} sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontWeight: 700, fontSize: 32 }}>
+                      {user.avatar ? '' : user.name[0]}
+                    </Avatar>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>{user.name}</Typography>
+                    <Typography variant="body1" color="text.secondary">Баланс: {user.balance}</Typography>
+                  </>
+                )}
+                {profileTab === 'fio' && (
+                  <>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>ФИО</Typography>
+                    <TextField fullWidth size="small" value={user.name} sx={{ input: { color: '#fff' } }} />
+                  </>
+                )}
+                {profileTab === 'address' && (
+                  <>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Адрес</Typography>
+                    <TextField fullWidth size="small" value={'г. Москва, ул. Примерная, д. 1'} sx={{ input: { color: '#fff' } }} />
+                  </>
+                )}
+                {profileTab === 'orders' && (
+                  <>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Заказы</Typography>
+                    <Typography variant="body2" color="text.secondary">У вас 3 заказа</Typography>
+                  </>
+                )}
+              </Box>
+              {/* Меню профиля слева */}
+              <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
+                <List disablePadding>
+                  <ListItemButton selected={profileTab==='logo'} onClick={()=>setProfileTab('logo')} sx={{ px: 2, py: 1 }}>Логотип</ListItemButton>
+                  <ListItemButton selected={profileTab==='fio'} onClick={()=>setProfileTab('fio')} sx={{ px: 2, py: 1 }}>ФИО</ListItemButton>
+                  <ListItemButton selected={profileTab==='address'} onClick={()=>setProfileTab('address')} sx={{ px: 2, py: 1 }}>Адрес</ListItemButton>
+                  <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemButton>
+                </List>
+              </Box>
+            </>
           )}
         </Paper>
-      )}
+      </Box>
     </Box>
   );
 };
