@@ -73,19 +73,33 @@ const App: React.FC = () => {
   const { themeMode, toggleTheme } = themeContext;
 
   useEffect(() => {
-    const hasRegisteredOrSkipped = localStorage.getItem('skip_reg');
-    const registrationTimestamp = localStorage.getItem('skip_reg_timestamp');
+    const checkRegistrationStatus = () => {
+      const userRegistered = localStorage.getItem('userRegistered');
+      const userName = localStorage.getItem('userName');
+      const userPhone = localStorage.getItem('userPhone');
+      const lastRegistrationTime = localStorage.getItem('lastRegistrationTime');
+      const lastSkipTime = localStorage.getItem('lastSkipTime');
 
-    if (hasRegisteredOrSkipped && registrationTimestamp) {
-      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
-      const lastRegistrationTime = parseInt(registrationTimestamp, 10);
-      if (Date.now() - lastRegistrationTime < thirtyDaysInMs) {
-        // User has registered or skipped within 30 days, proceed to app
-        return;
+      const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const now = new Date().getTime();
+
+      const registered = userRegistered === 'true' && !!userName && !!userPhone;
+      const skippedRecently = lastSkipTime && (now - parseInt(lastSkipTime) < fiveMinutes);
+      const registeredRecently = lastRegistrationTime && (now - parseInt(lastRegistrationTime) < fiveMinutes);
+
+      if (registered) {
+        setUser(prev => ({ ...prev, name: userName!, phone: userPhone! }));
+      } else if (!skippedRecently && !registeredRecently) {
+        // User is not registered and has not recently skipped or registered
+        navigate('/start');
       }
-    }
-    // User has not registered/skipped or 30 days have passed, redirect to welcome page
-    navigate('/welcome');
+    };
+
+    // Initial check and setup interval
+    checkRegistrationStatus();
+    const intervalId = setInterval(checkRegistrationStatus, 5 * 60 * 1000); // Check every 5 minutes
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
   }, [navigate]);
 
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -117,13 +131,17 @@ const App: React.FC = () => {
   const [isAromaDetailDialogOpen, setIsAromaDetailDialogOpen] = useState(false); // New state for aroma detail dialog
   const [selectedAromaDetail, setSelectedAromaDetail] = useState<{ aroma: string; brand: string; volume: string } | null>(null); // New state for selected aroma detail
 
-  const [user, setUser] = useState({
-    name: '',
-    balance: '12 500 ₽',
-    avatar: '', // Можно вставить ссылку на фото или оставить пустым для инициалов
-    orders: [] as { id: string; date: string; items: { aroma: string; brand: string; volume: string }[]; comment: string; receiptAttached: boolean; history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[]; awaitingManagerReply: boolean }[],
-    address: '',
-    phone: '',
+  const [user, setUser] = useState(() => {
+    const savedName = localStorage.getItem('userName') || '';
+    const savedPhone = localStorage.getItem('userPhone') || '';
+    return {
+      name: savedName,
+      balance: '12 500 ₽',
+      avatar: '',
+      orders: [] as { id: string; date: string; items: { aroma: string; brand: string; volume: string }[]; comment: string; receiptAttached: boolean; history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[]; awaitingManagerReply: boolean }[],
+      address: '',
+      phone: savedPhone,
+    };
   });
 
   // New state for search suggestions
@@ -546,8 +564,27 @@ const App: React.FC = () => {
                         fullWidth
                         size="small"
                         value={user.name}
-                        onChange={(e) => setUser(prev => ({...prev, name: e.target.value}))}
-                        sx={{ mt: 2 }} /* Добавим отступ сверху для разделения */
+                        onChange={(e) => {
+                          setUser(prev => ({...prev, name: e.target.value}));
+                          localStorage.setItem('userName', e.target.value);
+                        }}
+                        sx={{
+                          mt: 2,
+                          // Styles for the input element itself
+                          '& .MuiInputBase-input': {
+                            color: theme.palette.text.primary, // Text color based on theme
+                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                            borderRadius: theme.shape.borderRadius,
+                          },
+                          // Styles for the InputLabel
+                          '& .MuiInputLabel-root': {
+                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                          },
+                          // Styles for the OutlinedInput fieldset (border)
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent !important', // Remove default border
+                          },
+                        }}
                       />
                       <TextField
                         label="Адрес"
@@ -555,14 +592,59 @@ const App: React.FC = () => {
                         size="small"
                         value={user.address}
                         onChange={(e) => setUser(prev => ({...prev, address: e.target.value}))}
+                        sx={{
+                          // Styles for the input element itself
+                          '& .MuiInputBase-input': {
+                            color: theme.palette.text.primary, // Text color based on theme
+                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                            borderRadius: theme.shape.borderRadius,
+                          },
+                          // Styles for the InputLabel
+                          '& .MuiInputLabel-root': {
+                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                          },
+                          // Styles for the OutlinedInput fieldset (border)
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent !important', // Remove default border
+                          },
+                        }}
                       />
                       <TextField
                         label="Телефон"
                         fullWidth
                         size="small"
                         value={user.phone}
-                        onChange={(e) => setUser(prev => ({...prev, phone: e.target.value}))}
+                        onChange={(e) => {
+                          setUser(prev => ({...prev, phone: e.target.value}));
+                          localStorage.setItem('userPhone', e.target.value);
+                        }}
+                        sx={{
+                          // Styles for the input element itself
+                          '& .MuiInputBase-input': {
+                            color: theme.palette.text.primary, // Text color based on theme
+                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                            borderRadius: theme.shape.borderRadius,
+                          },
+                          // Styles for the InputLabel
+                          '& .MuiInputLabel-root': {
+                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                          },
+                          // Styles for the OutlinedInput fieldset (border)
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent !important', // Remove default border
+                          },
+                        }}
                       />
+                      {(localStorage.getItem('userRegistered') !== 'true' || !user.phone) && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => navigate('/start')}
+                          sx={{ mt: 2 }}
+                        >
+                          Завершить регистрацию
+                        </Button>
+                      )}
                     </>
                   )}
                   {profileTab === 'orders' && (

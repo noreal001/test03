@@ -19,7 +19,7 @@ const lightTheme = createTheme({
     mode: 'light',
     primary: { main: '#1976d2' },
     secondary: { main: '#dc004e' },
-    background: { default: '#f4f6f8', paper: '#ffffff' },
+    background: { default: '#FFFFFF', paper: '#F5F5F5' }, // White theme background and paper colors
     text: { primary: '#000000', secondary: '#5f6368' },
   },
   typography: {
@@ -32,7 +32,7 @@ const darkTheme = createTheme({
     mode: 'dark',
     primary: { main: '#90caf9' },
     secondary: { main: '#f48fb1' },
-    background: { default: '#121212', paper: '#1e1e1e' },
+    background: { default: '#000000', paper: '#121212' }, // Dark theme background and paper colors
     text: { primary: '#ffffff', secondary: '#b0b0b0' },
   },
   typography: {
@@ -41,10 +41,18 @@ const darkTheme = createTheme({
 });
 
 const RootComponent: React.FC = () => {
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() => {
+    // Initialize theme mode from localStorage, default to 'dark'
+    const savedTheme = localStorage.getItem('themeMode');
+    return savedTheme === 'light' ? 'light' : 'dark';
+  });
   const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
   const toggleTheme = () => {
-    setThemeMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    setThemeMode((prevMode) => {
+      const newMode = prevMode === 'light' ? 'dark' : 'light';
+      localStorage.setItem('themeMode', newMode); // Save theme to localStorage
+      return newMode;
+    });
   };
 
   const handleRegisterSuccess = (name: string, phone: string) => {
@@ -62,7 +70,7 @@ const RootComponent: React.FC = () => {
       <ThemeContext.Provider value={{ themeMode, toggleTheme }}>
         <BrowserRouter>
           <Routes>
-            <Route path="/welcome" element={<WelcomePage onRegisterSuccess={handleRegisterSuccess} onContinueWithoutRegistration={handleContinueWithoutRegistration} />} />
+            <Route path="/start" element={<WelcomePage />} />
             <Route path="/" element={<App />} />
           </Routes>
         </BrowserRouter>
