@@ -18,6 +18,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
+const toTitleCase = (phrase: string) => {
+  return phrase
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 // Mock info for all aromas (можно расширить под каждый аромат)
 const aromaInfo = {
   price: '1 800 ₽ — 38 000 ₽',
@@ -86,6 +94,12 @@ const App: React.FC = () => {
   const [isProfileFullScreen, setIsProfileFullScreen] = useState(false); // New state for full-screen profile
   const [isCartFullScreen, setIsCartFullScreen] = useState(false); // New state for full-screen cart
   const [selectedAromaFromCart, setSelectedAromaFromCart] = useState<string | null>(null); // New state to hold the aroma selected from cart
+  const [isAromaDetailDialogOpen, setIsAromaDetailDialogOpen] = useState(false); // New state for aroma detail dialog
+  const [selectedAromaDetail, setSelectedAromaDetail] = useState<{ aroma: string; brand: string; volume: string } | null>(null); // New state for selected aroma detail
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false); // New state for login dialog
+  const [loginStep, setLoginStep] = useState<'phone' | 'password'>('phone'); // New state for login step
+  const [loginPhone, setLoginPhone] = useState(''); // New state for login phone number
+  const [loginPassword, setLoginPassword] = useState(''); // New state for login password
 
   const [user, setUser] = useState({
     name: 'Алексей',
@@ -148,6 +162,38 @@ const App: React.FC = () => {
   //     : [...prev, filter]);
   // };
 
+  const handleOpenAromaDetail = (aroma: string, brand: string, volume: string) => {
+    setSelectedAromaDetail({ aroma, brand, volume });
+    setIsAromaDetailDialogOpen(true);
+  };
+
+  const handleCloseAromaDetailDialog = () => {
+    setIsAromaDetailDialogOpen(false);
+    setSelectedAromaDetail(null);
+  };
+
+  const handleOpenLoginDialog = () => {
+    setIsLoginDialogOpen(true);
+    setLoginStep('phone'); // Start with phone step
+    setLoginPhone(''); // Clear phone on open
+    setLoginPassword(''); // Clear password on open
+  };
+
+  const handleCloseLoginDialog = () => {
+    setIsLoginDialogOpen(false);
+  };
+
+  const handleLoginPhoneSubmit = () => {
+    // Here you would typically validate phone and send to backend for OTP or pre-check
+    setLoginStep('password'); // Move to password step
+  };
+
+  const handleLoginSubmit = () => {
+    // Here you would typically send phone and password to backend for login
+    console.log('Login attempt with phone:', loginPhone, 'and password:', loginPassword);
+    handleCloseLoginDialog(); // Close dialog on successful (mock) login
+  };
+
   const handleAddToCart = (aroma: string, brand: string, volumeIdx: number) => {
     setCart(prev => [...prev, { aroma, brand, volume: aromaInfo.volumes[volumeIdx] }]);
     setCartFlash(true); // Trigger flash animation
@@ -207,9 +253,9 @@ const App: React.FC = () => {
     const newOrder = { id: newOrderId, date: new Date().toLocaleDateString(), items: [...cart], comment: '', receiptAttached: false, history: [], awaitingManagerReply: false };
     setUser(prevUser => ({...prevUser, orders: [...prevUser.orders, newOrder]})); // Update user orders
     setCart([]); // Clear cart
-    setCheckoutStep(null); // Close dialog
+    setCheckoutStep('orderDetail'); 
     setIsCartFullScreen(false); // Close full screen cart
-    setCurrentOrder(user.orders.length - 1); // Select the newly created order
+    setCurrentOrder(user.orders.length); // Select the newly created order (length is the index of the new item)
   };
 
   const handleCloseCheckoutDialog = () => {
@@ -258,7 +304,11 @@ const App: React.FC = () => {
           setUser(latestUser => {
             const latestOrders = [...latestUser.orders];
             const latestCurrentOrderData = { ...latestOrders[currentOrder!] };
-            latestCurrentOrderData.history.push({ text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', sender: 'manager' });
+            // Prevent duplicate manager replies
+            const lastMessage = latestCurrentOrderData.history[latestCurrentOrderData.history.length - 1];
+            if (!lastMessage || lastMessage.sender !== 'manager') {
+              latestCurrentOrderData.history.push({ text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', sender: 'manager' });
+            }
             latestCurrentOrderData.awaitingManagerReply = false;
             latestOrders[currentOrder!] = latestCurrentOrderData;
             return { ...latestUser, orders: latestOrders };
@@ -301,20 +351,22 @@ const App: React.FC = () => {
 
           {/* Меню брендов слева */}
           {brandsMenuOpen && (
-            <Paper elevation={0} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: 'background.paper', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100%', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0, borderRight: '1px solid rgba(0, 0, 0, 0.12)' }}>
+            <Paper elevation={0} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: 'background.paper', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100%', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0, borderRight: '1px solid rgba(0, 0, 0, 0.12)', zIndex: 2 }}>
               {/* Кнопка сворачивания меню */}
               <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
                 <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
                   <MenuOpenIcon />
                 </IconButton>
-                <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
+                <IconButton onClick={handleBackToSearch} sx={{ mb: 1, ml: 1 }}>
                   <SearchIcon />
                 </IconButton>
+                {/* Consolidated PersonIcon for Login */}
                 <IconButton
-                  sx={{ color: 'text.primary', mt: '-8px', ml: 4 }}
+                  sx={{ color: 'text.primary', mb: 1, ml: 1 }}
                   onClick={() => {
-                    setIsProfileFullScreen(true); // Всегда открываем профиль
-                    setIsCartFullScreen(false);
+                    setIsProfileFullScreen(false); // Ensure profile full screen is off
+                    setIsCartFullScreen(false); // Ensure cart full screen is off
+                    handleOpenLoginDialog(); // Always open login dialog
                   }}
                 >
                   <PersonIcon sx={{ fontSize: 28 }} />
@@ -333,7 +385,7 @@ const App: React.FC = () => {
                     setIsProfileFullScreen(false); // Ensure profile full screen is off
                   }}
                 >
-                  {isCartFullScreen ? <CloseIcon sx={{ fontSize: 28 }} /> : <ShoppingCartIcon sx={{ fontSize: 28 }} />}
+                  <ShoppingCartIcon sx={{ fontSize: 28 }} />
                   {cart.length > 0 && (
                     <Box sx={{ position: 'absolute', top: -5, right: -5, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
                   )}
@@ -385,7 +437,8 @@ const App: React.FC = () => {
               opacity: 0.96,
               pt: 2,
               position: 'relative',
-              borderRight: '1px solid rgba(0, 0, 0, 0.12)'
+              borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+              zIndex: 2
             }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mb: 1, ml: 1 }}>
                 <MenuIcon />
@@ -393,11 +446,13 @@ const App: React.FC = () => {
               <IconButton onClick={handleBackToSearch} sx={{ mb: 1, ml: 1 }}>
                 <SearchIcon />
               </IconButton>
+              {/* Consolidated PersonIcon for Login */}
               <IconButton
-                sx={{ color: 'text.primary', mt: '-8px', ml: 4 }}
+                sx={{ color: 'text.primary', mb: 1, ml: 1 }}
                 onClick={() => {
-                  setIsProfileFullScreen(true); // Всегда открываем профиль
-                  setIsCartFullScreen(false);
+                  setIsProfileFullScreen(false); // Ensure profile full screen is off
+                  setIsCartFullScreen(false); // Ensure cart full screen is off
+                  handleOpenLoginDialog(); // Always open login dialog
                 }}
               >
                 <PersonIcon sx={{ fontSize: 28 }} />
@@ -409,14 +464,15 @@ const App: React.FC = () => {
                   position: 'relative',
                   bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent', // Flash effect
                   transition: 'background-color 0.3s ease-in-out',
-                  ml: 2
+                  ml: 1,
+                  mb: 1
                 }}
                 onClick={() => {
                   setIsCartFullScreen(!isCartFullScreen); // Toggle full screen mode for cart
                   setIsProfileFullScreen(false); // Ensure profile full screen is off
                 }}
               >
-                {isCartFullScreen ? <CloseIcon sx={{ fontSize: 28 }} /> : <ShoppingCartIcon sx={{ fontSize: 28 }} />}
+                <ShoppingCartIcon sx={{ fontSize: 28 }} />
                 {cart.length > 0 && (
                   <Box sx={{ position: 'absolute', top: -5, right: -5, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
                 )}
@@ -449,7 +505,7 @@ const App: React.FC = () => {
               px: 0, 
               borderTopLeftRadius: 0, 
               borderBottomLeftRadius: 0, 
-              boxSizing: 'border-box' 
+              boxSizing: 'border-box'
             }}
           >
             {/* Emoji explosion particles */}
@@ -557,15 +613,11 @@ const App: React.FC = () => {
                     {cart.map((item, idx) => (
                       <ListItemButton key={idx} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1 }}
                         onClick={() => {
-                          setIsCartFullScreen(false); // Закрываем корзину
-                          const brandIndex = brands.findIndex(b => b.name === item.brand);
-                          if (brandIndex !== -1) {
-                            setSelectedIndex(brandIndex); // Открываем страницу бренда
-                            setSelectedAromaFromCart(item.aroma); // Запоминаем выбранный аромат
-                          }
+                          handleOpenAromaDetail(item.aroma, item.brand, item.volume);
+                          setIsCartFullScreen(false); // Close cart when opening aroma detail
                         }}
                       >
-                        <ListItemText primary={`${item.aroma} (${item.volume})`} secondary={item.brand} />
+                        <ListItemText primary={`${toTitleCase(item.aroma)} (${item.volume})`} secondary={item.brand} />
                         <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFromCart(idx)}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
                       </ListItemButton>
                     ))}
@@ -666,7 +718,7 @@ const App: React.FC = () => {
                               <LocalFloristIcon sx={{ fontSize: 28, color: 'text.secondary' }} />
                             </Box>
                             {/* Название */}
-                            <Typography variant="body2" align="center" sx={{ fontWeight: 600, mb: 0.5, fontSize: 15 }}>{aroma}</Typography>
+                            <Typography variant="body2" align="center" sx={{ fontWeight: 600, mb: 0.5, fontSize: 15 }}>{toTitleCase(aroma)}</Typography>
                             {/* Вся информация */}
                             <Box sx={{ width: '100%', mt: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                               <Stack direction="row" spacing={0.5} sx={{ mb: 0.5 }}>
@@ -722,7 +774,7 @@ const App: React.FC = () => {
                         return (
                           <ListItemButton key={aroma} id={`aroma-${aroma}`} sx={{ mb: 1, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                              <Typography sx={{ fontWeight: 600 }}>{aroma}</Typography>
+                              <Typography sx={{ fontWeight: 600 }}>{toTitleCase(aroma)}</Typography>
                               <Typography variant="caption" color="text.secondary">{aromaInfo.price} • {aromaInfo.volumes[volumeIdx]}</Typography>
                             </Box>
                             <Box>
@@ -766,6 +818,13 @@ const App: React.FC = () => {
             {checkoutStep === 'payment' && (
               <Box>
                 <Typography variant="h6" sx={{ mb: 2 }}>Реквизиты для оплаты:</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>
+                  Сумма заказа: {cart.reduce((total, item) => {
+                    const priceMatch = aromaInfo.price.match(/(\d+)\s*₽/);
+                    const itemPrice = priceMatch ? parseInt(priceMatch[1].replace(/\s/g, '')) : 0;
+                    return total + itemPrice;
+                  }, 0)} ₽
+                </Typography>
                 <Typography sx={{ mb: 1 }}>Переведите сумму заказа по номеру телефона: <Typography component="span" fontWeight="bold">89207005595</Typography></Typography>
                 <Typography sx={{ mb: 2 }}>или по номеру карты: <Typography component="span" fontWeight="bold">2202 2067 6401 4721</Typography></Typography>
                 <Typography sx={{ mb: 1, fontStyle: 'italic' }}>Не пишите ничего в комментариях к переводу.</Typography>
@@ -859,6 +918,95 @@ const App: React.FC = () => {
             )}
           </DialogActions>
         </Dialog>
+
+        {/* Aroma Detail Dialog */}
+        <Dialog open={isAromaDetailDialogOpen} onClose={handleCloseAromaDetailDialog} maxWidth="xs" fullWidth>
+          <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {selectedAromaDetail && toTitleCase(selectedAromaDetail.aroma)}
+            <IconButton onClick={handleCloseAromaDetailDialog}><CloseIcon /></IconButton>
+          </DialogTitle>
+          <DialogContent>
+            {selectedAromaDetail && (
+              <Stack spacing={1}>
+                <Typography variant="subtitle1" fontWeight="bold">Бренд: {selectedAromaDetail.brand}</Typography>
+                <Typography variant="body2">Цена: {aromaInfo.price}</Typography>
+                <Typography variant="body2">Качество: {aromaInfo.quality}</Typography>
+                <Typography variant="body2">Объёмы: {aromaInfo.volumes.join(', ')}</Typography>
+                <Typography variant="body2">Фабрика: {aromaInfo.factory}</Typography>
+              </Stack>
+            )}
+          </DialogContent>
+          <DialogActions>
+            {selectedAromaDetail && (
+              <Button
+                variant="contained"
+                color="success"
+                fullWidth
+                onClick={() => {
+                  const brandIdx = brands.findIndex(b => b.name === selectedAromaDetail.brand);
+                  const aromaIdx = brands[brandIdx].aromas.indexOf(selectedAromaDetail.aroma);
+                  handleAddToCart(selectedAromaDetail.aroma, selectedAromaDetail.brand, aromaInfo.volumes.indexOf(selectedAromaDetail.volume));
+                  handleCloseAromaDetailDialog();
+                }}
+              >
+                Добавить в корзину
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
+
+        {/* Login Dialog */}
+        <Dialog open={isLoginDialogOpen} onClose={handleCloseLoginDialog} maxWidth="xs" fullWidth PaperProps={{ sx: { bgcolor: 'background.paper', color: 'text.primary' } }}>
+          <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {loginStep === 'phone' ? 'Войти по номеру телефона' : 'Введите пароль'}
+            <IconButton onClick={handleCloseLoginDialog}><CloseIcon /></IconButton>
+          </DialogTitle>
+          <DialogContent>
+            <Stack spacing={2}>
+              {loginStep === 'phone' && (
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Номер телефона"
+                  type="tel"
+                  fullWidth
+                  value={loginPhone}
+                  onChange={(e) => setLoginPhone(e.target.value)}
+                />
+              )}
+              {loginStep === 'password' && (
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Пароль"
+                  type="password"
+                  fullWidth
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  disabled={loginPhone.trim() === ''} // Disable until phone is entered
+                />
+              )}
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            {loginStep === 'phone' && (
+              <>
+                <Button onClick={handleCloseLoginDialog} color="primary" fullWidth>
+                  Продолжить без регистрации
+                </Button>
+                <Button onClick={handleLoginPhoneSubmit} variant="contained" color="primary" fullWidth disabled={loginPhone.trim() === ''}>
+                  Далее
+                </Button>
+              </>
+            )}
+            {loginStep === 'password' && (
+              <Button onClick={handleLoginSubmit} variant="contained" color="success" fullWidth disabled={loginPassword.trim() === ''}>
+                Войти
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
+
       </Box>
     </ThemeProvider>
   );
