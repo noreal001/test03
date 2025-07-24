@@ -375,7 +375,7 @@ const App = () => {
       boxShadow: 'none',
       boxSizing: 'border-box',
       bottom: 0,
-      borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+      borderRight: `1px solid ${theme.palette.divider}`,
       zIndex: 2
     }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
@@ -477,7 +477,7 @@ const App = () => {
             opacity: 0.96,
             pt: 2,
             position: 'relative',
-            borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+            borderRight: `1px solid ${theme.palette.divider}`,
             zIndex: 2
           }}>
             <IconButton onClick={handleToggleBrandsMenu} sx={{ mb: 1, ml: 1 }}>
@@ -579,13 +579,15 @@ const App = () => {
       {selectedIndex === null ? (
         <Box sx={{ 
           width: '95%', 
-                          mt: 2,
+          mt: 2,
           mb: 2,
           maxWidth: 600, 
           mx: 'auto', 
           display: 'flex', 
           flexDirection: 'column', 
-          alignItems: 'center' 
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '50vh'
         }}>
                       <TextField
             label="Поиск ароматов и брендов"
@@ -632,13 +634,13 @@ const App = () => {
                 <Card key={aroma.name} sx={{
                   width: 200,
                   boxShadow: 'none',
-                  border: '1px solid rgba(0, 0, 0, 0.12)',
-                  bgcolor: 'background.paper',
-                  color: 'text.primary',
-                  flexShrink: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
+                            border: `1px solid ${theme.palette.divider}`,
+          bgcolor: 'background.paper',
+          color: 'text.primary',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
                 }} id={`aroma-${aroma.name}`}>
                   <CardContent sx={{ 
                     p: 2, 
@@ -691,10 +693,24 @@ const App = () => {
                       <Typography variant="caption" sx={{ 
                         textAlign: 'center', 
                         width: '100%', 
-                        display: 'block' 
+                        display: 'block',
+                        mb: 2
                       }}>
                         Объем: {selectedVolumes[aroma.name] || 30}гр
                       </Typography>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        size="small"
+                        onClick={() => handleAddToCart(
+                          aroma.name, 
+                          brands[selectedIndex]?.name || '', 
+                          selectedVolumes[aroma.name] || 30
+                        )}
+                        sx={{ mt: 1 }}
+                      >
+                        В корзину
+                      </Button>
                     </Box>
                   </CardContent>
                 </Card>
@@ -723,7 +739,7 @@ const App = () => {
         width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)',
         borderRadius: 0,
         boxShadow: 'none',
-        zIndex: 3,
+        zIndex: 10,
         overflowX: 'hidden'
       }}
     >
@@ -735,7 +751,7 @@ const App = () => {
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
         <Box sx={{ 
           width: 120, 
-          borderRight: '1px solid #333', 
+          borderRight: `1px solid ${theme.palette.divider}`, 
           display: 'flex', 
           flexDirection: 'column', 
           py: 2 
@@ -784,16 +800,34 @@ const App = () => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
-        <IconButton onClick={() => setIsCartFullScreen(false)} sx={{ color: 'text.secondary' }}>
+        <IconButton onClick={() => {
+          setIsCartFullScreen(false);
+          setCheckoutStep(null);
+        }} sx={{ color: 'text.secondary' }}>
           <Close />
         </IconButton>
                   </Box>
       
       {checkoutStep === null && (
                           <Box>
-          <Typography variant="h5" sx={{ mb: 2 }}>Ваша корзина</Typography>
+          <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>Корзина</Typography>
           {cart.length === 0 ? (
-            <Typography>Ваша корзина пуста.</Typography>
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              minHeight: '200px',
+              textAlign: 'center',
+              mt: 4
+            }}>
+              <Typography variant="h6" sx={{ 
+                color: 'text.secondary',
+                fontWeight: 'normal',
+                fontSize: '18px'
+              }}>
+                Ваша корзина пуста
+              </Typography>
+            </Box>
           ) : (
             <List>
               {cart.map((item, index) => (

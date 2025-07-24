@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, TextField, Button, Typography, Paper, IconButton } from '@mui/material';
-import { MuiTelInput } from 'mui-tel-input';
+import { Box, TextField, Button, Typography, Paper, IconButton, InputAdornment } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 // import { Fade } from '@mui/material'; // Removed Fade import
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +18,7 @@ const AnimatedPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? 'rgba(18, 18, 18, 0.9)' : 'rgba(245, 245, 245, 0.9)', // Dynamic background based on theme mode
   color: theme.palette.text.primary,
   width: '90%',
-  maxWidth: 500, // Fixed width 500px, responsive to 90%
+  maxWidth: 540, // Увеличиваем ширину на 40px (примерно 1 см)
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(2),
@@ -34,7 +33,7 @@ const AnimatedPaper = styled(Paper)(({ theme }) => ({
     'to': { opacity: 1 },
   },
   [theme.breakpoints.up('sm')]: {
-    width: 500,
+    width: 540, // Увеличиваем ширину для больших экранов тоже на 40px
   },
 }));
 
@@ -47,6 +46,8 @@ const WelcomePage = () => { // Убрано React.FC
   const [backgroundAnimation, setBackgroundAnimation] = useState<'none' | 'snowflake' | 'rain' | 'stars' | 'smoke'>('none');
   const [inviteCode, setInviteCode] = useState('');
   const [inviteCodeError, setInviteCodeError] = useState(false);
+  const [showPhoneField, setShowPhoneField] = useState(false);
+  const [showInviteField, setShowInviteField] = useState(false);
   const navigate = useNavigate();
   const { themeMode, toggleTheme } = useContext(ThemeContext)!;
   const theme = useTheme();
@@ -56,25 +57,58 @@ const WelcomePage = () => { // Убрано React.FC
     const filteredName = newName.replace(/[^a-zA-Z0-9-_а-яА-ЯёЁ ]/g, ''); // Allow letters, numbers, -, _ and spaces (fixed escape)
     setName(filteredName);
     setNameError(filteredName.trim().length < 2 && filteredName.trim().length > 0); // Name must be at least 2 characters
+    
+    // Показываем поле телефона когда имя валидно
+    if (filteredName.trim().length >= 2) {
+      setShowPhoneField(true);
+    } else {
+      setShowPhoneField(false);
+      setShowInviteField(false); // Скрываем также поле инвайт-кода
+    }
   };
 
   const validatePhoneInput = (phoneNumber: string): boolean => {
     const digitsOnly = phoneNumber.replace(/\D/g, '');
-    // Accepts 10 or 11 digits (e.g., 9207005595 or 89207005595 / +79207005595)
-    return digitsOnly.length === 11 || (digitsOnly.length === 10 && (digitsOnly.startsWith('9') || digitsOnly.startsWith('8')));
+    // Accepts exactly 10 digits for Russian mobile numbers (without country code)
+    return digitsOnly.length === 10 && digitsOnly.startsWith('9');
   };
 
-  const handlePhoneChange = (newValue: string) => {
-    setPhone(newValue);
-    // Set error to false immediately if valid, true if invalid and not empty
-    setPhoneError(!validatePhoneInput(newValue) && newValue.length > 0);
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Remove all non-digits and limit to 10 digits
+    const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+    
+    // Format as XXX XXX-XX-XX
+    let formatted = '';
+    if (digitsOnly.length > 0) {
+      formatted = digitsOnly.substring(0, 3);
+      if (digitsOnly.length > 3) {
+        formatted += ' ' + digitsOnly.substring(3, 6);
+        if (digitsOnly.length > 6) {
+          formatted += '-' + digitsOnly.substring(6, 8);
+          if (digitsOnly.length > 8) {
+            formatted += '-' + digitsOnly.substring(8, 10);
+          }
+        }
+      }
+    }
+    
+    setPhone(formatted);
+    setPhoneError(!validatePhoneInput(formatted) && formatted.length > 0);
+    
+    // Показываем поле инвайт-кода когда телефон валидный
+    if (validatePhoneInput(formatted)) {
+      setShowInviteField(true);
+    } else {
+      setShowInviteField(false);
+    }
   };
 
   // Simulate API call for phone validation
   const validatePhoneNumberApi = async (phoneNumber: string): Promise<boolean> => {
     const digitsOnly = phoneNumber.replace(/\D/g, '');
-    if (digitsOnly.length < 10) { // Changed to 10 to allow 9xxxxxxxxxx format locally for validation
-      return false; // Not enough digits for a valid phone number
+    if (digitsOnly.length !== 10 || !digitsOnly.startsWith('9')) {
+      return false; // Must be exactly 10 digits starting with 9
     }
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -276,8 +310,11 @@ const WelcomePage = () => { // Убрано React.FC
 
           <AnimatedPaper elevation={0}> {/* Elevation 0 as per new design */}
             <Box sx={{ textAlign: 'center', mb: 2 }}>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.text.primary, mb: 1, fontSize: '28px' }}>
+                Ваша корзина
+              </Typography>
               {/* Replace with your logo */}
-              <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#fff', mb: 1 }}>LOGO</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 'normal', color: '#fff', mb: 1, opacity: 0.7 }}>LOGO</Typography>
             </Box>
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, textAlign: 'center', fontSize: '24px' }}>
               Добро пожаловать
@@ -301,6 +338,9 @@ const WelcomePage = () => { // Убрано React.FC
                   opacity: 1,
                   backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
                   borderRadius: theme.shape.borderRadius, // Apply border radius from theme
+                  letterSpacing: '0.2em', // Увеличиваем расстояние между символами
+                  textAlign: 'center', // Центрируем текст для лучшего вида
+                  fontSize: '1.1rem', // Увеличиваем размер шрифта для лучшей читаемости
                 },
                 // Styles for the InputLabel
                 '& .MuiInputLabel-root': {
@@ -313,82 +353,136 @@ const WelcomePage = () => { // Убрано React.FC
               }}
             />
 
-            <MuiTelInput
-              label="Телефон"
-              defaultCountry="RU"
-              value={phone}
-              onChange={handlePhoneChange}
-              fullWidth
-              required
-              error={phoneError}
-              helperText={phoneError ? 'Введите корректный номер телефона (минимум 11 цифр)' : ''}
-              sx={{
-                // Styles for the input element itself
-                '& .MuiInputBase-input': {
-                  color: theme.palette.text.primary, // White text
-                  opacity: 1,
-                  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                  borderRadius: theme.shape.borderRadius, // Apply border radius from theme
-                },
-                // Styles for the InputLabel
-                '& .MuiInputLabel-root': {
-                  color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                },
-                // Styles for the OutlinedInput fieldset (border)
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'transparent !important', // Remove default border
-                },
-              }}
-            />
+            {showPhoneField && (
+              <Box
+                sx={{
+                  opacity: showPhoneField ? 1 : 0,
+                  transform: showPhoneField ? 'translateY(0)' : 'translateY(-20px)',
+                  transition: 'all 0.5s ease-in-out',
+                }}
+              >
+                <TextField
+                  label="Телефон"
+                  placeholder="9XX XXX-XX-XX"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  error={phoneError}
+                  helperText={phoneError ? 'Введите корректный российский номер (9XX XXX-XX-XX)' : ''}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <span style={{ fontSize: '16px' }}>🇷🇺</span>
+                          <Typography variant="body2" sx={{ color: theme.palette.text.primary, fontWeight: 'medium' }}>
+                            +7
+                          </Typography>
+                        </Box>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    // Styles for the input element itself
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.text.primary, // White text
+                      opacity: 1,
+                      backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                      borderRadius: theme.shape.borderRadius, // Apply border radius from theme
+                      padding: '16px 20px', // Увеличиваем внутренние отступы для больше пространства от границ
+                      fontSize: '1.1rem', // Немного увеличиваем размер шрифта
+                      letterSpacing: '0.15em', // Увеличиваем расстояние между символами
+                      textAlign: 'center', // Центрируем текст для лучшего вида
+                    },
+                    // Styles for the InputLabel
+                    '& .MuiInputLabel-root': {
+                      color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                    },
+                    // Styles for the OutlinedInput fieldset (border)
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'transparent !important', // Remove default border
+                    },
+                    // Стили для контейнера поля ввода
+                    '& .MuiInputBase-root': {
+                      paddingLeft: '12px', // Дополнительный отступ слева для лучшего отображения флага и +7
+                    },
+                  }}
+                />
+              </Box>
+            )}
 
-            <TextField
-              label="Инвайт-код"
-              placeholder="XXXX-XXXX"
-              variant="outlined"
-              fullWidth
-              required
-              value={inviteCode}
-              onChange={handleInviteCodeChange}
-              error={inviteCodeError}
-              helperText={inviteCodeError ? 'Неверный инвайт-код' : ''}
-              inputProps={{ maxLength: 9 }} // Max length for XXXX-XXXX format
-              sx={{
-                // Styles for the input element itself
-                '& .MuiInputBase-input': {
-                  color: theme.palette.text.primary,
-                  opacity: 1,
-                  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                  borderRadius: theme.shape.borderRadius,
-                },
-                // Styles for the InputLabel
-                '& .MuiInputLabel-root': {
-                  color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
-                },
-                // Styles for the OutlinedInput fieldset (border)
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: 'transparent !important',
-                },
-              }}
-            />
+            {showInviteField && (
+              <Box
+                sx={{
+                  opacity: showInviteField ? 1 : 0,
+                  transform: showInviteField ? 'translateY(0)' : 'translateY(-20px)',
+                  transition: 'all 0.5s ease-in-out',
+                }}
+              >
+                <TextField
+                  label="Инвайт-код"
+                  placeholder="XXXX-XXXX"
+                  variant="outlined"
+                  fullWidth
+                  required
+                  value={inviteCode}
+                  onChange={handleInviteCodeChange}
+                  error={inviteCodeError}
+                  helperText={inviteCodeError ? 'Неверный инвайт-код' : ''}
+                  inputProps={{ maxLength: 9 }} // Max length for XXXX-XXXX format
+                  sx={{
+                    // Styles for the input element itself
+                    '& .MuiInputBase-input': {
+                      color: theme.palette.text.primary,
+                      opacity: 1,
+                      backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                      borderRadius: theme.shape.borderRadius,
+                      letterSpacing: '0.8em', // Увеличиваем расстояние между символами
+                      textAlign: 'center', // Центрируем текст для лучшего вида
+                      fontSize: '1.2rem', // Увеличиваем размер шрифта для лучшей читаемости
+                    },
+                    // Styles for the InputLabel
+                    '& .MuiInputLabel-root': {
+                      color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+                    },
+                    // Styles for the OutlinedInput fieldset (border)
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'transparent !important',
+                    },
+                  }}
+                />
+              </Box>
+            )}
 
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: theme.palette.primary.main, // Use primary color for accent
-                color: theme.palette.primary.contrastText,
-                '&:hover': {
-                  bgcolor: theme.palette.primary.dark,
-                  boxShadow: '0 0 8px 4px rgba(0, 191, 255, 0.4)', // Glow effect, consider using theme.palette.primary
-                },
-                mt: 2, // Spacing from inputs
-                mb: 8, // Increased margin-bottom to create more space before the absolute positioned skip button
-              }}
-              fullWidth
-              onClick={handleContinue}
-              disabled={!isFormValid}
-            >
-              Продолжить
-            </Button>
+            {showInviteField && (
+              <Box
+                sx={{
+                  opacity: showInviteField ? 1 : 0,
+                  transform: showInviteField ? 'translateY(0)' : 'translateY(-20px)',
+                  transition: 'all 0.5s ease-in-out',
+                  mt: 2, // Spacing from inputs
+                }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: theme.palette.primary.main, // Use primary color for accent
+                    color: theme.palette.primary.contrastText,
+                    '&:hover': {
+                      bgcolor: theme.palette.primary.dark,
+                      boxShadow: '0 0 8px 4px rgba(0, 191, 255, 0.4)', // Glow effect, consider using theme.palette.primary
+                    },
+                    mb: 8, // Increased margin-bottom to create more space before the absolute positioned skip button
+                  }}
+                  fullWidth
+                  onClick={handleContinue}
+                  disabled={!isFormValid}
+                >
+                  Продолжить
+                </Button>
+              </Box>
+            )}
 
             <Button
               variant="text"
@@ -396,7 +490,7 @@ const WelcomePage = () => { // Убрано React.FC
               onClick={handleSkip}
               sx={{
                 position: 'absolute', // Position at bottom right
-                bottom: theme.spacing(2), // 2 units from bottom
+                bottom: theme.spacing(-2), // Перемещаем ниже (отрицательное значение)
                 right: theme.spacing(2), // 2 units from right
                 fontSize: '14px', // 14px font size
                 color: 'grey.500', // Grey text
