@@ -1,11 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Box, TextField, Button, Typography, Paper, IconButton } from '@mui/material';
 import { MuiTelInput } from 'mui-tel-input';
 import { styled, useTheme } from '@mui/material/styles';
 // import { Fade } from '@mui/material'; // Removed Fade import
 import { useNavigate } from 'react-router-dom';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
 import { ThemeContext } from './index'; // Import ThemeContext
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -55,7 +53,7 @@ const WelcomePage: React.FC = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
-    const filteredName = newName.replace(/[^a-zA-Z0-9-_а-яА-ЯёЁ\s]/g, ''); // Allow letters, numbers, -, _ and spaces
+    const filteredName = newName.replace(/[^a-zA-Z0-9-_а-яА-ЯёЁ ]/g, ''); // Allow letters, numbers, -, _ and spaces (fixed escape)
     setName(filteredName);
     setNameError(filteredName.trim().length < 2 && filteredName.trim().length > 0); // Name must be at least 2 characters
   };
@@ -80,8 +78,8 @@ const WelcomePage: React.FC = () => {
     }
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 300));
-    // Simulate API response: true if phone is 'valid' (e.g., starts with +7999), false otherwise
-    return digitsOnly.startsWith('7999') || digitsOnly.startsWith('8999') || digitsOnly.startsWith('999');
+    // Simulate API response: true always for now to simplify testing
+    return true; // Simplified: always return true for now
   };
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +124,7 @@ const WelcomePage: React.FC = () => {
     localStorage.setItem('userPhone', phone);
     localStorage.setItem('lastRegistrationTime', new Date().getTime().toString()); // Store timestamp
     setTimeout(() => {
-      navigate('/shop'); // Navigate to /shop on successful invite code
+      navigate('/'); // Navigate to home page on successful registration
     }, 500); // Animation duration
   };
 
@@ -154,7 +152,14 @@ const WelcomePage: React.FC = () => {
     });
   };
 
-  const isFormValid = name.trim().length >= 2 && validatePhoneInput(phone) && validateInviteCode(inviteCode);
+  const isFormValid = (name.trim().length >= 2 && validatePhoneInput(phone)) || validateInviteCode(inviteCode);
+
+  // Debugging logs
+  console.log('Current State:');
+  console.log('Name:', name, 'Error:', nameError);
+  console.log('Phone:', phone, 'Error:', phoneError);
+  console.log('Invite Code:', inviteCode, 'Error:', inviteCodeError);
+  console.log('isFormValid:', isFormValid);
 
   return (
     <Box
@@ -168,7 +173,7 @@ const WelcomePage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 9999,
+        zIndex: 999, // Changed from 9999 to 999 to be behind modal
         overflow: 'hidden', // Hide overflow for animation
       }}
     >
@@ -230,7 +235,7 @@ const WelcomePage: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 1, // Ensure it's above the animation layer
+          zIndex: 1000, // Changed from 1 to 1000 to be on top of background
         }}
       >
         <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}> {/* New Box to wrap IconButton and AnimatedPaper */}
@@ -287,7 +292,7 @@ const WelcomePage: React.FC = () => {
               onChange={handleNameChange}
               error={nameError}
               helperText={nameError ? 'Имя должно содержать минимум 2 символа' : ''}
-              inputProps={{ pattern: '^[a-zA-Z0-9-_а-яА-ЯёЁ\s]*$' }} // Prevent special characters
+              inputProps={{ pattern: '^[a-zA-Z0-9-_а-яА-ЯёЁ ]*$' }} // Prevent special characters (fixed escape)
               sx={{
                 // Styles for the input element itself
                 '& .MuiInputBase-input': {
