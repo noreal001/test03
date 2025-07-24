@@ -50,13 +50,14 @@ type Aroma = {
 interface Order {
   id: string;
   date: string;
-  items: { aroma: string; brand: string; volume: string }[];
+  items: { aroma: string; brand: string; volume: string; price: number }[];
   comment: string;
   receiptAttached: boolean;
   history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[];
   awaitingManagerReply: boolean;
   address?: string;
   phone?: string;
+  total: number;
 }
 
 interface User {
@@ -66,6 +67,7 @@ interface User {
   orders: Order[];
   address: string;
   phone: string;
+  inviteCode: string;
 }
 
 // Константы
@@ -95,10 +97,11 @@ const App = () => {
   const [brandsMenuOpen, setBrandsMenuOpen] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedVolumes, setSelectedVolumes] = useState<{ [aroma: string]: number }>({});
-  const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
+  const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string; price: number }[]>([]);
   const [profileTab, setProfileTab] = useState<'data' | 'orders'>('data');
   const [checkoutStep, setCheckoutStep] = useState<null | 'form' | 'payment' | 'orderDetail'>(null);
   const [currentOrder, setCurrentOrder] = useState<number | null>(null);
+  const [selectedOrderForDetail, setSelectedOrderForDetail] = useState<Order | null>(null);
   const [orderComment, setOrderComment] = useState<string>('');
   const [commentFile, setCommentFile] = useState<File | null>(null);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null);
@@ -114,6 +117,7 @@ const App = () => {
   const [user, setUser] = useState<User>(() => {
     const savedName = localStorage.getItem('userName') || '';
     const savedPhone = localStorage.getItem('userPhone') || '';
+    const savedInviteCode = localStorage.getItem('inviteCode') || '';
     return {
       name: savedName,
       balance: '12 500 ₽',
@@ -121,6 +125,7 @@ const App = () => {
       orders: [],
       address: '',
       phone: savedPhone,
+      inviteCode: savedInviteCode,
     };
   });
 
@@ -159,7 +164,8 @@ const App = () => {
       const registeredRecently = lastRegistrationTime && (now - parseInt(lastRegistrationTime) < fiveMinutes);
 
       if (registered) {
-        setUser(prev => ({ ...prev, name: userName!, phone: userPhone! }));
+        const savedInviteCode = localStorage.getItem('inviteCode') || '';
+        setUser(prev => ({ ...prev, name: userName!, phone: userPhone!, inviteCode: savedInviteCode }));
       } else if (!skippedRecently && !registeredRecently) {
         navigate('/start');
       }
@@ -197,10 +203,16 @@ const App = () => {
   };
 
   const handleAddToCart = (aromaName: string, brandName: string, volume: number) => {
+    // Находим цену аромата
+    const selectedBrand = brands[selectedIndex!];
+    const selectedAroma = selectedBrand?.aromas.find(aroma => aroma.name === aromaName);
+    const price = selectedAroma?.prices[volume] || 0;
+
     setCart(prev => [...prev, { 
       aroma: aromaName, 
       brand: brandName, 
-      volume: `${volume} гр` 
+      volume: `${volume} гр`,
+      price: price
     }]);
     
     setCartFlash(true);
@@ -245,14 +257,18 @@ const App = () => {
 
   const handlePaymentComplete = () => {
     const newOrderId = `ORD-${Date.now()}`;
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
     const newOrder = { 
       id: newOrderId, 
-      date: new Date().toLocaleDateString(), 
+      date: new Date().toLocaleDateString('ru-RU'), 
       items: [...cart], 
       comment: '', 
       receiptAttached: false, 
       history: [], 
-      awaitingManagerReply: false 
+      awaitingManagerReply: false,
+      address: user.address,
+      phone: user.phone,
+      total: total
     };
     
     setUser(prev => ({
@@ -264,6 +280,16 @@ const App = () => {
     setCheckoutStep('orderDetail'); 
     setIsCartFullScreen(false);
     setCurrentOrder(user.orders.length);
+  };
+
+  const handleRepeatOrder = (order: Order) => {
+    setCart([...order.items]);
+    setSelectedOrderForDetail(null);
+    setIsProfileFullScreen(false);
+  };
+
+  const handleViewOrderDetails = (order: Order) => {
+    setSelectedOrderForDetail(order);
   };
 
   const handleCloseCheckoutDialog = () => {
@@ -760,7 +786,7 @@ const App = () => {
           <Close />
                 </IconButton>
               </Box>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start', height: '100%' }}>
         <Box sx={{ 
           width: 120, 
           borderRight: `1px solid ${theme.palette.divider}`, 
@@ -784,6 +810,237 @@ const App = () => {
               Заказы
                       </ListItemButton>
                   </List>
+                </Box>
+                
+                {/* Контент вкладок */}
+                <Box sx={{ flex: 1, p: 3 }}>
+                  {profileTab === 'data' && (
+                    <Box>
+                      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
+                        Личные данные
+                      </Typography>
+                      
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 400 }}>
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Имя
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {user.name || 'Не указано'}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Телефон
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {user.phone ? `+7 ${user.phone}` : 'Не указан'}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Инвайт-код
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {user.inviteCode || 'Не указан'}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Адрес доставки
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {user.address || 'Не указан'}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Дата регистрации
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {localStorage.getItem('lastRegistrationTime') 
+                              ? new Date(parseInt(localStorage.getItem('lastRegistrationTime')!)).toLocaleDateString('ru-RU') 
+                              : 'Не зарегистрирован'}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          p: 2, 
+                          border: `1px solid ${theme.palette.divider}`, 
+                          borderRadius: 1,
+                          bgcolor: 'background.paper'
+                        }}>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontSize: '12px', mb: 0.5 }}>
+                            Баланс
+                          </Typography>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium', color: 'primary.main' }}>
+                            {user.balance}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  )}
+                  
+                                    {profileTab === 'orders' && !selectedOrderForDetail && (
+                    <Box>
+                      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
+                        История заказов
+                      </Typography>
+                      {user.orders.length === 0 ? (
+                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                          У вас пока нет заказов
+                        </Typography>
+                      ) : (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          {user.orders.map((order, index) => (
+                            <Box 
+                              key={index}
+                              sx={{
+                                p: 3,
+                                border: `1px solid ${theme.palette.divider}`,
+                                borderRadius: 2,
+                                bgcolor: 'background.paper',
+                                '&:hover': {
+                                  bgcolor: 'action.hover',
+                                  cursor: 'pointer'
+                                }
+                              }}
+                            >
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                  Заказ №{index + 1}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                  {order.date}
+                                </Typography>
+                              </Box>
+                              
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                  Товаров: {order.items.length}
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                                  {order.total.toLocaleString('ru-RU')} ₽
+                                </Typography>
+                              </Box>
+                              
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Button
+                                  size="small"
+                                  variant="outlined"
+                                  onClick={() => handleViewOrderDetails(order)}
+                                >
+                                  Подробнее
+                                </Button>
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  onClick={() => handleRepeatOrder(order)}
+                                >
+                                  Повторить заказ
+                                </Button>
+                              </Box>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+
+                  {profileTab === 'orders' && selectedOrderForDetail && (
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                        <IconButton onClick={() => setSelectedOrderForDetail(null)} sx={{ mr: 2 }}>
+                          <Close />
+                        </IconButton>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          Заказ №{user.orders.findIndex(o => o.id === selectedOrderForDetail.id) + 1}
+                        </Typography>
+                      </Box>
+
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                          Дата заказа: {selectedOrderForDetail.date}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+                          Адрес: {selectedOrderForDetail.address || 'Не указан'}
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
+                          Сумма: {selectedOrderForDetail.total.toLocaleString('ru-RU')} ₽
+                        </Typography>
+                      </Box>
+
+                      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+                        Товары:
+                      </Typography>
+                      
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 3 }}>
+                        {selectedOrderForDetail.items.map((item, itemIndex) => (
+                          <Box 
+                            key={itemIndex}
+                            sx={{
+                              p: 2,
+                              border: `1px solid ${theme.palette.divider}`,
+                              borderRadius: 1,
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                                {item.brand} - {item.aroma}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                {item.volume}
+                              </Typography>
+                            </Box>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                              {item.price.toLocaleString('ru-RU')} ₽
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={() => handleRepeatOrder(selectedOrderForDetail)}
+                        sx={{ mt: 2 }}
+                      >
+                        Повторить этот заказ
+                      </Button>
+                    </Box>
+                  )}
                 </Box>
                 </Box>
                         </Paper>
@@ -862,6 +1119,7 @@ const App = () => {
                   </ListItemAvatar>
                   <ListItemText
                     primary={`${item.brand} - ${item.aroma} (${item.volume})`}
+                    secondary={`${item.price.toLocaleString('ru-RU')} ₽`}
                     sx={{ cursor: 'pointer' }}
                   />
                 </ListItem>
@@ -869,13 +1127,18 @@ const App = () => {
                   </List>
                 )}
           {cart.length > 0 && (
-            <Button 
-              variant="contained" 
-              sx={{ mt: 2 }} 
-              onClick={() => setCheckoutStep('form')}
-            >
-              Перейти к оформлению
-            </Button>
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
+                Итого: {cart.reduce((sum, item) => sum + item.price, 0).toLocaleString('ru-RU')} ₽
+              </Typography>
+              <Button 
+                variant="contained" 
+                fullWidth
+                onClick={() => setCheckoutStep('form')}
+              >
+                Перейти к оформлению
+              </Button>
+            </Box>
           )}
         </Box>
       )}
@@ -952,10 +1215,17 @@ const App = () => {
                 <List>
             {user.orders[currentOrder].items.map((item, index) => (
               <ListItem key={index}>
-                <ListItemText primary={`${item.brand} - ${item.aroma} (${item.volume})`} />
+                <ListItemText 
+                  primary={`${item.brand} - ${item.aroma} (${item.volume})`}
+                  secondary={`${item.price.toLocaleString('ru-RU')} ₽`}
+                />
               </ListItem>
                   ))}
                 </List>
+                
+                <Typography sx={{ mt: 2, fontWeight: 'bold', textAlign: 'center' }}>
+                  Итого: {user.orders[currentOrder].total.toLocaleString('ru-RU')} ₽
+                </Typography>
           
           <Typography sx={{ mt: 2, fontWeight: 'bold' }}>История сообщений:</Typography>
           <Box sx={{ 

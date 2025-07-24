@@ -138,7 +138,8 @@ const WelcomePage = () => { // Убрано React.FC
   const handleContinue = async () => {
     const isNameValid = name.trim().length >= 2;
     const isPhoneLengthValid = validatePhoneInput(phone);
-    const isInviteCodeValid = validateInviteCode(inviteCode);
+    // Инвайт-код теперь необязательный - проверяем только если он введен
+    const isInviteCodeValid = inviteCode.trim() === '' || validateInviteCode(inviteCode);
 
     if (!isNameValid || !isPhoneLengthValid || !isInviteCodeValid) {
       setNameError(!isNameValid);
@@ -158,6 +159,9 @@ const WelcomePage = () => { // Убрано React.FC
     localStorage.setItem('userRegistered', 'true');
     localStorage.setItem('userName', name);
     localStorage.setItem('userPhone', phone);
+    if (inviteCode.trim() !== '') {
+      localStorage.setItem('inviteCode', inviteCode); // Сохраняем инвайт-код только если он введен
+    }
     localStorage.setItem('lastRegistrationTime', new Date().getTime().toString()); // Store timestamp
     setTimeout(() => {
       navigate('/'); // Navigate to home page on successful registration
@@ -188,7 +192,7 @@ const WelcomePage = () => { // Убрано React.FC
     });
   };
 
-  const isFormValid = (name.trim().length >= 2 && validatePhoneInput(phone)) || validateInviteCode(inviteCode);
+  const isFormValid = name.trim().length >= 2 && validatePhoneInput(phone); // Убираем обязательную проверку инвайт-кода
 
   // Debugging logs
   console.log('Current State:');
@@ -427,15 +431,14 @@ const WelcomePage = () => { // Убрано React.FC
                 }}
               >
                 <TextField
-                  label="Инвайт-код"
+                  label="Инвайт-код (необязательно)"
                   placeholder="XXXX-XXXX"
                   variant="outlined"
                   fullWidth
-                  required
                   value={inviteCode}
                   onChange={handleInviteCodeChange}
                   error={inviteCodeError}
-                  helperText={inviteCodeError ? 'Неверный инвайт-код' : ''}
+                  helperText={inviteCodeError ? 'Неверный инвайт-код' : 'Введите инвайт-код если есть'}
                   inputProps={{ maxLength: 9 }} // Max length for XXXX-XXXX format
                   sx={{
                     // Styles for the input element itself
