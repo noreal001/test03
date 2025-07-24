@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Chip, Stack, Avatar, useMediaQuery, useTheme, Button, Switch } from '@mui/material';
+import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Stack, Avatar, useMediaQuery, useTheme, Button, Switch, ListItem, ListItemAvatar, Card, CardMedia, CardContent, Slider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
+import LocalFloristIcon from '@mui/icons-material/LocalFlorist'; // Re-added import
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -14,9 +14,9 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Popper from '@mui/material/Popper';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { createTheme } from '@mui/material/styles'; // Re-added import
+// import Popper from '@mui/material/Popper'; // Removed unused import
+// import ClickAwayListener from '@mui/material/ClickAwayListener'; // Removed unused import
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from './index'; // Import ThemeContext
 
@@ -36,7 +36,20 @@ const aromaInfo = {
   factory: 'Eps',
 };
 
-type Brand = { name: string; aromas: string[] };
+type Brand = { name: string; aromas: Aroma[] };
+type Aroma = { name: string; description: string; aroma_group: string; prices: { [key: string]: number }; image?: string };
+
+interface Order {
+  id: string;
+  date: string;
+  items: { aroma: string; brand: string; volume: string }[];
+  comment: string;
+  receiptAttached: boolean;
+  history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[];
+  awaitingManagerReply: boolean;
+  address?: string; // New: Add address to Order type
+  phone?: string;   // New: Add phone to Order type
+}
 
 const lightTheme = createTheme({
   palette: {
@@ -114,7 +127,6 @@ const App: React.FC = () => {
     setSelectedVolumes((prev) => ({ ...prev, [aroma]: idx }));
   };
 
-  const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
   const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
   const [aromaView, setAromaView] = useState<'cards' | 'list'>('cards');
   const [profileTab, setProfileTab] = useState<'data' | 'orders'>('data');
@@ -138,7 +150,7 @@ const App: React.FC = () => {
       name: savedName,
       balance: '12 500 ₽',
       avatar: '',
-      orders: [] as { id: string; date: string; items: { aroma: string; brand: string; volume: string }[]; comment: string; receiptAttached: boolean; history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[]; awaitingManagerReply: boolean }[],
+      orders: [] as Order[], // Use defined Order type
       address: '',
       phone: savedPhone,
     };
@@ -206,8 +218,8 @@ const App: React.FC = () => {
     setSelectedAromaDetail(null);
   };
 
-  const handleAddToCart = (aroma: string, brand: string, volumeIdx: number) => {
-    setCart(prev => [...prev, { aroma, brand, volume: aromaInfo.volumes[volumeIdx] }]);
+  const handleAddToCart = (aromaName: string, brandName: string, volumeIndex: number) => {
+    setCart(prev => [...prev, { aroma: aromaName, brand: brandName, volume: aromaInfo.volumes[volumeIndex] }]);
     setCartFlash(true); // Trigger flash animation
     setTimeout(() => {
       setCartFlash(false); // Reset flash after a short delay
@@ -248,6 +260,17 @@ const App: React.FC = () => {
   };
   const handleRemoveFromCart = (idx: number) => {
     setCart(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleAromaClickFromCart = (aromaName: string, brandName: string, volume: string) => {
+    // Logic to navigate to the aroma detail, or open a dialog
+    // For now, let's assume it opens the aroma detail dialog
+    // You might want to scroll to the aroma in the main view or open a specific dialog
+    console.log(`Clicked on aroma: ${aromaName} from brand: ${brandName}, volume: ${volume}`);
+    setSelectedAromaFromCart(aromaName);
+    // If you want to show aroma details in a modal, you would open that modal here
+    // For example:
+    // handleOpenAromaDetail(aromaName, brandName, volume);
   };
 
   const handlePlaceOrder = () => {
@@ -353,6 +376,23 @@ const App: React.FC = () => {
   const handleSuggestionClick = (suggestion: string, type: 'brand' | 'aroma') => {
     // Implement the logic to handle suggestion click
     console.log(`Suggestion clicked: ${suggestion}, type: ${type}`);
+  };
+
+  const handleAddMessageToOrder = (orderIndex: number | null, comment: string, file: File | null) => {
+    // This function can now directly call handleSendComment if logic is unified
+    // For simplicity, I'll remove its usage if handleSendComment can cover it
+    console.log(`Adding message to order ${orderIndex}: ${comment}`);
+    handleSendComment(); // Call the unified send/save function
+  };
+
+  const handleCancelEditComment = () => {
+    setEditingCommentIndex(null);
+    setOrderComment('');
+    setCommentFile(null);
+  };
+
+  const handleSaveEditedComment = () => {
+    handleSendComment(); // Call the unified send/save function
   };
 
   return (
@@ -472,7 +512,7 @@ const App: React.FC = () => {
                 position: 'relative',
                 bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent', // Flash effect
                 transition: 'background-color 0.3s ease-in-out',
-                ml: 1,
+                ml: 'auto', mr: 'auto', // Center the cart button
                 mb: 1
               }}
               onClick={() => {
@@ -491,496 +531,585 @@ const App: React.FC = () => {
               onChange={toggleTheme}
               color="default"
               inputProps={{ 'aria-label': 'theme switch' }}
-              sx={{ ml: 1, mb: 1 }}
+              sx={{ ml: 'auto', mr: 'auto', mb: 1 }} // Center the theme switch
             />
           </Box>
         )}
 
-        {/* Центральная панель (ароматы/поиск/полноэкранный профиль/полноэкранная корзина) */}
-        <Box 
-          sx={{
-            flex: 1, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'flex-start', 
-            height: '100%', 
-            position: 'relative', // Needed for absolute positioning of emojis
-            top: 0, 
-            bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper', // Flash effect on central panel
-            transition: 'background-color 0.3s ease-in-out',
-            zIndex: 1, 
-            px: 0, 
-            borderTopLeftRadius: 0, 
-            borderBottomLeftRadius: 0, 
-            boxSizing: 'border-box'
-          }}
-        >
-          {/* Emoji explosion particles */}
-          {emojiParticles.map(particle => (
-            <span
-              key={particle.id}
-              style={{
-                position: 'absolute',
-                left: '50%', // Position origin at center of parent
-                top: '50%',   // Position origin at center of parent
-                fontSize: '30px',
-                opacity: particle.opacity,
-                transform: `translate(-50%, -50%)`, // Centered without vx/vy for simplicity
-                transition: 'opacity 0.4s linear', // Fade transition
-                pointerEvents: 'none', // Allow interaction with elements below
-                zIndex: 100,
-              }}
-            >
-              {particle.emoji}
-            </span>
-          ))}
+        {/* Центральная панель (ароматы/поиск) - теперь без полноэкранных профиля/корзины */}
+        {!isProfileFullScreen && !isCartFullScreen && (
+          <Box 
+            sx={{
+              flex: 1, 
+              minWidth: 0, // Ensure it can shrink
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              justifyContent: 'flex-start', 
+              height: '100%', 
+              position: 'relative', // Needed for absolute positioning of emojis
+              top: 0, 
+              bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper', // Flash effect on central panel
+              transition: 'background-color 0.3s ease-in-out',
+              zIndex: 1, 
+              px: 0, 
+              borderTopLeftRadius: 0, 
+              borderBottomLeftRadius: 0, 
+              boxSizing: 'border-box'
+            }}
+          >
+            {/* Emoji explosion particles */}
+            {emojiParticles.map(particle => (
+              <span
+                key={particle.id}
+                style={{
+                  position: 'absolute',
+                  left: '50%', // Position origin at center of parent
+                  top: '50%',   // Position origin at center of parent
+                  fontSize: '30px',
+                  opacity: particle.opacity,
+                  transform: `translate(-50%, -50%)`, // Centered without vx/vy for simplicity
+                  transition: 'opacity 0.4s linear', // Fade transition
+                  pointerEvents: 'none', // Allow interaction with elements below
+                  zIndex: 100,
+                }}
+              >
+                {particle.emoji}
+              </span>
+            ))}
 
-          {/* Conditional content inside the central panel */}
-          {isProfileFullScreen ? (
-            <Paper elevation={0} sx={{ flex: 1, bgcolor: 'background.default', color: 'text.primary', p: 3, display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: 0, boxShadow: 'none' }}>
-              {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>Профиль</Typography>
-              </Box> */}
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                {/* Menu profile on the left */}
-                <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
-                  <List disablePadding>
-                    <ListItemButton selected={profileTab==='data'} onClick={()=>setProfileTab('data')} sx={{ px: 2, py: 1 }}>Данные</ListItemButton>
-                    <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemButton>
-                  </List>
-                </Box>
-                {/* Profile content based on profileTab */}
-                <Box sx={{ flex: 1, minWidth: 220, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                  {profileTab === 'data' && (
-                    <>
-                      <Avatar src={user.avatar} alt={user.name} sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontWeight: 700, fontSize: 32 }}>
-                        {user.avatar ? '' : user.name[0]}
-                      </Avatar>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>{user.name}</Typography>
-                      <Typography variant="body1" color="text.secondary">Баланс: {user.balance}</Typography>
-                      <TextField
-                        label="ФИО"
-                        fullWidth
-                        size="small"
-                        value={user.name}
-                        onChange={(e) => {
-                          setUser(prev => ({...prev, name: e.target.value}));
-                          localStorage.setItem('userName', e.target.value);
-                        }}
-                        sx={{
-                          mt: 2,
-                          // Styles for the input element itself
-                          '& .MuiInputBase-input': {
-                            color: theme.palette.text.primary, // Text color based on theme
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                            borderRadius: theme.shape.borderRadius,
-                          },
-                          // Styles for the InputLabel
-                          '& .MuiInputLabel-root': {
-                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                          },
-                          // Styles for the OutlinedInput fieldset (border)
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: 'transparent !important', // Remove default border
-                          },
-                        }}
-                      />
-                      <TextField
-                        label="Адрес"
-                        fullWidth
-                        size="small"
-                        value={user.address}
-                        onChange={(e) => setUser(prev => ({...prev, address: e.target.value}))}
-                        sx={{
-                          // Styles for the input element itself
-                          '& .MuiInputBase-input': {
-                            color: theme.palette.text.primary, // Text color based on theme
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                            borderRadius: theme.shape.borderRadius,
-                          },
-                          // Styles for the InputLabel
-                          '& .MuiInputLabel-root': {
-                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                          },
-                          // Styles for the OutlinedInput fieldset (border)
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: 'transparent !important', // Remove default border
-                          },
-                        }}
-                      />
-                      <TextField
-                        label="Телефон"
-                        fullWidth
-                        size="small"
-                        value={user.phone}
-                        onChange={(e) => {
-                          setUser(prev => ({...prev, phone: e.target.value}));
-                          localStorage.setItem('userPhone', e.target.value);
-                        }}
-                        sx={{
-                          // Styles for the input element itself
-                          '& .MuiInputBase-input': {
-                            color: theme.palette.text.primary, // Text color based on theme
-                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                            borderRadius: theme.shape.borderRadius,
-                          },
-                          // Styles for the InputLabel
-                          '& .MuiInputLabel-root': {
-                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                          },
-                          // Styles for the OutlinedInput fieldset (border)
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: 'transparent !important', // Remove default border
-                          },
-                        }}
-                      />
-                      {(localStorage.getItem('userRegistered') !== 'true' || !user.phone) && (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => navigate('/start')}
-                          sx={{ mt: 2 }}
-                        >
-                          Завершить регистрацию
-                        </Button>
-                      )}
-                    </>
-                  )}
-                  {profileTab === 'orders' && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="h6">Мои заказы</Typography>
-                      {user.orders.length === 0 ? (
-                        <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>У вас пока нет заказов.</Typography>
-                      ) : (
-                        <List>
-                          {user.orders.map((order, index) => (
-                            <ListItemButton key={order.id} onClick={() => {
-                              setCurrentOrder(index);
-                              setCheckoutStep('orderDetail');
-                              setOrderComment(order.history.slice().reverse().find((msg: {sender: string}) => msg.sender === 'user')?.text || ''); // Set comment for editing
-                            }} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
-                              <ListItemText
-                                primary={`Заказ №${order.id} от ${order.date}`}
-                                secondary={`Товаров: ${order.items.length}`}
-                              />
-                            </ListItemButton>
-                          ))}
-                        </List>
-                      )}
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            </Paper>
-          ) : isCartFullScreen ? (
-            <Paper elevation={0} sx={{ flex: 1, bgcolor: 'background.default', color: 'text.primary', p: 3, display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: 0, boxShadow: 'none' }}>
-              {/* Cart Content */}
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'space-between' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>Корзина ({cart.length} шт.)</Typography>
-                <IconButton onClick={() => setIsCartFullScreen(false)}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              {cart.length === 0 ? (
-                <Typography sx={{ textAlign: 'center', color: 'text.secondary', mt: 4 }}>Корзина пуста.</Typography>
-              ) : (
-                <List sx={{ width: '100%', flex: 1, overflowY: 'auto' }}>
-                  {cart.map((item, idx) => (
-                    <ListItemButton key={idx} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={() => handleOpenAromaDetail(item.aroma, item.brand, item.volume)}>
-                      <ListItemText primary={`${toTitleCase(item.aroma)} (${item.volume})`} secondary={item.brand} />
-                      <IconButton edge="end" aria-label="delete" onClick={(e) => {
-                        e.stopPropagation(); // Prevent ListItemButton click from firing
-                        handleRemoveFromCart(idx);
-                      }}>
-                        <CloseIcon />
-                      </IconButton>
+            {/* Search Input */}
+            <TextField
+              label="Поиск ароматов и брендов"
+              variant="outlined"
+              fullWidth
+              value={search}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 2, bgcolor: 'background.paper', width: '95%', mt: 2 }}
+            />
+
+            {/* Suggested Search Results */}
+            {search && (
+              <Paper sx={{ width: '95%', mb: 2, maxHeight: 200, overflowY: 'auto' }}>
+                <List>
+                  {suggestions.map((s, index) => (
+                    <ListItemButton key={index} onClick={() => handleSuggestionClick(s, 'aroma')}> {/* Dummy type for now */}
+                      <ListItemText primary={s} />
                     </ListItemButton>
                   ))}
                 </List>
-              )}
-              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handlePlaceOrder}
-                  disabled={cart.length === 0}
-                  fullWidth
-                >
-                  Оформить заказ
-                </Button>
-              </Box>
-            </Paper>
-          ) : selectedIndex === null ? (
-            <Paper elevation={4} sx={{ width: '100%', p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, borderRadius: 0, boxSizing: 'border-box' }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-                Поиск ароматов
-              </Typography>
-              <TextField
-                variant="outlined"
-                placeholder="Введите название аромата..."
-                value={search}
-                onChange={handleSearchChange}
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                inputRef={searchInputRef}
-              />
-              {/* Search suggestions */}
-              {search && suggestions.length > 0 && (
-                <Paper sx={{ width: '100%', maxHeight: 200, overflowY: 'auto', mt: 1 }}>
-                  <List dense>
-                    {suggestions.map((suggestion, idx) => (
-                      <ListItemButton key={idx} onClick={() => handleSuggestionClick(suggestion, 'aroma')}> {/* Assuming suggestion is aroma name */}
-                        <ListItemText primary={toTitleCase(suggestion)} />
-                      </ListItemButton>
-                    ))}
-                  </List>
-                </Paper>
-              )}
-            </Paper>
-          ) : (
-            <Fade in={selectedIndex !== null} timeout={400} unmountOnExit>
-              <Paper elevation={4} sx={{ width: '100%', p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2, position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto', boxSizing: 'border-sizing', bgcolor: 'background.default' }}>
-                {/* Header for brand aromas */}
-                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 1, justifyContent: 'space-between' }}>
-                  <IconButton onClick={handleBackToSearch} sx={{ mr: 1 }}>
-                    <ArrowBackIcon />
-                  </IconButton>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', flex: 1, minWidth: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-                    {brands[selectedIndex].name}
-                  </Typography>
-                </Box>
-                <Divider sx={{ mb: 2, width: '100%' }} />
-
-                {/* View Toggle Buttons - NEW LOCATION, centered */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 2 }}>
-                  <IconButton onClick={() => setAromaView('cards')} color={aromaView === 'cards' ? 'primary' : 'default'}><ViewModuleIcon /></IconButton>
-                  <IconButton onClick={() => setAromaView('list')} color={aromaView === 'list' ? 'primary' : 'default'}><ViewListIcon /></IconButton>
-                </Box>
-
-                {/* Список или карточки ароматов */}
-                {aromaView === 'cards' ? (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, width: '100%', justifyContent: 'center' }}>
-                    {brands[selectedIndex].aromas.map((aroma) => {
-                      const volumeIdx = selectedVolumes[aroma] ?? 0;
-                      return (
-                        <Paper key={aroma} elevation={2} sx={{ width: 280, p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 2, bgcolor: 'background.paper' }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, textAlign: 'center' }}>{toTitleCase(aroma)}</Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{aromaInfo.price}</Typography>
-                          <Box sx={{ width: '100%', px: 0.5, position: 'relative', minHeight: 50, mt: 1 }}>
-                            <Box sx={{ position: 'absolute', left: 0, right: 0, top: 0, height: 32, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', zIndex: 2 }}>
-                              {volumeMarks.map((v, idx) => (
-                                <Box key={v} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', minWidth: 28 }} onClick={() => handleVolumeSlider(aroma, idx)}>
-                                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: idx === volumeIdx ? 'success.main' : 'grey.700', border: idx === volumeIdx ? '2px solid #fff' : '2px solid #b9fbc0', mb: 0.3, transition: 'background 0.3s, border 0.3s' }} />
-                                  <Typography variant="caption" sx={{ color: idx === volumeIdx ? 'success.main' : 'text.secondary', fontWeight: idx === volumeIdx ? 700 : 400, transition: 'color 0.3s', mt: 0.2, fontSize: 10 }}>{v}</Typography>
-                                </Box>
-                              ))}
-                            </Box>
-                            {/* Градиентная полоса */}
-                            <Box sx={{ position: 'absolute', left: 0, right: 0, top: 38, height: 6, borderRadius: 3, background: 'linear-gradient(90deg, #b9fbc0 0%, #a3f7bf 100%)', opacity: 0.5 }} />
-                            {/* Бегунок */}
-                            <Box sx={{ position: 'absolute', top: 35, width: 20, height: 20, borderRadius: '50%', bgcolor: 'primary.main', boxShadow: '0px 2px 5px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'left 0.3s ease', left: `calc(${(volumeIdx / (volumeMarks.length - 1)) * 100}% - 10px)` }} />
-                          </Box>
-                          <Button variant="contained" color="success" sx={{ mt: 2 }} fullWidth onClick={() => handleAddToCart(aroma, brands[selectedIndex].name, volumeIdx)}>
-                            Добавить в корзину
-                          </Button>
-                        </Paper>
-                      );
-                    })}
-                  </Box>
-                ) : (
-                  <List sx={{ width: '100%' }}>
-                    {brands[selectedIndex].aromas.map((aroma) => {
-                      const volumeIdx = selectedVolumes[aroma] ?? 0;
-                      return (
-                        <ListItemButton key={aroma} id={`aroma-${aroma}`} sx={{ mb: 1, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Typography sx={{ fontWeight: 600 }}>{toTitleCase(aroma)}</Typography>
-                            <Typography variant="caption" color="text.secondary">{aromaInfo.price} • {aromaInfo.volumes[volumeIdx]}</Typography>
-                          </Box>
-                          <Box>
-                            <IconButton color="success" onClick={() => handleAddToCart(aroma, brands[selectedIndex].name, volumeIdx)}>
-                              <ShoppingCartIcon />
-                            </IconButton>
-                          </Box>
-                        </ListItemButton>
-                      );
-                    })}
-                  </List>
-                )}
               </Paper>
-            </Fade>
-          )}
-        </Box>
+            )}
 
-        {/* Checkout Dialog */}
-        <Dialog open={checkoutStep !== null} onClose={handleCloseCheckoutDialog} maxWidth="sm" fullWidth>
-          <DialogTitle>{checkoutStep === 'form' ? 'Оформление заказа' : checkoutStep === 'payment' ? 'Оплата заказа' : 'Детали заказа'}</DialogTitle>
-          <DialogContent>
-            {checkoutStep === 'form' && (
-              <Stack spacing={2}>
-                <TextField
-                  label="Адрес доставки"
-                  variant="outlined"
-                  fullWidth
-                  value={user.address}
-                  onChange={(e) => setUser(prev => ({...prev, address: e.target.value}))}
-                />
-                <TextField
-                  label="Телефон"
-                  variant="outlined"
-                  fullWidth
-                  value={user.phone}
-                  onChange={(e) => setUser(prev => ({...prev, phone: e.target.value}))}
-                />
-              </Stack>
-            )}
-            {checkoutStep === 'payment' && (
-              <Box>
-                <Typography variant="h6" sx={{ mb: 2 }}>Реквизиты для оплаты:</Typography>
-                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Сумма заказа: {cart.reduce((total, item) => {
-                    const priceMatch = aromaInfo.price.match(/(\d+)\s*₽/);
-                    const itemPrice = priceMatch ? parseInt(priceMatch[1].replace(/\s/g, '')) : 0;
-                    return total + itemPrice;
-                  }, 0)} ₽
-                </Typography>
-                <Typography sx={{ mb: 1 }}>Переведите сумму заказа по номеру телефона: <Typography component="span" fontWeight="bold">89207005595</Typography></Typography>
-                <Typography sx={{ mb: 2 }}>или по номеру карты: <Typography component="span" fontWeight="bold">2202 2067 6401 4721</Typography></Typography>
-                <Typography sx={{ mb: 1, fontStyle: 'italic' }}>Не пишите ничего в комментариях к переводу.</Typography>
-                <Typography sx={{ mb: 2 }}>ФИО получателя: <Typography component="span" fontWeight="bold">Джавадов Джамал Ясарович</Typography></Typography>
-                <Typography variant="body2" color="text.secondary">После оплаты нажмите "Продолжить далее" и отправьте нам чек.</Typography>
+            {/* Список или карточки ароматов */}
+            <Box sx={{ display: 'flex', flexDirection: aromaView === 'cards' ? 'row' : 'column', flexWrap: 'wrap', gap: 2, justifyContent: aromaView === 'cards' ? 'center' : 'flex-start', width: '100%', overflowY: 'auto', pb: 2, pt: 0, px: 2 }}>
+              {selectedIndex !== null && brands[selectedIndex]?.aromas
+                ?.filter((aroma: Aroma) => aroma.name.toLowerCase().includes(search.toLowerCase()))
+                .map((aroma: Aroma, aromaIdx: number) => (
+                  <Card key={aroma.name} sx={{
+                    width: aromaView === 'cards' ? 200 : '100%',
+                    mb: aromaView === 'list' ? 2 : 0, // Margin bottom for list view
+                    boxShadow: 'none', // Remove default card shadow
+                    border: '1px solid rgba(0, 0, 0, 0.12)', // Thin grey border
+                    bgcolor: 'background.paper',
+                    color: 'text.primary',
+                    flexShrink: 0,
+                    display: 'flex',
+                    flexDirection: aromaView === 'list' ? 'row' : 'column',
+                    alignItems: aromaView === 'list' ? 'flex-start' : 'center',
+                    gap: aromaView === 'list' ? 2 : 0,
+                    p: aromaView === 'list' ? 2 : 0, // Padding for list view
+                    position: 'relative', // For absolute positioning of cart icon
+                  }} id={`aroma-${aroma.name}`}>
+                    {aromaView === 'cards' && (
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={aroma.image || 'https://via.placeholder.com/150'}
+                        alt={aroma.name}
+                        sx={{ width: '100%', objectFit: 'cover', borderRadius: 1, mb: 1 }}
+                      />
+                    )}
+                    <CardContent sx={{ p: aromaView === 'list' ? 0 : 2, textAlign: aromaView === 'cards' ? 'center' : 'left', flexGrow: 1, width: '100%' }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>{aroma.name}</Typography>
+                      {aromaView === 'list' && (
+                        <Typography variant="body2" color="text.secondary">{aroma.description}</Typography>
+                      )}
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{brands[selectedIndex]?.name}</Typography>
+                      <Box sx={{ display: 'flex', justifyContent: aromaView === 'cards' ? 'center' : 'flex-start', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <LocalFloristIcon sx={{ fontSize: 16, color: 'secondary.main' }} />
+                        <Typography variant="body2">{aroma.aroma_group}</Typography>
+                      </Box>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                        {Object.keys(aroma.prices).map((volume) => (
+                          `${volume}ml: ${aroma.prices[volume]} ₽`
+                        )).join(' / ')}
+                      </Typography>
+                      {/* Volume Slider */}
+                      <Box sx={{ width: '100%', px: 2, mt: 2 }}>
+                        <Slider
+                          aria-label="Объем"
+                          defaultValue={0}
+                          step={1}
+                          marks
+                          min={0}
+                          max={Object.keys(aroma.prices).length - 1}
+                          value={selectedVolumes[aroma.name] || 0}
+                          onChange={(_, value) => handleVolumeSlider(aroma.name, value as number)}
+                          valueLabelFormat={(value) => Object.keys(aroma.prices)[value]}
+                          valueLabelDisplay="auto"
+                          sx={{
+                            color: 'primary.main',
+                            '& .MuiSlider-thumb': {
+                              width: 16,
+                              height: 16,
+                            },
+                            '& .MuiSlider-track': {
+                              height: 4,
+                            },
+                            '& .MuiSlider-rail': {
+                              height: 4,
+                            },
+                          }}
+                        />
+                        <Typography variant="caption" sx={{ textAlign: 'center', width: '100%', display: 'block' }}>
+                          Объем: {Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]}ml
+                        </Typography>
+                      </Box>
+
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                        onClick={() => handleAddToCart(aroma.name, brands[selectedIndex]?.name || '', Object.keys(aroma.prices).indexOf(Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]))}
+                      >
+                        Добавить в корзину
+                      </Button>
+
+                    </CardContent>
+                    <IconButton
+                      sx={{
+                        position: 'absolute',
+                        bottom: aromaView === 'cards' ? 10 : '50%',
+                        right: aromaView === 'cards' ? 10 : 10,
+                        transform: aromaView === 'list' ? 'translateY(-50%)' : 'none',
+                        bgcolor: 'primary.main',
+                        color: 'primary.contrastText',
+                        '&:hover': { bgcolor: 'primary.dark' },
+                      }}
+                      onClick={() => handleAddToCart(aroma.name, brands[selectedIndex]?.name || '', Object.keys(aroma.prices).indexOf(Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]))}
+                    >
+                      <ShoppingCartIcon />
+                    </IconButton>
+                  </Card>
+                ))}
+            </Box>
+
+          </Box>
+        )}
+
+        {/* Полноэкранный профиль */}
+        {isProfileFullScreen && (
+          <Paper
+            elevation={0}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: brandsMenuOpen ? 340 : 66, // Dynamic left based on menu state
+              bgcolor: 'background.default',
+              color: 'text.primary',
+              p: 3,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)', // Explicit width
+              borderRadius: 0,
+              boxShadow: 'none',
+              zIndex: 3, // Higher zIndex to be on top
+              overflowX: 'hidden'
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
+              <IconButton onClick={() => setIsProfileFullScreen(false)} sx={{ color: 'text.secondary' }}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+              {/* Menu profile on the left */}
+              <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
+                <List disablePadding>
+                  <ListItemButton selected={profileTab==='data'} onClick={()=>setProfileTab('data')} sx={{ px: 2, py: 1 }}>Данные</ListItemButton>
+                  <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemButton>
+                </List>
               </Box>
-            )}
-            {/* Order Detail View */}
-            {checkoutStep === 'orderDetail' && currentOrder !== null && (
-              <Box>
-                <Typography variant="h6" sx={{ mb: 2 }}>Детали заказа №{user.orders[currentOrder].id}</Typography>
-                <List>
-                  {user.orders[currentOrder].items.map((item, idx) => (
-                    <ListItemText key={idx} primary={`${item.aroma} (${item.volume})`} secondary={item.brand} />
+              {/* Profile content based on profileTab */}
+              <Box sx={{ flex: 1, minWidth: 220, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                {profileTab === 'data' && (
+                  <>
+                    <Avatar src={user.avatar} alt={user.name} sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontWeight: 700, fontSize: 32 }}>
+                      {user.avatar ? '' : user.name[0]}
+                    </Avatar>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>{user.name}</Typography>
+                    <Typography variant="body1" color="text.secondary">Баланс: {user.balance}</Typography>
+                    <TextField
+                      label="ФИО"
+                      fullWidth
+                      size="small"
+                      value={user.name}
+                      onChange={(e) => {
+                        setUser(prev => ({...prev, name: e.target.value}));
+                        localStorage.setItem('userName', e.target.value);
+                      }}
+                      sx={{
+                        // Styles for the input element itself
+                        '& .MuiInputBase-input': {
+                          color: theme.palette.text.primary, // Text color based on theme
+                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                          borderRadius: theme.shape.borderRadius,
+                        },
+                        // Styles for the InputLabel
+                        '& .MuiInputLabel-root': {
+                          color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                        },
+                        // Styles for the OutlinedInput fieldset (border)
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'transparent !important', // Remove default border
+                        },
+                      }}
+                    />
+                    <TextField
+                      label="Телефон"
+                      fullWidth
+                      size="small"
+                      value={user.phone}
+                      onChange={(e) => {
+                        setUser(prev => ({...prev, phone: e.target.value}));
+                        localStorage.setItem('userPhone', e.target.value);
+                      }}
+                      sx={{
+                        // Styles for the input element itself
+                        '& .MuiInputBase-input': {
+                          color: theme.palette.text.primary, // Text color based on theme
+                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                          borderRadius: theme.shape.borderRadius,
+                        },
+                        // Styles for the InputLabel
+                        '& .MuiInputLabel-root': {
+                          color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                        },
+                        // Styles for the OutlinedInput fieldset (border)
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'transparent !important', // Remove default border
+                        },
+                      }}
+                    />
+                    {(localStorage.getItem('userRegistered') !== 'true' || !user.phone) && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => navigate('/start')}
+                        sx={{ mt: 2 }}
+                      >
+                        Завершить регистрацию
+                      </Button>
+                    )}
+                  </>
+                )}
+                {profileTab === 'orders' && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="h6">Мои заказы</Typography>
+                    {user.orders.length === 0 ? (
+                      <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>У вас пока нет заказов.</Typography>
+                    ) : (
+                      <List>
+                        {user.orders.map((order, index) => (
+                          <ListItemButton key={order.id} onClick={() => {
+                            setCurrentOrder(index);
+                            setCheckoutStep('orderDetail');
+                            setOrderComment(order.history.slice().reverse().find((msg: {sender: string}) => msg.sender === 'user')?.text || ''); // Set comment for editing
+                          }} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+                            <ListItemText
+                              primary={`Заказ №${order.id} от ${order.date}`}
+                              secondary={`Товаров: ${order.items.length}`}
+                            />
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    )}
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          </Paper>
+        )}
+
+        {/* Полноэкранная корзина */}
+        {isCartFullScreen && (
+          <Paper
+            elevation={0}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: brandsMenuOpen ? 340 : 66, // Dynamic left based on menu state
+              bgcolor: 'background.default',
+              color: 'text.primary',
+              p: 3,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)', // Explicit width
+              borderRadius: 0,
+              boxShadow: 'none',
+              zIndex: 3, // Higher zIndex to be on top
+              overflowX: 'hidden'
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
+              <IconButton onClick={() => setIsCartFullScreen(false)} sx={{ color: 'text.secondary' }}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, height: '100%', overflowY: 'auto' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 2 }}>Корзина</Typography>
+
+              {cart.length === 0 ? (
+                <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>Корзина пуста.</Typography>
+              ) : (
+                <List sx={{ width: '100%' }}>
+                  {cart.map((item, index) => (
+                    <ListItem
+                      key={index}
+                      secondaryAction={
+                        <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFromCart(index)}>
+                          <CloseIcon />
+                        </IconButton>
+                      }
+                      sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1, pr: 7 }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar><LocalFloristIcon /></Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={`${item.aroma} (${item.volume}ml)`}
+                        secondary={item.brand}
+                        onClick={() => handleAromaClickFromCart(item.aroma, item.brand, item.volume)} // Allow clicking to jump to aroma
+                      />
+                    </ListItem>
                   ))}
                 </List>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="h6" sx={{ mb: 1 }}>История комментариев:</Typography>
-                <Box sx={{ maxHeight: 150, overflowY: 'auto', border: '1px solid #444', borderRadius: 1, p: 1, mb: 2 }}>
-                  {user.orders[currentOrder].history.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">Нет комментариев.</Typography>
-                  ) : (
-                    user.orders[currentOrder].history.map((msg, idx) => (
-                      <Box key={idx} sx={{ mb: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography variant="body2" sx={{ color: msg.sender === 'user' ? 'primary.main' : 'text.secondary' }}>
-                          <Typography component="span" fontWeight="bold">{msg.sender === 'user' ? 'Вы' : 'Менеджер'}: </Typography>{msg.text}
-                          {msg.file && (
-                            <Typography component="span" sx={{ ml: 1, fontSize: '0.75rem' }}>
-                              (Файл: <a href={msg.file.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>{msg.file.name}</a>)
-                            </Typography>
-                          )}
-                        </Typography>
-                        {msg.sender === 'user' && (
-                          <Button size="small" onClick={() => {
-                            setOrderComment(msg.text);
-                            setCommentFile(msg.file ? new File([], msg.file.name) : null); // Re-create File object from name/url
-                            setEditingCommentIndex(idx);
-                          }}>Редактировать</Button>
-                        )}
-                      </Box>
-                    ))
-                  )}
+              )}
+
+              {cart.length > 0 && (
+                <Box sx={{ mt: 'auto', p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
+                  <Typography variant="h6" sx={{ textAlign: 'right', mb: 2 }}>
+                    Итого: {cart.reduce((total, item) => {
+                      // Find the brand and aroma to get the price
+                      const brand = brands.find(b => b.name === item.brand);
+                      const aroma = brand?.aromas.find(a => a.name === item.aroma);
+                      return total + (aroma?.prices?.[item.volume] || 0);
+                    }, 0)} ₽
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => setCheckoutStep('form')}
+                  >
+                    Оформить заказ
+                  </Button>
                 </Box>
+              )}
+            </Box>
+          </Paper>
+        )}
+
+        {/* Модальное окно деталей аромата */}
+        <Dialog open={isAromaDetailDialogOpen} onClose={() => setIsAromaDetailDialogOpen(false)} maxWidth="md" fullWidth>
+          {selectedAromaDetail && (
+            <>
+              <DialogTitle>{selectedAromaDetail.aroma}</DialogTitle>
+              <DialogContent dividers>
+                <Typography>Бренд: {selectedAromaDetail.brand}</Typography>
+                <Typography>Объем: {selectedAromaDetail.volume}ml</Typography>
+                {/* Add more details here */}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setIsAromaDetailDialogOpen(false)}>Закрыть</Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+
+        {/* Модальное окно оформления заказа */}
+        <Dialog open={checkoutStep !== null && checkoutStep !== 'orderDetail'} onClose={() => setCheckoutStep(null)} maxWidth="md" fullWidth>
+          {checkoutStep === 'form' && (
+            <>
+              <DialogTitle>Оформление заказа</DialogTitle>
+              <DialogContent dividers>
+                {/* Order Form Content */}
+                <TextField label="Ваше имя" fullWidth margin="normal" value={user.name} onChange={(e) => setUser(prev => ({...prev, name: e.target.value}))} />
+                <TextField label="Ваш телефон" fullWidth margin="normal" value={user.phone} onChange={(e) => setUser(prev => ({...prev, phone: e.target.value}))} />
+                <TextField label="Адрес доставки" fullWidth margin="normal" value={user.address} onChange={(e) => setUser(prev => ({...prev, address: e.target.value}))} />
                 <TextField
                   label="Комментарий к заказу"
-                  variant="outlined"
                   fullWidth
                   multiline
-                  rows={3}
+                  rows={4}
+                  margin="normal"
                   value={orderComment}
-                  onChange={handleOrderCommentChange}
-                  sx={{ mt: 2, mb: 2 }}
+                  onChange={(e) => setOrderComment(e.target.value)}
                 />
-                {currentOrder !== null && user.orders[currentOrder].awaitingManagerReply && (
-                  <Typography variant="caption" color="text.secondary" sx={{ mb: 1 }}>Ожидайте ответа менеджера.</Typography>
-                )}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <Button variant="contained" onClick={handleSendComment} sx={{ mr: 1 }} disabled={orderComment.trim() === '' && !commentFile}>Отправить комментарий</Button>
+                <Button
+                  variant="contained"
+                  component="label"
+                  sx={{ mt: 2 }}
+                >
+                  Прикрепить файл
                   <input
-                    accept="image/*,.pdf"
-                    style={{ display: 'none' }}
-                    id="comment-file-upload-button"
                     type="file"
-                    onChange={handleCommentFileUpload}
+                    hidden
+                    onChange={(e) => { if (e.target.files) setCommentFile(e.target.files[0]); }}
                   />
-                  <label htmlFor="comment-file-upload-button">
-                    <Button variant="outlined" component="span">
-                      Приложить фото
-                    </Button>
-                  </label>
-                  {commentFile && <Typography variant="body2">{commentFile.name}</Typography>}
-                </Box>
-                <Button variant="outlined" color="secondary" onClick={handleEditOrder} sx={{ mt: 2 }}>
-                  Редактировать заказ
                 </Button>
-              </Box>
-            )}
-          </DialogContent>
-          <DialogActions>
-            {checkoutStep === 'form' && (
-              <>
-                <Button onClick={handleCloseCheckoutDialog}>Отмена</Button>
-                <Button onClick={handleSendOrderDetails} variant="contained" color="primary">Отправить</Button>
-              </>
-            )}
-            {checkoutStep === 'payment' && (
-              <Button onClick={handlePaymentComplete} variant="contained" color="success">Я оплатил</Button>
-            )}
-            {checkoutStep === 'orderDetail' && (
-              <Button onClick={handleCloseCheckoutDialog} variant="contained">Закрыть</Button>
-            )}
-          </DialogActions>
+                {commentFile && <Typography variant="body2" sx={{ ml: 1 }}>{commentFile.name}</Typography>}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setCheckoutStep(null)}>Отмена</Button>
+                <Button onClick={() => setCheckoutStep('payment')} variant="contained">Продолжить</Button>
+              </DialogActions>
+            </>
+          )}
+          {checkoutStep === 'payment' && (
+            <>
+              <DialogTitle>Оплата</DialogTitle>
+              <DialogContent dividers>
+                <Typography>Здесь будет платежная система.</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setCheckoutStep('form')}>Назад</Button>
+                <Button onClick={handlePlaceOrder} variant="contained">Оплатить</Button>
+              </DialogActions>
+            </>
+          )}
         </Dialog>
 
-        {/* Aroma Detail Dialog */}
-        <Dialog open={isAromaDetailDialogOpen} onClose={handleCloseAromaDetailDialog} maxWidth="xs" fullWidth>
-          <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {selectedAromaDetail && toTitleCase(selectedAromaDetail.aroma)}
-            <IconButton onClick={handleCloseAromaDetailDialog}><CloseIcon /></IconButton>
-          </DialogTitle>
-          <DialogContent>
-            {selectedAromaDetail && (
-              <Stack spacing={1}>
-                <Typography variant="subtitle1" fontWeight="bold">Бренд: {selectedAromaDetail.brand}</Typography>
-                <Typography variant="body2">Цена: {aromaInfo.price}</Typography>
-                <Typography variant="body2">Качество: {aromaInfo.quality}</Typography>
-                <Typography variant="body2">Объёмы: {aromaInfo.volumes.join(', ')}</Typography>
-                <Typography variant="body2">Фабрика: {aromaInfo.factory}</Typography>
-              </Stack>
-            )}
-          </DialogContent>
-          <DialogActions>
-            {selectedAromaDetail && (
-              <Button
-                variant="contained"
-                color="success"
-                fullWidth
-                onClick={() => {
-                  const brandIdx = brands.findIndex(b => b.name === selectedAromaDetail.brand);
-                  handleAddToCart(selectedAromaDetail.aroma, selectedAromaDetail.brand, aromaInfo.volumes.indexOf(selectedAromaDetail.volume));
-                  handleCloseAromaDetailDialog();
-                }}
-              >
-                Добавить в корзину
-              </Button>
-            )}
-          </DialogActions>
-        </Dialog>
+        {/* Модальное окно деталей заказа */}
+        <Dialog open={checkoutStep === 'orderDetail'} onClose={() => setCheckoutStep(null)} maxWidth="md" fullWidth>
+          {currentOrder !== null && (
+            <>
+              <DialogTitle>Детали заказа №{user.orders[currentOrder].id}</DialogTitle>
+              <DialogContent dividers>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>Дата: {user.orders[currentOrder].date}</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>Адрес: {user.orders[currentOrder].address || 'Не указан'}</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>Телефон: {user.orders[currentOrder].phone || 'Не указан'}</Typography>
+                <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Товары:</Typography>
+                <List dense>
+                  {user.orders[currentOrder].items.map((item, idx) => (
+                    <ListItem key={idx}>
+                      <ListItemText primary={`${item.aroma} (${item.volume}ml) - ${item.brand}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+                {user.orders[currentOrder].comment && (
+                  <Box sx={{ mt: 2, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Ваш комментарий:</Typography>
+                    <Typography variant="body2">{user.orders[currentOrder].comment}</Typography>
+                  </Box>
+                )}
+                {user.orders[currentOrder].receiptAttached && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>Квитанция прикреплена.</Typography>
+                )}
 
+                {/* Order History/Chat */}
+                <Box sx={{ mt: 2, p: 2, border: '1px solid rgba(0, 0, 0, 0.12)', borderRadius: 1, maxHeight: 200, overflowY: 'auto' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>История заказа:</Typography>
+                  {user.orders[currentOrder].history.length > 0 ? (
+                    user.orders[currentOrder].history.map((msg, idx) => (
+                      <Box key={idx} sx={{ mb: 1, p: 1, bgcolor: msg.sender === 'user' ? 'primary.light' : 'grey.200', color: msg.sender === 'user' ? 'primary.contrastText' : 'text.primary', borderRadius: 1, alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start' }}>
+                        <Typography variant="caption" sx={{ fontWeight: 'bold' }}>{msg.sender === 'user' ? 'Вы:' : 'Менеджер:'}</Typography>
+                        <Typography variant="body2">{msg.text}</Typography>
+                        {msg.file && <Typography variant="caption" sx={{ display: 'block', mt: 0.5 }}>Файл: <a href={msg.file.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>{msg.file.name}</a></Typography>}
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="text.secondary">История пуста.</Typography>
+                  )}
+                </Box>
+
+                {user.orders[currentOrder].awaitingManagerReply && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, textAlign: 'center' }}>Ожидается ответ менеджера...</Typography>
+                )}
+
+                {/* Reply to manager */}
+                {!user.orders[currentOrder].awaitingManagerReply && (
+                  <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <TextField
+                      label="Ответить менеджеру"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={orderComment}
+                      onChange={(e) => setOrderComment(e.target.value)}
+                    />
+                    <Button
+                      variant="contained"
+                      component="label"
+                      sx={{ mt: 1 }}
+                    >
+                      Прикрепить файл
+                      <input
+                        type="file"
+                        hidden
+                        onChange={(e) => { if (e.target.files) setCommentFile(e.target.files[0]); }}
+                      />
+                    </Button>
+                    {commentFile && <Typography variant="body2" sx={{ ml: 1 }}>{commentFile.name}</Typography>}
+                    <Button
+                      variant="contained"
+                      onClick={handleSendComment} // Use unified send/save function
+                      sx={{ mt: 1 }}
+                      disabled={!orderComment.trim() && !commentFile} // Disable if both comment and file are empty
+                    >
+                      Отправить ответ
+                    </Button>
+                    {editingCommentIndex !== null && (
+                      <Button
+                        variant="outlined"
+                        onClick={handleCancelEditComment} // Use the new function
+                        sx={{ mt: 1 }}
+                      >
+                        Отменить редактирование
+                      </Button>
+                    )}
+                  </Box>
+                )}
+
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setCheckoutStep(null)}>Закрыть</Button>
+                {editingCommentIndex !== null && (
+                  <Button onClick={handleSendComment} variant="contained">Сохранить изменения</Button> // Use unified send/save function
+                )}
+                {profileTab === 'orders' && currentOrder !== null && (
+                  <Button onClick={handleEditOrder} variant="outlined">Редактировать</Button>
+                )}
+
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
       </Box>
     </Box>
   );
