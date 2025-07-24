@@ -631,90 +631,102 @@ const App = () => {
                 aroma?.name?.toLowerCase().includes(search.toLowerCase())
               )
               .map((aroma: Aroma, aromaIdx: number) => (
-                <Card key={aroma.name} sx={{
-                  width: 200,
-                  boxShadow: 'none',
-                            border: `1px solid ${theme.palette.divider}`,
-          bgcolor: 'background.paper',
-          color: 'text.primary',
-          flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-                }} id={`aroma-${aroma.name}`}>
-                  <CardContent sx={{ 
-                    p: 2, 
-                    textAlign: 'center', 
-                    flexGrow: 1, 
-                    width: '100%' 
-                  }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                      {aroma.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                      {brands[selectedIndex]?.name}
-                    </Typography>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'center', 
-                      alignItems: 'center', 
-                      gap: 1, 
-                      mb: 1 
-                    }}>
-                      <LocalFlorist sx={{ fontSize: 16, color: 'secondary.main' }} />
-                      <Typography variant="body2">{aroma.aroma_group}</Typography>
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                      {`${selectedVolumes[aroma.name] || 30} гр: ${aroma.prices[selectedVolumes[aroma.name] || 30]} ₽`}
-                    </Typography>
-                    <Box sx={{ width: '100%', px: 2, mt: 2 }}>
-                      <Slider
-                        aria-label="Объем"
-                        defaultValue={30}
-                        step={5}
-                        marks
-                        min={30}
-                        max={1000}
-                        value={selectedVolumes[aroma.name] || 30}
-                        onChange={(_: any, value: number | number[]) => {
-                          handleVolumeSlider(aroma.name, _, Array.isArray(value) ? value[0] : value);
-                        }}
-                        valueLabelFormat={(value: number) => 
-                          `${value} гр`
-                        }
-                        valueLabelDisplay="auto"
-                        sx={{
-                          color: 'primary.main',
-                          '& .MuiSlider-thumb': { width: 16, height: 16 },
-                          '& .MuiSlider-track': { height: 4 },
-                          '& .MuiSlider-rail': { height: 4 },
-                        }}
-                      />
-                      <Typography variant="caption" sx={{ 
-                        textAlign: 'center', 
-                        width: '100%', 
-                        display: 'block',
-                        mb: 2
-                      }}>
-                        Объем: {selectedVolumes[aroma.name] || 30}гр
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        size="small"
-                        onClick={() => handleAddToCart(
-                          aroma.name, 
-                          brands[selectedIndex]?.name || '', 
-                          selectedVolumes[aroma.name] || 30
-                        )}
-                        sx={{ mt: 1 }}
-                      >
-                        В корзину
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-                          ))}
+                <Button
+                  key={aroma.name}
+                  variant="outlined"
+                  id={`aroma-${aroma.name}`}
+                  sx={{
+                    width: 300,
+                    height: 120,
+                    flexShrink: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: 2,
+                    bgcolor: 'background.paper',
+                    borderColor: theme.palette.divider,
+                    borderRadius: 2,
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                      borderColor: 'primary.main',
+                    },
+                    position: 'relative',
+                    cursor: 'default'
+                  }}
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      fontWeight: 'bold', 
+                      mb: 2, 
+                      textAlign: 'center',
+                      color: 'text.primary',
+                      textTransform: 'none'
+                    }}
+                  >
+                    {aroma.name}
+                  </Typography>
+                  
+                  <Box sx={{ width: '90%', mb: 1 }}>
+                    <Slider
+                      aria-label={`Объем для ${aroma.name}`}
+                      defaultValue={30}
+                      step={5}
+                      marks
+                      min={30}
+                      max={1000}
+                      value={selectedVolumes[aroma.name] || 30}
+                      onChange={(_: any, value: number | number[]) => {
+                        handleVolumeSlider(aroma.name, _, Array.isArray(value) ? value[0] : value);
+                      }}
+                      valueLabelFormat={(value: number) => `${value} гр`}
+                      valueLabelDisplay="auto"
+                      sx={{
+                        color: 'primary.main',
+                        '& .MuiSlider-thumb': { width: 20, height: 20 },
+                        '& .MuiSlider-track': { height: 6 },
+                        '& .MuiSlider-rail': { height: 6 },
+                      }}
+                    />
+                  </Box>
+                  
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      color: 'text.secondary',
+                      textAlign: 'center',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {selectedVolumes[aroma.name] || 30} гр - {aroma.prices[selectedVolumes[aroma.name] || 30]} ₽
+                  </Typography>
+                  
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(
+                        aroma.name, 
+                        brands[selectedIndex]?.name || '', 
+                        selectedVolumes[aroma.name] || 30
+                      );
+                    }}
+                    sx={{ 
+                      position: 'absolute',
+                      bottom: 8,
+                      right: 8,
+                      minWidth: 'auto',
+                      px: 2,
+                      py: 0.5
+                    }}
+                  >
+                    +
+                  </Button>
+                </Button>
+              ))}
           </Box>
                     </Box>
                   )}

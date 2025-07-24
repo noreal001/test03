@@ -13,7 +13,8 @@ import Stars from './animations/Stars';         // Раскомментиров�
 import Smoke from './animations/Smoke';         // Раскомментировано
 
 const AnimatedPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
+  padding: theme.spacing(3),
+  paddingBottom: theme.spacing(5), // Отступ для кнопки "Пропустить"
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.mode === 'dark' ? 'rgba(18, 18, 18, 0.9)' : 'rgba(245, 245, 245, 0.9)', // Dynamic background based on theme mode
   color: theme.palette.text.primary,
@@ -27,6 +28,7 @@ const AnimatedPaper = styled(Paper)(({ theme }) => ({
   boxShadow: 'none', // Remove default paper shadow
   opacity: 0, // Start with opacity 0 for fade-in (handled by parent Box now)
   animation: 'fadeIn 0.5s forwards', // This will be handled by the parent Box with opacity and transition
+  transition: 'all 0.3s ease-in-out', // Плавное изменение размеров
   // Define keyframes for fade-in animation (moved to global or parent Box for consistency if needed, but not strictly required here)
   '@keyframes fadeIn': {
     'from': { opacity: 0 },
@@ -308,13 +310,17 @@ const WelcomePage = () => { // Убрано React.FC
             <SwapCallsIcon />
           </IconButton>
 
-          <AnimatedPaper elevation={0}> {/* Elevation 0 as per new design */}
+          <AnimatedPaper 
+            elevation={0} 
+            sx={{
+              minHeight: showInviteField ? 480 : showPhoneField ? 400 : 320, // Динамическая высота
+              transition: 'min-height 0.5s ease-in-out', // Плавное изменение высоты
+            }}
+          > {/* Elevation 0 as per new design */}
             <Box sx={{ textAlign: 'center', mb: 2 }}>
               <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.text.primary, mb: 1, fontSize: '28px' }}>
-                Ваша корзина
+                BAHUR STORE
               </Typography>
-              {/* Replace with your logo */}
-              <Typography variant="h6" sx={{ fontWeight: 'normal', color: '#fff', mb: 1, opacity: 0.7 }}>LOGO</Typography>
             </Box>
             <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, textAlign: 'center', fontSize: '24px' }}>
               Добро пожаловать
@@ -455,34 +461,34 @@ const WelcomePage = () => { // Убрано React.FC
               </Box>
             )}
 
-            {showInviteField && (
-              <Box
-                sx={{
-                  opacity: showInviteField ? 1 : 0,
-                  transform: showInviteField ? 'translateY(0)' : 'translateY(-20px)',
-                  transition: 'all 0.5s ease-in-out',
-                  mt: 2, // Spacing from inputs
-                }}
-              >
-                <Button
-                  variant="contained"
+                          {showInviteField && (
+                <Box
                   sx={{
-                    bgcolor: theme.palette.primary.main, // Use primary color for accent
-                    color: theme.palette.primary.contrastText,
-                    '&:hover': {
-                      bgcolor: theme.palette.primary.dark,
-                      boxShadow: '0 0 8px 4px rgba(0, 191, 255, 0.4)', // Glow effect, consider using theme.palette.primary
-                    },
-                    mb: 8, // Increased margin-bottom to create more space before the absolute positioned skip button
+                    opacity: showInviteField ? 1 : 0,
+                    transform: showInviteField ? 'translateY(0)' : 'translateY(-20px)',
+                    transition: 'all 0.5s ease-in-out',
+                    mt: 2, // Spacing from inputs
                   }}
-                  fullWidth
-                  onClick={handleContinue}
-                  disabled={!isFormValid}
                 >
-                  Продолжить
-                </Button>
-              </Box>
-            )}
+                  <Button
+                    variant="contained"
+                    sx={{
+                      bgcolor: theme.palette.primary.main, // Use primary color for accent
+                      color: theme.palette.primary.contrastText,
+                      '&:hover': {
+                        bgcolor: theme.palette.primary.dark,
+                        boxShadow: '0 0 8px 4px rgba(0, 191, 255, 0.4)', // Glow effect, consider using theme.palette.primary
+                      },
+                      mb: 4, // Уменьшаем отступ снизу
+                    }}
+                    fullWidth
+                    onClick={handleContinue}
+                    disabled={!isFormValid}
+                  >
+                    Продолжить
+                  </Button>
+                </Box>
+              )}
 
             <Button
               variant="text"
@@ -490,7 +496,7 @@ const WelcomePage = () => { // Убрано React.FC
               onClick={handleSkip}
               sx={{
                 position: 'absolute', // Position at bottom right
-                bottom: theme.spacing(-2), // Перемещаем ниже (отрицательное значение)
+                bottom: theme.spacing(1.5), // Немного поднимаем выше от края
                 right: theme.spacing(2), // 2 units from right
                 fontSize: '14px', // 14px font size
                 color: 'grey.500', // Grey text

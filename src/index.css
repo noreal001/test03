@@ -1,13 +1,34 @@
 @font-face {
-  font-family: 'Pensile Round';
-  src: url('./assets/fonts/PensileRound.otf') format('opentype');
+  font-family: 'Kollektif';
+  src: url('/Font/Кollektif/Kollektif.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Kollektif';
+  src: url('/Font/Кollektif/Kollektif-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Kollektif';
+  src: url('/Font/Кollektif/Kollektif-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Kollektif';
+  src: url('/Font/Кollektif/Kollektif-BoldItalic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
 body {
   margin: 0;
-  font-family: 'Pensile Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Kollektif', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;

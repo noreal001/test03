@@ -1,7 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import './assets/fonts/PensileRound.otf';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -24,7 +23,7 @@ const lightTheme = createTheme({
     text: { primary: '#000000', secondary: '#5f6368' },
   },
   typography: {
-    fontFamily: 'Helvetica, Arial, sans-serif',
+    fontFamily: '"Kollektif", "Helvetica", "Arial", sans-serif',
   },
 });
 
@@ -37,7 +36,7 @@ const darkTheme = createTheme({
     text: { primary: '#ffffff', secondary: '#b0b0b0' },
   },
   typography: {
-    fontFamily: 'Helvetica, Arial, sans-serif',
+    fontFamily: '"Kollektif", "Helvetica", "Arial", sans-serif',
   },
 });
 
