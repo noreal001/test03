@@ -9,6 +9,11 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import { ThemeContext } from './index'; // Import ThemeContext
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import SwapCallsIcon from '@mui/icons-material/SwapCalls'; // New import for background animation toggle
+import Snowflake from './animations/Snowflake';
+import Rain from './animations/Rain';
+import Stars from './animations/Stars';
+import Smoke from './animations/Smoke';
 
 const AnimatedPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -41,14 +46,18 @@ const WelcomePage: React.FC = () => {
   const [phoneError, setPhoneError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [backgroundAnimation, setBackgroundAnimation] = useState<'none' | 'snowflake' | 'rain' | 'stars' | 'smoke'>('none');
+  const [inviteCode, setInviteCode] = useState('');
+  const [inviteCodeError, setInviteCodeError] = useState(false);
   const navigate = useNavigate();
   const { themeMode, toggleTheme } = useContext(ThemeContext)!;
   const theme = useTheme();
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
-    setName(newName);
-    setNameError(newName.trim().length < 2 && newName.trim().length > 0); // Name must be at least 2 characters
+    const filteredName = newName.replace(/[^a-zA-Z0-9-_а-яА-ЯёЁ\s]/g, ''); // Allow letters, numbers, -, _ and spaces
+    setName(filteredName);
+    setNameError(filteredName.trim().length < 2 && filteredName.trim().length > 0); // Name must be at least 2 characters
   };
 
   const validatePhoneInput = (phoneNumber: string): boolean => {
@@ -75,13 +84,32 @@ const WelcomePage: React.FC = () => {
     return digitsOnly.startsWith('7999') || digitsOnly.startsWith('8999') || digitsOnly.startsWith('999');
   };
 
+  const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newCode = e.target.value.replace(/[^0-9-]/g, ''); // Allow only numbers and hyphens
+    let formattedCode = newCode;
+    if (newCode.length > 4 && !newCode.includes('-')) {
+      formattedCode = `${newCode.substring(0, 4)}-${newCode.substring(4, 8)}`;
+    } else if (newCode.length > 9) { // Max 8 digits + 1 hyphen
+      formattedCode = newCode.substring(0, 9);
+    }
+    setInviteCode(formattedCode);
+    setInviteCodeError(false);
+  };
+
+  const validateInviteCode = (code: string): boolean => {
+    // Example: Valid codes are '1234-5678' or '0000-0000'
+    return code === '1234-5678'; // Replace with actual validation logic
+  };
+
   const handleContinue = async () => {
     const isNameValid = name.trim().length >= 2;
     const isPhoneLengthValid = validatePhoneInput(phone);
+    const isInviteCodeValid = validateInviteCode(inviteCode);
 
-    if (!isNameValid || !isPhoneLengthValid) {
+    if (!isNameValid || !isPhoneLengthValid || !isInviteCodeValid) {
       setNameError(!isNameValid);
       setPhoneError(!isPhoneLengthValid);
+      setInviteCodeError(!isInviteCodeValid);
       return;
     }
 
@@ -98,7 +126,7 @@ const WelcomePage: React.FC = () => {
     localStorage.setItem('userPhone', phone);
     localStorage.setItem('lastRegistrationTime', new Date().getTime().toString()); // Store timestamp
     setTimeout(() => {
-      navigate('/');
+      navigate('/shop'); // Navigate to /shop on successful invite code
     }, 500); // Animation duration
   };
 
@@ -113,7 +141,20 @@ const WelcomePage: React.FC = () => {
     }, 500); // Animation duration
   };
 
-  const isFormValid = name.trim().length >= 2 && validatePhoneInput(phone);
+  const toggleBackgroundAnimation = () => {
+    setBackgroundAnimation((prevAnimation) => {
+      switch (prevAnimation) {
+        case 'none': return 'snowflake';
+        case 'snowflake': return 'rain';
+        case 'rain': return 'stars';
+        case 'stars': return 'smoke';
+        case 'smoke': return 'none';
+        default: return 'none';
+      }
+    });
+  };
+
+  const isFormValid = name.trim().length >= 2 && validatePhoneInput(phone) && validateInviteCode(inviteCode);
 
   return (
     <Box
@@ -172,11 +213,20 @@ const WelcomePage: React.FC = () => {
         }}
       />
 
+      {backgroundAnimation === 'snowflake' && <Snowflake />}
+      {backgroundAnimation === 'rain' && <Rain />}
+      {backgroundAnimation === 'stars' && <Stars />}
+      {backgroundAnimation === 'smoke' && <Smoke />}
+
       <Box // This Box handles the fade animation
         sx={{
           opacity: isFadingOut ? 0 : 1,
           transition: 'opacity 0.5s ease-in-out',
-          width: '100%', // Ensure it takes full width of the parent Box
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          margin: '0 auto', // Center horizontally
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -191,11 +241,33 @@ const WelcomePage: React.FC = () => {
               right: theme.spacing(1),
               color: theme.palette.text.primary, // Adjust color based on theme
               zIndex: 10000, // Ensure it's above the paper
+              transition: 'transform 0.1s ease-in-out', // Smooth animation
+              '&:active': {
+                transform: 'scale(0.9)', // Scale down on click
+              },
             }}
             onClick={toggleTheme}
           >
             {themeMode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
+
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: theme.spacing(1),
+              right: theme.spacing(7), // Position next to theme button
+              color: theme.palette.text.primary,
+              zIndex: 10000,
+              transition: 'transform 0.1s ease-in-out',
+              '&:active': {
+                transform: 'scale(0.9)',
+              },
+            }}
+            onClick={toggleBackgroundAnimation}
+          >
+            <SwapCallsIcon />
+          </IconButton>
+
           <AnimatedPaper elevation={0}> {/* Elevation 0 as per new design */}
             <Box sx={{ textAlign: 'center', mb: 2 }}>
               {/* Replace with your logo */}
@@ -215,6 +287,7 @@ const WelcomePage: React.FC = () => {
               onChange={handleNameChange}
               error={nameError}
               helperText={nameError ? 'Имя должно содержать минимум 2 символа' : ''}
+              inputProps={{ pattern: '^[a-zA-Z0-9-_а-яА-ЯёЁ\s]*$' }} // Prevent special characters
               sx={{
                 // Styles for the input element itself
                 '& .MuiInputBase-input': {
@@ -261,6 +334,37 @@ const WelcomePage: React.FC = () => {
                 },
               }}
             />
+
+            <TextField
+              label="Инвайт-код"
+              placeholder="XXXX-XXXX"
+              variant="outlined"
+              fullWidth
+              required
+              value={inviteCode}
+              onChange={handleInviteCodeChange}
+              error={inviteCodeError}
+              helperText={inviteCodeError ? 'Неверный инвайт-код' : ''}
+              inputProps={{ maxLength: 9 }} // Max length for XXXX-XXXX format
+              sx={{
+                // Styles for the input element itself
+                '& .MuiInputBase-input': {
+                  color: theme.palette.text.primary,
+                  opacity: 1,
+                  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                  borderRadius: theme.shape.borderRadius,
+                },
+                // Styles for the InputLabel
+                '& .MuiInputLabel-root': {
+                  color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+                },
+                // Styles for the OutlinedInput fieldset (border)
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'transparent !important',
+                },
+              }}
+            />
+
             <Button
               variant="contained"
               sx={{
@@ -271,6 +375,7 @@ const WelcomePage: React.FC = () => {
                   boxShadow: '0 0 8px 4px rgba(0, 191, 255, 0.4)', // Glow effect, consider using theme.palette.primary
                 },
                 mt: 2, // Spacing from inputs
+                mb: 8, // Increased margin-bottom to create more space before the absolute positioned skip button
               }}
               fullWidth
               onClick={handleContinue}
