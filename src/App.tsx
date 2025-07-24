@@ -1,32 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, List, ListItemButton, ListItemText, Typography, Paper, Fade, Divider, IconButton, TextField, InputAdornment, Stack, Avatar, useMediaQuery, useTheme, Button, Switch, ListItem, ListItemAvatar, Card, CardMedia, CardContent, Slider } from '@mui/material';
+import { Box, List, ListItemButton, ListItemText, Typography, Paper, IconButton, TextField, InputAdornment, Avatar, useMediaQuery, useTheme, Button, Switch, ListItem, ListItemAvatar, Card, CardMedia, CardContent, Slider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LocalFloristIcon from '@mui/icons-material/LocalFlorist'; // Re-added import
+import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import ViewListIcon from '@mui/icons-material/ViewList';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { createTheme } from '@mui/material/styles'; // Re-added import
-// import Popper from '@mui/material/Popper'; // Removed unused import
-// import ClickAwayListener from '@mui/material/ClickAwayListener'; // Removed unused import
+import { createTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from './index'; // Import ThemeContext
-
-const toTitleCase = (phrase: string) => {
-  return phrase
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
 
 // Mock info for all aromas (можно расширить под каждый аромат)
 const aromaInfo = {
@@ -128,7 +115,7 @@ const App: React.FC = () => {
   };
 
   const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
-  const [aromaView, setAromaView] = useState<'cards' | 'list'>('cards');
+  const [aromaView, setAromaView] = useState<'cards' | 'list'>('cards'); 
   const [profileTab, setProfileTab] = useState<'data' | 'orders'>('data');
   const [checkoutStep, setCheckoutStep] = useState<null | 'form' | 'payment' | 'orderDetail'> (null); // Changed to step-based
   const [currentOrder, setCurrentOrder] = useState<number | null>(null); // New state for selected order detail
@@ -156,8 +143,7 @@ const App: React.FC = () => {
     };
   });
 
-  // New state for search suggestions
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]); 
   const searchInputRef = React.useRef<HTMLInputElement>(null); // Ref for TextField
 
   useEffect(() => {
@@ -191,31 +177,6 @@ const App: React.FC = () => {
 
   const handleToggleBrandsMenu = () => {
     setBrandsMenuOpen((prev) => !prev);
-  };
-
-  // 1. Кастомный слайдер объёма для карточки аромата:
-  const volumeMarks = [30, 50, 500, 1000];
-
-  // 2. Фильтры в поиске:
-  // const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  // const filterOptions = [
-  //   'TOP', 'Q1', 'Q2', 'МУЖСКИЕ', 'ЖЕНСКИЕ', 'УНИСЕКС',
-  //   'АПЕЛЬСИН', 'УД', 'ТАБАК', 'МАНДАРИН',
-  // ];
-  // const handleFilterClick = (filter: string) => {
-  //   setActiveFilters((prev) => prev.includes(filter)
-  //     ? prev.filter(f => f !== filter)
-  //     : [...prev, filter]);
-  // };
-
-  const handleOpenAromaDetail = (aroma: string, brand: string, volume: string) => {
-    setSelectedAromaDetail({ aroma, brand, volume });
-    setIsAromaDetailDialogOpen(true);
-  };
-
-  const handleCloseAromaDetailDialog = () => {
-    setIsAromaDetailDialogOpen(false);
-    setSelectedAromaDetail(null);
   };
 
   const handleAddToCart = (aromaName: string, brandName: string, volumeIndex: number) => {
@@ -277,34 +238,6 @@ const App: React.FC = () => {
     setCheckoutStep('form');
   };
 
-  const handleSendOrderDetails = () => {
-    // Here you would typically send address and phone to backend
-    // For now, move to payment step
-    setCheckoutStep('payment');
-  };
-
-  const handlePaymentComplete = () => {
-    const newOrderId = `ORD-${Date.now()}`;
-    const newOrder = { id: newOrderId, date: new Date().toLocaleDateString(), items: [...cart], comment: '', receiptAttached: false, history: [], awaitingManagerReply: false };
-    setUser(prevUser => ({...prevUser, orders: [...prevUser.orders, newOrder]})); // Update user orders
-    setCart([]); // Clear cart
-    setCheckoutStep('orderDetail'); 
-    setIsCartFullScreen(false); // Close full screen cart
-    setCurrentOrder(user.orders.length); // Select the newly created order (length is the index of the new item)
-  };
-
-  const handleCloseCheckoutDialog = () => {
-    setCheckoutStep(null);
-    setOrderComment(''); // Clear order comment input
-    setCommentFile(null); // Clear comment file on dialog close
-    setEditingCommentIndex(null); // Clear editing index
-    setIsCartFullScreen(false); // Close full screen cart
-  };
-
-  const handleOrderCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOrderComment(e.target.value);
-  };
-
   const handleSendComment = () => {
     if (currentOrder === null || (orderComment.trim() === '' && !commentFile)) {
       alert('Пожалуйста, введите комментарий или прикрепите файл.');
@@ -356,12 +289,6 @@ const App: React.FC = () => {
     });
   };
 
-  const handleCommentFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCommentFile(e.target.files[0]);
-    }
-  };
-
   const handleEditOrder = () => {
     if (currentOrder !== null) {
       alert(`Функция редактирования заказа №${user.orders[currentOrder].id} пока не реализована.`);
@@ -378,21 +305,10 @@ const App: React.FC = () => {
     console.log(`Suggestion clicked: ${suggestion}, type: ${type}`);
   };
 
-  const handleAddMessageToOrder = (orderIndex: number | null, comment: string, file: File | null) => {
-    // This function can now directly call handleSendComment if logic is unified
-    // For simplicity, I'll remove its usage if handleSendComment can cover it
-    console.log(`Adding message to order ${orderIndex}: ${comment}`);
-    handleSendComment(); // Call the unified send/save function
-  };
-
   const handleCancelEditComment = () => {
     setEditingCommentIndex(null);
     setOrderComment('');
     setCommentFile(null);
-  };
-
-  const handleSaveEditedComment = () => {
-    handleSendComment(); // Call the unified send/save function
   };
 
   return (
@@ -417,7 +333,6 @@ const App: React.FC = () => {
                 onClick={() => {
                   setIsProfileFullScreen(true); // Always open profile full screen
                   setIsCartFullScreen(false); // Ensure cart full screen is off
-                  // handleOpenLoginDialog(); // Removed as login is now on a separate page
                 }}
               >
                 <PersonIcon sx={{ fontSize: 28 }} />
@@ -478,9 +393,9 @@ const App: React.FC = () => {
             maxWidth: 66,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'flex-start',
+            alignItems: 'center',
             justifyContent: 'flex-start',
-            height: '100%',
+            height: '100vh', // Changed to 100vh for full screen height
             bgcolor: 'background.paper',
             opacity: 0.96,
             pt: 2,
@@ -500,7 +415,6 @@ const App: React.FC = () => {
               onClick={() => {
                 setIsProfileFullScreen(true); // Always open profile full screen
                 setIsCartFullScreen(false); // Ensure cart full screen is off
-                // handleOpenLoginDialog(); // Removed as login is now on a separate page
               }}
             >
               <PersonIcon sx={{ fontSize: 28 }} />
@@ -538,75 +452,77 @@ const App: React.FC = () => {
 
         {/* Центральная панель (ароматы/поиск) - теперь без полноэкранных профиля/корзины */}
         {!isProfileFullScreen && !isCartFullScreen && (
-          <Box 
-            sx={{
-              flex: 1, 
+        <Box 
+          sx={{
+            flex: 1, 
               minWidth: 0, // Ensure it can shrink
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'flex-start', 
-              height: '100%', 
-              position: 'relative', // Needed for absolute positioning of emojis
-              top: 0, 
-              bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper', // Flash effect on central panel
-              transition: 'background-color 0.3s ease-in-out',
-              zIndex: 1, 
-              px: 0, 
-              borderTopLeftRadius: 0, 
-              borderBottomLeftRadius: 0, 
-              boxSizing: 'border-box'
-            }}
-          >
-            {/* Emoji explosion particles */}
-            {emojiParticles.map(particle => (
-              <span
-                key={particle.id}
-                style={{
-                  position: 'absolute',
-                  left: '50%', // Position origin at center of parent
-                  top: '50%',   // Position origin at center of parent
-                  fontSize: '30px',
-                  opacity: particle.opacity,
-                  transform: `translate(-50%, -50%)`, // Centered without vx/vy for simplicity
-                  transition: 'opacity 0.4s linear', // Fade transition
-                  pointerEvents: 'none', // Allow interaction with elements below
-                  zIndex: 100,
-                }}
-              >
-                {particle.emoji}
-              </span>
-            ))}
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'flex-start', 
+            height: '100%', 
+            position: 'relative', // Needed for absolute positioning of emojis
+            top: 0, 
+            bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper', // Flash effect on central panel
+            transition: 'background-color 0.3s ease-in-out',
+            zIndex: 1, 
+            px: 0, 
+            borderTopLeftRadius: 0, 
+            borderBottomLeftRadius: 0, 
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* Emoji explosion particles */}
+          {emojiParticles.map(particle => (
+            <span
+              key={particle.id}
+              style={{
+                position: 'absolute',
+                left: '50%', // Position origin at center of parent
+                top: '50%',   // Position origin at center of parent
+                fontSize: '30px',
+                opacity: particle.opacity,
+                transform: `translate(-50%, -50%)`, // Centered without vx/vy for simplicity
+                transition: 'opacity 0.4s linear', // Fade transition
+                pointerEvents: 'none', // Allow interaction with elements below
+                zIndex: 100,
+              }}
+            >
+              {particle.emoji}
+            </span>
+          ))}
 
             {/* Search Input */}
-            <TextField
-              label="Поиск ароматов и брендов"
-              variant="outlined"
-              fullWidth
-              value={search}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ mb: 2, bgcolor: 'background.paper', width: '95%', mt: 2 }}
-            />
+            <Box sx={{ width: '95%', mt: 2, mb: 2, bgcolor: 'background.paper', borderRadius: 1, p: 2, boxShadow: 1 }}>
+              <TextField
+                label="Поиск ароматов и брендов"
+                variant="outlined"
+                fullWidth
+                value={search}
+                onChange={handleSearchChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ mb: 1 }}
+              />
 
-            {/* Suggested Search Results */}
-            {search && (
-              <Paper sx={{ width: '95%', mb: 2, maxHeight: 200, overflowY: 'auto' }}>
-                <List>
-                  {suggestions.map((s, index) => (
-                    <ListItemButton key={index} onClick={() => handleSuggestionClick(s, 'aroma')}> {/* Dummy type for now */}
-                      <ListItemText primary={s} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Paper>
-            )}
+              {/* Suggested Search Results */}
+              {search && (
+                <Paper elevation={0} sx={{ width: '100%', maxHeight: 200, overflowY: 'auto', borderTop: '1px solid rgba(0, 0, 0, 0.12)', mt: 1 }}>
+                  <List>
+                    {suggestions.map((s: string, index: number) => (
+                      <ListItemButton key={index} onClick={() => handleSuggestionClick(s, 'aroma')}> {/* Dummy type for now */}
+                        <ListItemText primary={s} />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Paper>
+              )}
+            </Box>
 
             {/* Список или карточки ароматов */}
             <Box sx={{ display: 'flex', flexDirection: aromaView === 'cards' ? 'row' : 'column', flexWrap: 'wrap', gap: 2, justifyContent: aromaView === 'cards' ? 'center' : 'flex-start', width: '100%', overflowY: 'auto', pb: 2, pt: 0, px: 2 }}>
@@ -743,113 +659,113 @@ const App: React.FC = () => {
                 <CloseIcon />
               </IconButton>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-              {/* Menu profile on the left */}
-              <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
-                <List disablePadding>
-                  <ListItemButton selected={profileTab==='data'} onClick={()=>setProfileTab('data')} sx={{ px: 2, py: 1 }}>Данные</ListItemButton>
-                  <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemButton>
-                </List>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                {/* Menu profile on the left */}
+                <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
+                  <List disablePadding>
+                    <ListItemButton selected={profileTab==='data'} onClick={()=>setProfileTab('data')} sx={{ px: 2, py: 1 }}>Данные</ListItemButton>
+                    <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemButton>
+                  </List>
+                </Box>
+                {/* Profile content based on profileTab */}
+                <Box sx={{ flex: 1, minWidth: 220, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                  {profileTab === 'data' && (
+                    <>
+                      <Avatar src={user.avatar} alt={user.name} sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontWeight: 700, fontSize: 32 }}>
+                        {user.avatar ? '' : user.name[0]}
+                      </Avatar>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>{user.name}</Typography>
+                      <Typography variant="body1" color="text.secondary">Баланс: {user.balance}</Typography>
+                      <TextField
+                        label="ФИО"
+                        fullWidth
+                        size="small"
+                        value={user.name}
+                        onChange={(e) => {
+                          setUser(prev => ({...prev, name: e.target.value}));
+                          localStorage.setItem('userName', e.target.value);
+                        }}
+                        sx={{
+                          // Styles for the input element itself
+                          '& .MuiInputBase-input': {
+                            color: theme.palette.text.primary, // Text color based on theme
+                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                            borderRadius: theme.shape.borderRadius,
+                          },
+                          // Styles for the InputLabel
+                          '& .MuiInputLabel-root': {
+                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                          },
+                          // Styles for the OutlinedInput fieldset (border)
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent !important', // Remove default border
+                          },
+                        }}
+                      />
+                      <TextField
+                        label="Телефон"
+                        fullWidth
+                        size="small"
+                        value={user.phone}
+                        onChange={(e) => {
+                          setUser(prev => ({...prev, phone: e.target.value}));
+                          localStorage.setItem('userPhone', e.target.value);
+                        }}
+                        sx={{
+                          // Styles for the input element itself
+                          '& .MuiInputBase-input': {
+                            color: theme.palette.text.primary, // Text color based on theme
+                            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
+                            borderRadius: theme.shape.borderRadius,
+                          },
+                          // Styles for the InputLabel
+                          '& .MuiInputLabel-root': {
+                            color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
+                          },
+                          // Styles for the OutlinedInput fieldset (border)
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent !important', // Remove default border
+                          },
+                        }}
+                      />
+                      {(localStorage.getItem('userRegistered') !== 'true' || !user.phone) && (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => navigate('/start')}
+                          sx={{ mt: 2 }}
+                        >
+                          Завершить регистрацию
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {profileTab === 'orders' && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="h6">Мои заказы</Typography>
+                      {user.orders.length === 0 ? (
+                        <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>У вас пока нет заказов.</Typography>
+                      ) : (
+                        <List>
+                          {user.orders.map((order, index) => (
+                            <ListItemButton key={order.id} onClick={() => {
+                              setCurrentOrder(index);
+                              setCheckoutStep('orderDetail');
+                              setOrderComment(order.history.slice().reverse().find((msg: {sender: string}) => msg.sender === 'user')?.text || ''); // Set comment for editing
+                            }} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+                              <ListItemText
+                                primary={`Заказ №${order.id} от ${order.date}`}
+                                secondary={`Товаров: ${order.items.length}`}
+                              />
+                            </ListItemButton>
+                          ))}
+                        </List>
+                      )}
+                    </Box>
+                  )}
+                </Box>
               </Box>
-              {/* Profile content based on profileTab */}
-              <Box sx={{ flex: 1, minWidth: 220, p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                {profileTab === 'data' && (
-                  <>
-                    <Avatar src={user.avatar} alt={user.name} sx={{ width: 64, height: 64, bgcolor: 'primary.main', fontWeight: 700, fontSize: 32 }}>
-                      {user.avatar ? '' : user.name[0]}
-                    </Avatar>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>{user.name}</Typography>
-                    <Typography variant="body1" color="text.secondary">Баланс: {user.balance}</Typography>
-                    <TextField
-                      label="ФИО"
-                      fullWidth
-                      size="small"
-                      value={user.name}
-                      onChange={(e) => {
-                        setUser(prev => ({...prev, name: e.target.value}));
-                        localStorage.setItem('userName', e.target.value);
-                      }}
-                      sx={{
-                        // Styles for the input element itself
-                        '& .MuiInputBase-input': {
-                          color: theme.palette.text.primary, // Text color based on theme
-                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                          borderRadius: theme.shape.borderRadius,
-                        },
-                        // Styles for the InputLabel
-                        '& .MuiInputLabel-root': {
-                          color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                        },
-                        // Styles for the OutlinedInput fieldset (border)
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: 'transparent !important', // Remove default border
-                        },
-                      }}
-                    />
-                    <TextField
-                      label="Телефон"
-                      fullWidth
-                      size="small"
-                      value={user.phone}
-                      onChange={(e) => {
-                        setUser(prev => ({...prev, phone: e.target.value}));
-                        localStorage.setItem('userPhone', e.target.value);
-                      }}
-                      sx={{
-                        // Styles for the input element itself
-                        '& .MuiInputBase-input': {
-                          color: theme.palette.text.primary, // Text color based on theme
-                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', // Dynamic semi-transparent background
-                          borderRadius: theme.shape.borderRadius,
-                        },
-                        // Styles for the InputLabel
-                        '& .MuiInputLabel-root': {
-                          color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)', // Dynamic lighter gray for label
-                        },
-                        // Styles for the OutlinedInput fieldset (border)
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: 'transparent !important', // Remove default border
-                        },
-                      }}
-                    />
-                    {(localStorage.getItem('userRegistered') !== 'true' || !user.phone) && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => navigate('/start')}
-                        sx={{ mt: 2 }}
-                      >
-                        Завершить регистрацию
-                      </Button>
-                    )}
-                  </>
-                )}
-                {profileTab === 'orders' && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="h6">Мои заказы</Typography>
-                    {user.orders.length === 0 ? (
-                      <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>У вас пока нет заказов.</Typography>
-                    ) : (
-                      <List>
-                        {user.orders.map((order, index) => (
-                          <ListItemButton key={order.id} onClick={() => {
-                            setCurrentOrder(index);
-                            setCheckoutStep('orderDetail');
-                            setOrderComment(order.history.slice().reverse().find((msg: {sender: string}) => msg.sender === 'user')?.text || ''); // Set comment for editing
-                          }} sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
-                            <ListItemText
-                              primary={`Заказ №${order.id} от ${order.date}`}
-                              secondary={`Товаров: ${order.items.length}`}
-                            />
-                          </ListItemButton>
-                        ))}
-                      </List>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          </Paper>
+            </Paper>
         )}
 
         {/* Полноэкранная корзина */}
@@ -877,9 +793,9 @@ const App: React.FC = () => {
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
               <IconButton onClick={() => setIsCartFullScreen(false)} sx={{ color: 'text.secondary' }}>
-                <CloseIcon />
-              </IconButton>
-            </Box>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, height: '100%', overflowY: 'auto' }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 2 }}>Корзина</Typography>
 
@@ -892,8 +808,8 @@ const App: React.FC = () => {
                       key={index}
                       secondaryAction={
                         <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFromCart(index)}>
-                          <CloseIcon />
-                        </IconButton>
+                        <CloseIcon />
+                      </IconButton>
                       }
                       sx={{ mb: 1, bgcolor: 'action.hover', borderRadius: 1, pr: 7 }}
                     >
@@ -920,18 +836,18 @@ const App: React.FC = () => {
                       return total + (aroma?.prices?.[item.volume] || 0);
                     }, 0)} ₽
                   </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
                     onClick={() => setCheckoutStep('form')}
-                  >
-                    Оформить заказ
-                  </Button>
-                </Box>
+                >
+                  Оформить заказ
+                </Button>
+              </Box>
               )}
-            </Box>
-          </Paper>
+                </Box>
+                        </Paper>
         )}
 
         {/* Модальное окно деталей аромата */}
@@ -953,7 +869,7 @@ const App: React.FC = () => {
 
         {/* Модальное окно оформления заказа */}
         <Dialog open={checkoutStep !== null && checkoutStep !== 'orderDetail'} onClose={() => setCheckoutStep(null)} maxWidth="md" fullWidth>
-          {checkoutStep === 'form' && (
+            {checkoutStep === 'form' && (
             <>
               <DialogTitle>Оформление заказа</DialogTitle>
               <DialogContent dividers>
@@ -989,8 +905,8 @@ const App: React.FC = () => {
                 <Button onClick={() => setCheckoutStep('payment')} variant="contained">Продолжить</Button>
               </DialogActions>
             </>
-          )}
-          {checkoutStep === 'payment' && (
+            )}
+            {checkoutStep === 'payment' && (
             <>
               <DialogTitle>Оплата</DialogTitle>
               <DialogContent dividers>
@@ -1049,18 +965,18 @@ const App: React.FC = () => {
                 </Box>
 
                 {user.orders[currentOrder].awaitingManagerReply && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, textAlign: 'center' }}>Ожидается ответ менеджера...</Typography>
+                  <Typography variant="body2" sx={{ mt: 1, textAlign: 'center' }}>Ожидается ответ менеджера...</Typography>
                 )}
 
                 {/* Reply to manager */}
                 {!user.orders[currentOrder].awaitingManagerReply && (
                   <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    <TextField
+                <TextField
                       label="Ответить менеджеру"
-                      fullWidth
-                      multiline
+                  fullWidth
+                  multiline
                       rows={2}
-                      value={orderComment}
+                  value={orderComment}
                       onChange={(e) => setOrderComment(e.target.value)}
                     />
                     <Button
@@ -1069,11 +985,11 @@ const App: React.FC = () => {
                       sx={{ mt: 1 }}
                     >
                       Прикрепить файл
-                      <input
-                        type="file"
+                  <input
+                    type="file"
                         hidden
                         onChange={(e) => { if (e.target.files) setCommentFile(e.target.files[0]); }}
-                      />
+                  />
                     </Button>
                     {commentFile && <Typography variant="body2" sx={{ ml: 1 }}>{commentFile.name}</Typography>}
                     <Button
@@ -1083,7 +999,7 @@ const App: React.FC = () => {
                       disabled={!orderComment.trim() && !commentFile} // Disable if both comment and file are empty
                     >
                       Отправить ответ
-                    </Button>
+                </Button>
                     {editingCommentIndex !== null && (
                       <Button
                         variant="outlined"
@@ -1093,11 +1009,11 @@ const App: React.FC = () => {
                         Отменить редактирование
                       </Button>
                     )}
-                  </Box>
-                )}
+              </Box>
+            )}
 
-              </DialogContent>
-              <DialogActions>
+          </DialogContent>
+          <DialogActions>
                 <Button onClick={() => setCheckoutStep(null)}>Закрыть</Button>
                 {editingCommentIndex !== null && (
                   <Button onClick={handleSendComment} variant="contained">Сохранить изменения</Button> // Use unified send/save function
@@ -1106,7 +1022,7 @@ const App: React.FC = () => {
                   <Button onClick={handleEditOrder} variant="outlined">Редактировать</Button>
                 )}
 
-              </DialogActions>
+          </DialogActions>
             </>
           )}
         </Dialog>
