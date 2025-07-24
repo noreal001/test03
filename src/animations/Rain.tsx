@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const Rain: React.FC = () => {
+const Rain = () => {
   return (
     <Box
       sx={{

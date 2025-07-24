@@ -8,10 +8,10 @@ import { ThemeContext } from './index'; // Import ThemeContext
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import SwapCallsIcon from '@mui/icons-material/SwapCalls'; // New import for background animation toggle
-import Snowflake from './animations/Snowflake';
-import Rain from './animations/Rain';
-import Stars from './animations/Stars';
-import Smoke from './animations/Smoke';
+import Snowflake from './animations/Snowflake'; // Раскомментировано
+import Rain from './animations/Rain';         // Раскомментировано
+import Stars from './animations/Stars';         // Раскомментировано
+import Smoke from './animations/Smoke';         // Раскомментировано
 
 const AnimatedPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -38,7 +38,7 @@ const AnimatedPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-const WelcomePage: React.FC = () => {
+const WelcomePage = () => { // Убрано React.FC
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState(false);
@@ -218,6 +218,7 @@ const WelcomePage: React.FC = () => {
         }}
       />
 
+      {/* Условный рендеринг компонентов анимации - раскомментировано */}
       {backgroundAnimation === 'snowflake' && <Snowflake />}
       {backgroundAnimation === 'rain' && <Rain />}
       {backgroundAnimation === 'stars' && <Stars />}

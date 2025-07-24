@@ -2,1348 +2,1205 @@
   {
     "name": "27 87",
     "aromas": [
-      "GENETIC BLISS"
+      { "name": "GENETIC BLISS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ABDUL SAMAD AL-QURASHI",
     "aromas": [
-      "SAFARI EXTREME"
+      { "name": "SAFARI EXTREME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AFNAN",
     "aromas": [
-      "9PM",
-      "TRIBUTE BLUE"
+      { "name": "9PM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TRIBUTE BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AJMAL",
     "aromas": [
-      "AMBER WOOD",
-      "ARISTOCRAT",
-      "AURUM",
-      "MYSTERY"
+      { "name": "AMBER WOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ARISTOCRAT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AURUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MYSTERY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AL-REHAB",
     "aromas": [
-      "DALAL"
+      { "name": "DALAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ALEXANDRE J.",
     "aromas": [
-      "IRIS VIOLET",
-      "IRIS VIOLET",
-      "MANDARINE SULTANE",
-      "MANDARINE SULTANE",
-      "MORNING MUSCS",
-      "MORNING MUSCS",
-      "THE COLLECTOR BLACK MUSCS"
+      { "name": "IRIS VIOLET", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANDARINE SULTANE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MORNING MUSCS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE COLLECTOR BLACK MUSCS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ALFRED DUNHILL",
     "aromas": [
-      "AGAR WOOD",
-      "DESIRE BLUE",
-      "DESIRE GOLD EAU DE TOILETTE"
+      { "name": "AGAR WOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DESIRE BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DESIRE GOLD EAU DE TOILETTE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AMOUAGE",
     "aromas": [
-      "ENCLAVE",
-      "GUIDANCE",
-      "INTERLUDE BLACK IRIS",
-      "LOVE TUBEROUSE",
-      "MEANDER",
-      "REFLECTION MAN",
-      "REFLECTION WOMAN",
-      "REFLECTION WOMAN"
+      { "name": "ENCLAVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GUIDANCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INTERLUDE BLACK IRIS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOVE TUBEROUSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MEANDER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "REFLECTION MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "REFLECTION WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ANNA SUI",
     "aromas": [
-      "FANTASIA (BLACK FLEUR)",
-      "LUCKY WISH (SOBLAZN)"
+      { "name": "FANTASIA (BLACK FLEUR)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LUCKY WISH (SOBLAZN)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ANTONIO BANDERAS",
     "aromas": [
-      "BLUE SEDUCTION"
+      { "name": "BLUE SEDUCTION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ARABIAN OUD",
     "aromas": [
-      "ARABIAN KNIGHT",
-      "MADAWI GOLD",
-      "MADAWI GOLD"
+      { "name": "ARABIAN KNIGHT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MADAWI GOLD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ARIANA GRANDE",
     "aromas": [
-      "MOD BLUSH"
+      { "name": "MOD BLUSH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ARMAND BASI",
     "aromas": [
-      "IN BLUE",
-      "IN RED",
-      "IN RED",
-      "IN RED"
+      { "name": "IN BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IN RED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ATKINSONS",
     "aromas": [
-      "OUD SAVE THE KING"
+      { "name": "OUD SAVE THE KING", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ATTAR COLLECTION",
     "aromas": [
-      "AL-RAYHAN",
-      "AL-RAYHAN",
-      "AZORA",
-      "CRYSTAL LOVE FOR HER",
-      "CRYSTAL LOVE FOR HER",
-      "CRYSTAL LOVE FOR HIM",
-      "HAYATI",
-      "HAYATI",
-      "KHALTAT NIGHT",
-      "MUSC CASHMIR",
-      "MUSC CASHMIR",
-      "MUSC CASHMIR",
-      "MUSC CASHMIR"
+      { "name": "AL-RAYHAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AZORA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CRYSTAL LOVE FOR HER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CRYSTAL LOVE FOR HIM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HAYATI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "KHALTAT NIGHT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MUSC CASHMIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AVON",
     "aromas": [
-      "TODAY"
+      { "name": "TODAY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "AZZARO",
     "aromas": [
-      "CHROME"
+      { "name": "CHROME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BATH & BODY WORKS",
     "aromas": [
-      "BAHAMAS PASSIONFRUIT & BANANA FLOWER",
-      "WHISKEY RESERVE COLOGNE"
+      { "name": "BAHAMAS PASSIONFRUIT & BANANA FLOWER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WHISKEY RESERVE COLOGNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BDK PARFUMS",
     "aromas": [
-      "TABAC ROSE"
+      { "name": "TABAC ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BENETTON",
     "aromas": [
-      "WE ARE TRIBE"
+      { "name": "WE ARE TRIBE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BEYONCÉ",
     "aromas": [
-      "CÉ NOIR"
+      { "name": "CÉ NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BOADICEA THE VICTORIOUS",
     "aromas": [
-      "ANGELIC",
-      "AURICA",
-      "AURICA",
-      "HANUMAN",
-      "HEROINE"
+      { "name": "ANGELIC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AURICA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HANUMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HEROINE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BOND NO 9",
     "aromas": [
-      "LAFAYETTE STREET",
-      "NOMAD EAU DE PARFUM"
+      { "name": "LAFAYETTE STREET", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NOMAD EAU DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BOUCHERON",
     "aromas": [
-      "ROSE D'ISPARTA"
+      { "name": "ROSE D'ISPARTA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BURBERRY",
     "aromas": [
-      "HERO",
-      "LONDON MAN",
-      "LONDON WOMAN",
-      "MY BURBERRY",
-      "TUDOR ROSE",
-      "WEEKEND"
+      { "name": "HERO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LONDON MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LONDON WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MY BURBERRY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TUDOR ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WEEKEND", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BVLGARI",
     "aromas": [
-      "AQVA POUR HOMME",
-      "AQVA POUR HOMME",
-      "AQVA POUR HOMME",
-      "JASMINE NOIR",
-      "LE GEMME ASTREA",
-      "LE GEMME AZARAN",
-      "LE GEMME TYGAR",
-      "LE GEMME TYGAR",
-      "OMNIA",
-      "OMNIA CRYSTALLINE",
-      "THE NOIR",
-      "THE NOIR"
+      { "name": "AQVA POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "JASMINE NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE GEMME ASTREA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE GEMME AZARAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE GEMME TYGAR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OMNIA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OMNIA CRYSTALLINE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BY KILIAN",
     "aromas": [
-      "ANGELS SHARE",
-      "BAD BOYS ARE NOT GOOD BUT GOOD",
-      "BAD BOYS ARE NOT GOOD BUT GOOD",
-      "BLACK PHANTOM MEMENTO MORI",
-      "GOOD GIRL GONE BAD",
-      "GOOD GIRL GONE BAD",
-      "GOOD GIRL GONE BAD",
-      "GOOD GIRL GONE BAD EXTREME",
-      "INTOXICATED",
-      "KILLING ME SLOWLY",
-      "L'HEURE VERTE",
-      "LOVE BY KILIAN",
-      "OLD FASHIONED",
-      "PLAYING WITH DEVIL",
-      "ROLLING IN LOVE",
-      "ROSES ON ICE",
-      "STRAIGHT TO HEAVEN: WHITE CRISTAL",
-      "TO BE A PRINCESS",
-      "TO BE A PRINCESS",
-      "VODKA ON THE ROCKS",
-      "VODKA ON THE ROCKS",
-      "VODKA ON THE ROCKS"
+      { "name": "ANGELS SHARE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BAD BOYS ARE NOT GOOD BUT GOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK PHANTOM MEMENTO MORI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GOOD GIRL GONE BAD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GOOD GIRL GONE BAD EXTREME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INTOXICATED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "KILLING ME SLOWLY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'HEURE VERTE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOVE BY KILIAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OLD FASHIONED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PLAYING WITH DEVIL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROLLING IN LOVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSES ON ICE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "STRAIGHT TO HEAVEN: WHITE CRISTAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TO BE A PRINCESS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VODKA ON THE ROCKS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "BYREDO",
     "aromas": [
-      "BAL D'AFRIQUE",
-      "BAL D'AFRIQUE",
-      "BIBLIOTEQUE",
-      "BLANCHE",
-      "BLANCHE",
-      "DE LOS SANTOS",
-      "GYPSY WATER",
-      "GYPSY WATER",
-      "LA TULIPE",
-      "MARIJUANA",
-      "MOJAVE GOST",
-      "SUPER CEDR",
-      "YONG ROSE"
+      { "name": "BAL D'AFRIQUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BIBLIOTEQUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLANCHE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DE LOS SANTOS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GYPSY WATER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LA TULIPE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MARIJUANA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOJAVE GOST", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SUPER CEDR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "YONG ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CACHAREL",
     "aromas": [
-      "AMOR AMOR",
-      "AMOR AMOR"
+      { "name": "AMOR AMOR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CALVIN KLEIN",
     "aromas": [
-      "EUPHORIA MAN",
-      "EUPHORIA WOMAN"
+      { "name": "EUPHORIA MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EUPHORIA WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CANALI",
     "aromas": [
-      "DAL 1934"
+      { "name": "DAL 1934", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CAROLINA HERRERA",
     "aromas": [
-      "212 MAN",
-      "212 MAN",
-      "212 VIP MAN",
-      "212 VIP ROSE",
-      "212 VIP ROSE",
-      "212 VIP WOMAN",
-      "212 WOMAN",
-      "212 WOMAN",
-      "BAD BOY",
-      "CH",
-      "CHIC MAN",
-      "CHIC WOMAN",
-      "GOOD GIRL",
-      "GOOD GIRL",
-      "GOOD GIRL",
-      "GOOD GIRL BLUSH",
-      "GOOD GIRL SUPREME",
-      "MAD WORLD"
+      { "name": "212 MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "212 VIP MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "212 VIP ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "212 VIP WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "212 WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BAD BOY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHIC MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHIC WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GOOD GIRL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GOOD GIRL BLUSH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GOOD GIRL SUPREME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MAD WORLD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CARTIER",
     "aromas": [
-      "LA PANTHERE"
+      { "name": "LA PANTHERE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CERRUTI",
     "aromas": [
-      "1881 CERRUTI"
+      { "name": "1881 CERRUTI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CHANEL",
     "aromas": [
-      "ALLURE HOMME SPORT",
-      "ALLURE HOMME SPORT",
-      "ALLURE SENSUELLE",
-      "BLEU DE CHANEL",
-      "BLEU DE CHANEL",
-      "CHANCE",
-      "CHANCE",
-      "CHANCE",
-      "CHANCE EAU FRAICHE",
-      "CHANCE EAU FRAICHE",
-      "CHANCE EAU TENDRE",
-      "CHANCE EAU TENDRE",
-      "CHANCE EAU TENDRE EAU DE PARFUM",
-      "COCO MADEMOISELLE",
-      "COCO MADEMOISELLE",
-      "EGOIST",
-      "EGOIST PLATINIUM",
-      "EGOIST PLATINIUM",
-      "GABRIELLE",
-      "LE LION DE",
-      "N5",
-      "NO 1 DE CHANEL L'EAU ROUGE",
-      "NO.19"
+      { "name": "ALLURE HOMME SPORT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ALLURE SENSUELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLEU DE CHANEL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHANCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHANCE EAU FRAICHE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHANCE EAU TENDRE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHANCE EAU TENDRE EAU DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "COCO MADEMOISELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EGOIST", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EGOIST PLATINIUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GABRIELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE LION DE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "N5", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NO 1 DE CHANEL L'EAU ROUGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NO.19", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CHLOE",
     "aromas": [
-      "CHLOE EAU DE PARFUM",
-      "LOVE STORY",
-      "NOMADE"
+      { "name": "CHLOE EAU DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOVE STORY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NOMADE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CHOPARD",
     "aromas": [
-      "CEDAR MALAKI"
+      { "name": "CEDAR MALAKI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CHOPARD VETIVER",
     "aromas": [
-      "D'HAITI AU THE VERT"
+      { "name": "D'HAITI AU THE VERT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CHRISTIAN LOUBOTIN",
     "aromas": [
-      "LOUBIMAR LEGERE"
+      { "name": "LOUBIMAR LEGERE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CLINIQUE",
     "aromas": [
-      "HAPPY",
-      "HAPPY"
+      { "name": "HAPPY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CLIVE CHRISTIAN",
     "aromas": [
-      "1872",
-      "MATSUKITA",
-      "N1 EXCLUSIVE"
+      { "name": "1872", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MATSUKITA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "N1 EXCLUSIVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "CREED",
     "aromas": [
-      "AVENTUS",
-      "AVENTUS",
-      "AVENTUS",
-      "AVENTUS COLOGNE",
-      "QUEEN OF SILK",
-      "SILVER MOUNTAIN",
-      "SILVER MOUNTAIN",
-      "VIKING",
-      "VIKING",
-      "VIKING COLONGE"
+      { "name": "AVENTUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AVENTUS COLOGNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "QUEEN OF SILK", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SILVER MOUNTAIN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VIKING", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VIKING COLONGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "DAVIDOFF",
     "aromas": [
-      "COOL WATER",
-      "COOL WATER"
+      { "name": "COOL WATER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "DIOR",
     "aromas": [
-      "ADDICT",
-      "AMBRE NUIT",
-      "DUNE",
-      "FAHRENHEIT",
-      "FAHRENHEIT",
-      "FOREVER AND EVER",
-      "GRIS DIOR",
-      "HOMME COLOGNE",
-      "HOMME SPORT",
-      "J'ADORE",
-      "J'ADORE",
-      "J'ADORE INFINISSIME",
-      "MIDNIGHT POISON",
-      "MISS DIOR BLOOMING BOQUET",
-      "MISS DIOR EAU DE PARFUM",
-      "MISS DIOR LE PERFUM",
-      "OUD ROSEWOOD",
-      "PATCHOULI EXLIXIR PRECIEUX",
-      "POISON GIRL",
-      "PURE POISON",
-      "ROUGE TRAFALGAR",
-      "SAUVAGE",
-      "SAUVAGE",
-      "TOBACOLOR"
+      { "name": "ADDICT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AMBRE NUIT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DUNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FAHRENHEIT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FOREVER AND EVER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GRIS DIOR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HOMME COLOGNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HOMME SPORT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "J'ADORE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "J'ADORE INFINISSIME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MIDNIGHT POISON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MISS DIOR BLOOMING BOQUET", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MISS DIOR EAU DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MISS DIOR LE PERFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD ROSEWOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PATCHOULI EXLIXIR PRECIEUX", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POISON GIRL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PURE POISON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROUGE TRAFALGAR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SAUVAGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TOBACOLOR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "DOLCE & GABBANA",
     "aromas": [
-      "DOLCE",
-      "IMPERATRICE 3",
-      "IMPERATRICE 3",
-      "K BY DOLCE",
-      "LEMON",
-      "LIGHT BLUE POUR FEMME",
-      "LIGHT BLUE POUR HOMME",
-      "ORANGE",
-      "PINE APPLE",
-      "POUR FEMME",
-      "THE ONE",
-      "THE ONLY ONE"
+      { "name": "DOLCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IMPERATRICE 3", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "K BY DOLCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LEMON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LIGHT BLUE POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LIGHT BLUE POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ORANGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PINE APPLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE ONE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE ONLY ONE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "DONNA KARAN",
     "aromas": [
-      "BE DELICIOUS"
+      { "name": "BE DELICIOUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ELIZABET ARDEN",
     "aromas": [
-      "5TH AVENUE"
+      { "name": "5TH AVENUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ELIZABETH ARDEN",
     "aromas": [
-      "GREEN TEA"
+      { "name": "GREEN TEA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ESCADA",
     "aromas": [
-      "CANDY LOVE",
-      "CHERRY",
-      "CHERRY",
-      "CHERRY",
-      "MOON SPARKLE",
-      "MOON SPARKLE",
-      "SEXY GRAFFITI",
-      "TAJ SUNSET"
+      { "name": "CANDY LOVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHERRY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOON SPARKLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SEXY GRAFFITI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TAJ SUNSET", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ESCENTRIC MOLECULES",
     "aromas": [
-      "ESCENTRIC 01",
-      "ESCENTRIC 02",
-      "ESCENTRIC 02",
-      "ESCENTRIC 02",
-      "ESCENTRIC 02 BLACK EDITION",
-      "ESCENTRIC 03",
-      "MOLECULE 01 + BLACK TEA",
-      "MOLECULE 01 + GINGER",
-      "MOLECULE 01 + GUAIAC WOOD",
-      "MOLECULE 01 + IRIS",
-      "MOLECULE 01 + MANDARIN",
-      "MOLECULE 01 + PATCHOULI",
-      "MOLECULE 04",
-      "MOLECULE 04",
-      "MOLECULE 05",
-      "MOLECULE 05",
-      "MOLECULE KINSKI",
-      "TBMS VOL.1 INTELLIGENCE FANTASY",
-      "TBMS VOL.1 INTELLIGENCE FANTASY",
-      "TBMS VOL.1 INTELLIGENCE FANTASY",
-      "TBMS VOL.1 INTELLIGENCE FANTASY VER. 2"
+      { "name": "ESCENTRIC 01", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ESCENTRIC 02", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ESCENTRIC 02 BLACK EDITION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ESCENTRIC 03", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + BLACK TEA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + GINGER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + GUAIAC WOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + IRIS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + MANDARIN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 01 + PATCHOULI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 04", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 05", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE KINSKI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TBMS VOL.1 INTELLIGENCE FANTASY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TBMS VOL.1 INTELLIGENCE FANTASY VER. 2", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ESSENTIAL PARFUMES",
     "aromas": [
-      "BOIS IMPÉRIAL"
+      { "name": "BOIS IMPÉRIAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "EX NIHILO",
     "aromas": [
-      "BLUE TALISMAN",
-      "BLUE TALISMAN",
-      "DEVIL TENDER",
-      "FLEUR NARCOTIQUE",
-      "FLEUR NARCOTIQUE",
-      "FLEUR NARCOTIQUE",
-      "FLEUR NARCOTIQUE  LOVE EDITION",
-      "FLEUR NARCOTIQUE EXTRAIT DE PARFUM",
-      "LUST IN PARADISE",
-      "LUST IN PARADISE",
-      "OUTCAST BLUE",
-      "THE HEDONIST",
-      "VETIVER MOLOKO"
+      { "name": "BLUE TALISMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DEVIL TENDER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FLEUR NARCOTIQUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FLEUR NARCOTIQUE LOVE EDITION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FLEUR NARCOTIQUE EXTRAIT DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LUST IN PARADISE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUTCAST BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE HEDONIST", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VETIVER MOLOKO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "FRANC BOCKLET",
     "aromas": [
-      "COCAÏNE",
-      "COCAÏNE"
+      { "name": "COCAÏNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "FRANCK OLIVIER",
     "aromas": [
-      "NATURE"
+      { "name": "NATURE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GENYUM",
     "aromas": [
-      "PAINTER"
+      { "name": "PAINTER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GIORGIO ARMANI",
     "aromas": [
-      "AQUA DI GIO POUR FEMME",
-      "AQUA DI GIO POUR HOMME",
-      "CODE",
-      "CODE PROFUMO",
-      "EMPORIO ARMANI BECAUSE IT IS YOU",
-      "EMPORIO ARMANI STRONGER WITH YOU",
-      "MY WAY",
-      "SANTAL DAN SHA",
-      "SI",
-      "SI PASSION INTENSE"
+      { "name": "AQUA DI GIO POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AQUA DI GIO POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CODE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CODE PROFUMO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EMPORIO ARMANI BECAUSE IT IS YOU", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EMPORIO ARMANI STRONGER WITH YOU", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MY WAY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SANTAL DAN SHA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SI PASSION INTENSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GISADA",
     "aromas": [
-      "TITANIUM"
+      { "name": "TITANIUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GIVENCHY",
     "aromas": [
-      "AMARIGE",
-      "ANGE OU DEMON",
-      "ANGE OU DEMON LE SECRET",
-      "ANGE OU DEMON LE SECRET LIMITED",
-      "GENTLEMAN",
-      "GENTLEMAN EAU DE PARFUME",
-      "L'INTERDIT",
-      "L'INTERDIT INTENSE",
-      "MMW",
-      "ORGANZA",
-      "PI",
-      "POUR HOMME",
-      "VERY IRRESISTIBLE",
-      "PLAY FOR HER",
-      "HOT COUTURE"
+      { "name": "AMARIGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ANGE OU DEMON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ANGE OU DEMON LE SECRET", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ANGE OU DEMON LE SECRET LIMITED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GENTLEMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GENTLEMAN EAU DE PARFUME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'INTERDIT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'INTERDIT INTENSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MMW", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ORGANZA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERY IRRESISTIBLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PLAY FOR HER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HOT COUTURE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GUCCI",
     "aromas": [
-      "BAMBOO",
-      "BAMBOO",
-      "BAMBOO",
-      "FLORA BY GUCCI",
-      "GUILTY",
-      "RUSH",
-      "RUSH",
-      "RUSH",
-      "RUSH"
+      { "name": "BAMBOO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FLORA BY GUCCI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GUILTY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "RUSH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "GUERLAIN",
     "aromas": [
-      "AQUA ALLEGORIA MANDARIN BASILIC",
-      "EAU DE SHALIMAR",
-      "INSOLENCE",
-      "IRIS TORREFIE",
-      "L’HOMME IDÉAL",
-      "LA PETITE ROBE NOIR",
-      "OUD NUDE",
-      "SAMSARA EAU DE PARFUME",
-      "SPIRITUEUSE DOUBLE VANILLE"
+      { "name": "AQUA ALLEGORIA MANDARIN BASILIC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EAU DE SHALIMAR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INSOLENCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IRIS TORREFIE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'HOMME IDÉAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LA PETITE ROBE NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD NUDE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SAMSARA EAU DE PARFUME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SPIRITUEUSE DOUBLE VANILLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "HAUTE FRAGRANCE COMPANY",
     "aromas": [
-      "DEVIL'S INTRIGUE",
-      "DEVIL'S INTRIGUE",
-      "DEVIL'S INTRIGUE",
-      "DIVINE BLOSSOM",
-      "LOVE WEAR EVERYWHERE",
-      "PROPOSAL",
-      "VOODOO CHIC",
-      "WRAP ME IN DREAMS"
+      { "name": "DEVIL'S INTRIGUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DIVINE BLOSSOM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOVE WEAR EVERYWHERE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PROPOSAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VOODOO CHIC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WRAP ME IN DREAMS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "HERMÈS",
     "aromas": [
-      "HERMESSENCE VIOLETTE VOLYNKA",
-      "TERRE D'HERMES",
-      "TWILLY D’HERMÈS",
-      "VOYAGE D'HERMES"
+      { "name": "HERMESSENCE VIOLETTE VOLYNKA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TERRE D'HERMES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TWILLY D'HERMÈS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VOYAGE D'HERMES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "HUGO BOSS",
     "aromas": [
-      "BOSS WOMAN",
-      "BOSS WOMAN",
-      "HUGO MAN"
+      { "name": "BOSS WOMAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HUGO MAN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "HUGO BOSS",
     "aromas": [
-      "BOTTLED",
-      "BOTTLED PACIFIC",
-      "BOTTLED UNLIMITED",
-      "THE SCENT FOR HER"
+      { "name": "BOTTLED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BOTTLED PACIFIC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BOTTLED UNLIMITED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE SCENT FOR HER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "INITIO PARFUMS PRIVES",
     "aromas": [
-      "ABSOLUTE APHRODISIAC",
-      "BLESSED BARAKA",
-      "HIGH FREQUENCY",
-      "MUSK THERAPY",
-      "OUD FOR GREATNESS",
-      "PSYCHEDELIC LOVE",
-      "REHAB",
-      "SIDE EFFECT",
-      "ATOMIC ROSE"
+      { "name": "ABSOLUTE APHRODISIAC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLESSED BARAKA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HIGH FREQUENCY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MUSK THERAPY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD FOR GREATNESS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PSYCHEDELIC LOVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "REHAB", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SIDE EFFECT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ATOMIC ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "JEAN PAUL GAULTIER",
     "aromas": [
-      "LA BELLE PARADISE GARDEN",
-      "LE MALE",
-      "LE MALE ELIXIR",
-      "SCANDAL POUR HOMME",
-      "SCANDAL POUR HOMME",
-      "ULTRA MALE",
-      "LA BELLE",
-      "LA BELLE LE PARFUM"
+      { "name": "LA BELLE PARADISE GARDEN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE MALE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE MALE ELIXIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SCANDAL POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ULTRA MALE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LA BELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LA BELLE LE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "JO MALONE",
     "aromas": [
-      "BLACKBERRY & BAY",
-      "BLACKBERRY & BAY",
-      "MYRRH & TONKA",
-      "MYRRH & TONKA",
-      "OUD & BERGAMOT",
-      "WOOD SAGE AND SEA SALT",
-      "WOOD SAGE AND SEA SALT",
-      "WOOD SAGE AND SEA SALT",
-      "WOOD SAGE AND SEA SALT"
+      { "name": "BLACKBERRY & BAY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MYRRH & TONKA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD & BERGAMOT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WOOD SAGE AND SEA SALT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "JULIETTE HAS A GUN",
     "aromas": [
-      "NOT A PERFUME",
-      "NOT A PERFUME"
+      { "name": "NOT A PERFUME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "KAJAL",
     "aromas": [
-      "ALMAZ",
-      "DAHAB",
-      "FARIS",
-      "LAMAR"
+      { "name": "ALMAZ", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DAHAB", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FARIS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LAMAR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "KAYALI FRAGRANCES",
     "aromas": [
-      "MALDIVES IN A BOTTLE YLANG COCO | 20",
-      "VANILLA CANDY ROCK SUGAR | 42",
-      "YUM PISTACHIO GELATO | 33"
+      { "name": "MALDIVES IN A BOTTLE YLANG COCO | 20", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VANILLA CANDY ROCK SUGAR | 42", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "YUM PISTACHIO GELATO | 33", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "KENZO",
     "aromas": [
-      "FLOWER BY KENZO",
-      "FLOWER BY KENZO",
-      "L'EAU PAR POUR FEMME",
-      "L'EAU PAR POUR HOMME"
+      { "name": "FLOWER BY KENZO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'EAU PAR POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'EAU PAR POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LACOSTE",
     "aromas": [
-      "ESSENTIAL",
-      "ESSENTIAL",
-      "ESSENTIAL SPORT",
-      "L.12.12. WHITE BLANC",
-      "L.12.12. WHITE BLANC",
-      "POUR FEMME",
-      "POUR FEMME",
-      "POUR HOMME"
+      { "name": "ESSENTIAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ESSENTIAL SPORT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L.12.12. WHITE BLANC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LANCÔME",
     "aromas": [
-      "LA VIE EST BELLE",
-      "MAGIE NOIR",
-      "PEUT-ETRE",
-      "POEME",
-      "TRÉSOR"
+      { "name": "LA VIE EST BELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MAGIE NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PEUT-ETRE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POEME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TRÉSOR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LANVIN",
     "aromas": [
-      "ECLAT D'ARPEGE",
-      "JEANNE",
-      "MARRY ME",
-      "MARRY ME",
-      "MODERN PRINCESS",
-      "MODERN PRINCESS EAU SENSUELLE",
-      "SCANDAL"
+      { "name": "ECLAT D'ARPEGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "JEANNE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MARRY ME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MODERN PRINCESS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MODERN PRINCESS EAU SENSUELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SCANDAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LATTAFA PERFUMES",
     "aromas": [
-      "ASAD",
-      "ASAD ZANZIBAR",
-      "BADE'E AL OUD OUD FOR GLORY",
-      "KHAMRAH",
-      "SHEIKH SHUYUKH",
-      "SHEIKH SHUYUKH",
-      "YARA CANDY"
+      { "name": "ASAD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ASAD ZANZIBAR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BADE'E AL OUD OUD FOR GLORY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "KHAMRAH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SHEIKH SHUYUKH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "YARA CANDY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LE LABO",
     "aromas": [
-      "ANOTHER 13",
-      "BERGAMOT 22",
-      "ROSE 31",
-      "SANTAL 33"
+      { "name": "ANOTHER 13", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BERGAMOT 22", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSE 31", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SANTAL 33", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "LOUIS VUITTON",
     "aromas": [
-      "AFTERNOON SWIM",
-      "ATTRAPE-REVES",
-      "CONTRE MOI",
-      "CONTRE MOI",
-      "ETOLE FILANTE",
-      "IMAGINATION",
-      "L'IMMENSITE",
-      "L'IMMENSITE",
-      "L'IMMENSITE",
-      "LE JOUR SE LÈVE",
-      "METEORE",
-      "NOUVEAU MONDE",
-      "OMBRE NOMADO",
-      "ON THE BEACH",
-      "ORAGE",
-      "PACIFIC CHILL",
-      "STELLAR TIMES",
-      "SYMPHONY",
-      "FLEUR DU DÉSERT"
+      { "name": "AFTERNOON SWIM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ATTRAPE-REVES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CONTRE MOI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ETOLE FILANTE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IMAGINATION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "L'IMMENSITE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LE JOUR SE LÈVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "METEORE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NOUVEAU MONDE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OMBRE NOMADO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ON THE BEACH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ORAGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PACIFIC CHILL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "STELLAR TIMES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SYMPHONY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FLEUR DU DÉSERT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MAISON FRANCIS KURKDJIAN",
     "aromas": [
-      "AQUA CELESTIA",
-      "AQUA MEDIA COLOGNE FORTE",
-      "BACCARAT 540 EXTRAIT",
-      "BACCARAT ROUGE 540",
-      "BACCARAT ROUGE 540",
-      "BACCARAT ROUGE 540 (С КРИСТАЛЛАМИ)",
-      "OUD SATIN MOOD"
+      { "name": "AQUA CELESTIA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "AQUA MEDIA COLOGNE FORTE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BACCARAT 540 EXTRAIT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BACCARAT ROUGE 540", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BACCARAT ROUGE 540 (С КРИСТАЛЛАМИ)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD SATIN MOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MAISON MARTIN MARGIELA",
     "aromas": [
-      "BY THE FIREPLACE",
-      "UNDER THE LEMON TREE",
-      "JAZZ CLUB"
+      { "name": "BY THE FIREPLACE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "UNDER THE LEMON TREE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "JAZZ CLUB", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MANCERA",
     "aromas": [
-      "CEDRAT BOIS",
-      "RED TOBACCO",
-      "ROSES VANILLE",
-      "VETIVER SENSUELLE",
-      "WILD PYTHON"
+      { "name": "CEDRAT BOIS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "RED TOBACCO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSES VANILLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VETIVER SENSUELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WILD PYTHON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MARC-АNTOINE BARROIS",
     "aromas": [
-      "TILIA",
-      "TILIA"
+      { "name": "TILIA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MARC-ANTOINE BARROIS",
     "aromas": [
-      "B863",
-      "ENCELADE",
-      "GANYMEDE",
-      "GANYMEDE"
+      { "name": "B863", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ENCELADE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GANYMEDE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MEMO PARIS",
     "aromas": [
-      "AFRICAN LEATHER",
-      "AFRICAN LEATHER",
-      "IRISH LEATHER",
-      "IRISH OUD",
-      "ITALIAN LEATHER",
-      "MARFA",
-      "MOROCCAN LEATHER",
-      "OCEAN LEATHER",
-      "RUSSIAN LEATHER",
-      "SHERWOOD"
+      { "name": "AFRICAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IRISH LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "IRISH OUD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ITALIAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MARFA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOROCCAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OCEAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "RUSSIAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SHERWOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MOLTON BROWN",
     "aromas": [
-      "TOBACCO ABSOLUT DE PARFUM"
+      { "name": "TOBACCO ABSOLUT DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MONO",
     "aromas": [
-      "VINOGRAD (ВИНОГРАД)",
-      "VINOGRAD (ВИНОГРАД)"
+      { "name": "VINOGRAD (ВИНОГРАД)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MONTALE",
     "aromas": [
-      "AOUD FOREST",
-      "AOUD FOREST",
-      "ARABIANS TONKKA",
-      "BLACK AOUD",
-      "CHOCOLATE GREEDY (С КРИСТАЛЛАМИ)",
-      "CRYSTAL FLOWERS",
-      "INTENSE CAFE",
-      "MANGO MANGA",
-      "MUKHALLAT",
-      "ROSE MUSC",
-      "ROSES ELIXIR",
-      "STARRY NIGHT",
-      "STARRY NIGHT",
-      "SWEET PEONY",
-      "SWEET VANILLA",
-      "WOOD & SPICES"
+      { "name": "AOUD FOREST", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ARABIANS TONKKA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK AOUD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHOCOLATE GREEDY (С КРИСТАЛЛАМИ)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CRYSTAL FLOWERS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INTENSE CAFE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANGO MANGA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MUKHALLAT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSE MUSC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSES ELIXIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "STARRY NIGHT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SWEET PEONY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SWEET VANILLA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WOOD & SPICES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MONTBLANC",
     "aromas": [
-      "LEGEND",
-      "SIGNATURE",
-      "STARWOLKER"
+      { "name": "LEGEND", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SIGNATURE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "STARWOLKER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MOSCHINO",
     "aromas": [
-      "CHEAP AND CHIC I LOVE LOVE",
-      "FUNNY"
+      { "name": "CHEAP AND CHIC I LOVE LOVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FUNNY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "NARCISO RODRIGUEZ",
     "aromas": [
-      "FOR HER FOREVER",
-      "POUDREE"
+      { "name": "FOR HER FOREVER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUDREE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "NASOMATTO",
     "aromas": [
-      "BARAONDA",
-      "BLACK AFGANO",
-      "BLACK AFGANO",
-      "BLACK AFGANO",
-      "BLACK AFGANO"
+      { "name": "BARAONDA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK AFGANO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "NEJMA",
     "aromas": [
-      "7"
+      { "name": "7", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "NINA RICCI",
     "aromas": [
-      "NINA",
-      "PREMIER JOUR"
+      { "name": "NINA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PREMIER JOUR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "NISHANE",
     "aromas": [
-      "HACIVAT",
-      "HACIVAT",
-      "HUNDRED SILENT WAYS",
-      "TERO"
+      { "name": "HACIVAT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HUNDRED SILENT WAYS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TERO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ORMONDE JAYNE",
     "aromas": [
-      "MONTABACCO",
-      "MONTABACCO"
+      { "name": "MONTABACCO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ORTO PARISI",
     "aromas": [
-      "BERGAMASK",
-      "MEGAMARE",
-      "MEGAMARE",
-      "MEGAMARE",
-      "MEGAMARE",
-      "TERRONI"
+      { "name": "BERGAMASK", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MEGAMARE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TERRONI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "PACO RABANNE",
     "aromas": [
-      "1 MILLION",
-      "1 MILLION",
-      "1 MILLION",
-      "1 MILLION LUCKY",
-      "BLACK XS IGGY POP LIMITED",
-      "BLACK XS L'EXCES",
-      "INVICTUS",
-      "INVICTUS",
-      "INVICTUS",
-      "INVICTUS AQVA",
-      "LADY MILLION",
-      "LADY MILLION ROYAL",
-      "OLYMPEA",
-      "OLYMPEA BLOSSOM"
+      { "name": "1 MILLION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "1 MILLION LUCKY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK XS IGGY POP LIMITED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK XS L'EXCES", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INVICTUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "INVICTUS AQVA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LADY MILLION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LADY MILLION ROYAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OLYMPEA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OLYMPEA BLOSSOM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "PARFUMS DE MARLY",
     "aromas": [
-      "DELINA",
-      "DELINA EXCLUSIVE",
-      "LAYTON",
-      "PERSEUS"
+      { "name": "DELINA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DELINA EXCLUSIVE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LAYTON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PERSEUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "PENHALIGON'S",
     "aromas": [
-      "HALFETI"
+      { "name": "HALFETI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "PRADA",
     "aromas": [
-      "LUNA ROSSA CARBON",
-      "PARADOXE"
+      { "name": "LUNA ROSSA CARBON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PARADOXE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "PUREDISTANCE",
     "aromas": [
-      "WHITE NO. 06 (БЕЛЫЙ ДЫМ)"
+      { "name": "WHITE NO. 06 (БЕЛЫЙ ДЫМ)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "RALPH LAUREN",
     "aromas": [
-      "POLO BLUE"
+      { "name": "POLO BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "RAPLH LAUREN",
     "aromas": [
-      "POLO BLUE"
+      { "name": "POLO BLUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "RASASI",
     "aromas": [
-      "RUMZ POUR ELLE 9325",
-      "RUMZ POUR LUI 9459"
+      { "name": "RUMZ POUR ELLE 9325", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "RUMZ POUR LUI 9459", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "RICARDO VERON",
     "aromas": [
-      "AFRODIZIAK (PHEROMON)",
-      "AFRODIZIAK (PHEROMON)"
+      { "name": "AFRODIZIAK (PHEROMON)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "RICHARD",
     "aromas": [
-      "WHITE CHOCOLA"
+      { "name": "WHITE CHOCOLA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ROJA DOVE",
     "aromas": [
-      "AMBER AOUD",
-      "ELYSIUM",
-      "ISOLA BLU",
-      "OLIGARPH",
-      "SWEETIE AOUD",
-      "TI AMO"
+      { "name": "AMBER AOUD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ELYSIUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ISOLA BLU", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OLIGARPH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SWEETIE AOUD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TI AMO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "SALVATORE FERRAGAMO",
     "aromas": [
-      "AMO"
+      { "name": "AMO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "SHAIK",
     "aromas": [
-      "CHIC SHAIK 33",
-      "CHIC SHAIK 70",
-      "CHIC SHAIK 77",
-      "CHIC SHAIK 77",
-      "CHIC SHAIK 77"
+      { "name": "CHIC SHAIK 33", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHIC SHAIK 70", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHIC SHAIK 77", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "SHISEIDO",
     "aromas": [
-      "ZEN"
+      { "name": "ZEN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "SOSPIRO PERFUMES",
     "aromas": [
-      "ACCENTO",
-      "ACCENTO",
-      "DIAPASON",
-      "ERBA PURA",
-      "ERBA PURA",
-      "OPERA",
-      "WARDASINA (ROSSO AFGANO)"
+      { "name": "ACCENTO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DIAPASON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ERBA PURA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OPERA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "WARDASINA (ROSSO AFGANO)", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "THE HOUSE OF OUD",
     "aromas": [
-      "EMPATHY"
+      { "name": "EMPATHY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "THIERY MUGLER",
     "aromas": [
-      "ALIEN GODDESS"
+      { "name": "ALIEN GODDESS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "THOMAS KOSMALA",
     "aromas": [
-      "4 APRÈS L’AMOUR",
-      "4 APRÈS L’AMOUR",
-      "BUKHOOR N09"
+      { "name": "4 APRÈS L'AMOUR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BUKHOOR N09", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "TIZIANA TERENZI",
     "aromas": [
-      "ANDROMEDA",
-      "CASSIOPEA",
-      "DIONISIO",
-      "DRACO",
-      "GUMIN",
-      "HALLEY",
-      "KIRKE",
-      "KIRKE",
-      "KIRKE",
-      "KIRKE",
-      "MIRACH",
-      "ORION",
-      "ORZA",
-      "POGGIA",
-      "VITTORIALE 2022"
+      { "name": "ANDROMEDA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CASSIOPEA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DIONISIO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DRACO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GUMIN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HALLEY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "KIRKE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MIRACH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ORION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ORZA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POGGIA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VITTORIALE 2022", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "TOM FORD",
     "aromas": [
-      "BITTER PEACH",
-      "BITTER PEACH",
-      "BITTER PEACH",
-      "BITTER PEACH",
-      "BLACK ORCHID",
-      "BLACK ORCHID",
-      "CHERRY SMOKE",
-      "CHERRY SMOKE",
-      "ÉBÈNE FUMÉ",
-      "ELECTRIC CHERRY",
-      "FUCKING FABULOUS",
-      "GREY VETIEVER",
-      "LOST CHERRY",
-      "LOST CHERRY",
-      "LOST CHERRY",
-      "MANDARINO DI AMALFI",
-      "MANDARINO DI AMALFI ACQUA",
-      "METALLIQUE",
-      "NEROLI PORTOFINO",
-      "NOIR DE NOIR",
-      "NOIR DE NOIR",
-      "NOIR EXTREME",
-      "NOIR EXTREME",
-      "OMBRE LEATHER",
-      "OUD WOOD",
-      "OUD WOOD",
-      "SOLEIL BLANC",
-      "SOLEIL BLANC",
-      "SOLEIL NEIGE",
-      "TOBACCO OUD",
-      "TOBACCO VANILLE",
-      "TOM FORD",
-      "TUBEREUSE NUE",
-      "TUSCAN LEATHER",
-      "VANILLA SEX",
-      "VENETIAN BERGAMOT",
-      "VERT BONEME"
+      { "name": "BITTER PEACH", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK ORCHID", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CHERRY SMOKE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ÉBÈNE FUMÉ", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ELECTRIC CHERRY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "FUCKING FABULOUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "GREY VETIEVER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOST CHERRY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANDARINO DI AMALFI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANDARINO DI AMALFI ACQUA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "METALLIQUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NEROLI PORTOFINO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NOIR DE NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "NOIR EXTREME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OMBRE LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "OUD WOOD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SOLEIL BLANC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SOLEIL NEIGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TOBACCO OUD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TOBACCO VANILLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TOM FORD", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TUBEREUSE NUE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TUSCAN LEATHER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VANILLA SEX", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VENETIAN BERGAMOT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERT BONEME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "⁠⁠TOM FORD",
     "aromas": [
-      "JASMIN ROUGE"
+      { "name": "JASMIN ROUGE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "TRUSSARDI",
     "aromas": [
-      "DELICATE ROSE",
-      "DELICATE ROSE",
-      "DONNA TRUSSARDI",
-      "DONNA TRUSSARDI",
-      "MY LAND",
-      "PASSEGGIATA IN GALLERIA VITTORIO EMANUELE II"
+      { "name": "DELICATE ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DONNA TRUSSARDI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MY LAND", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PASSEGGIATA IN GALLERIA VITTORIO EMANUELE II", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VALENTINO",
     "aromas": [
-      "DONNA ROSE VERDE",
-      "VOCE VIVA"
+      { "name": "DONNA ROSE VERDE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VOCE VIVA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VAN CLEEF & ARPELS",
     "aromas": [
-      "ORCHIDAE VANILLE"
+      { "name": "ORCHIDAE VANILLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VERSACE",
     "aromas": [
-      "BRIGHT CRYSTAL",
-      "BRIGHT CRYSTAL",
-      "BRIGHT CRYSTAL",
-      "BRIGHT CRYSTAL ABSOLU",
-      "CRYSTAL NOIR",
-      "DYLAN BLUE POUR FEMME",
-      "DYLAN BLUE POUR HOMME",
-      "EAU FRAICHE",
-      "EAU FRAICHE",
-      "ECLAT DE ROSE",
-      "EROS",
-      "EROS EAU DE PARFUM",
-      "EROS FLAME",
-      "EROS FLAME",
-      "EROS POUR FEMME",
-      "POUR HOMME",
-      "VERSENCE",
-      "VERSUS"
+      { "name": "BRIGHT CRYSTAL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CRYSTAL NOIR", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DYLAN BLUE POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "DYLAN BLUE POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EAU FRAICHE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ECLAT DE ROSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EROS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EROS EAU DE PARFUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EROS FLAME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "EROS POUR FEMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "POUR HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERSENCE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERSUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VERTUS",
     "aromas": [
-      "NARCOS'IS",
-      "NARCOS'IS",
-      "SOLE PATCHOULI"
+      { "name": "NARCOS'IS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SOLE PATCHOULI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VICTORIA'S SECRET",
     "aromas": [
-      "BARE VANILLA",
-      "BOMBSHELL",
-      "BOMBSHELL",
-      "LOVE IS HEAVINLY",
-      "ROMANTIC",
-      "ROSE BERGAMOT",
-      "SCANDALOUS",
-      "SO SEXY",
-      "TEMPTATION",
-      "VERY SEXY",
-      "VERY SEXY OASIS"
+      { "name": "BARE VANILLA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BOMBSHELL", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LOVE IS HEAVINLY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROMANTIC", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ROSE BERGAMOT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SCANDALOUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "SO SEXY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TEMPTATION", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERY SEXY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VERY SEXY OASIS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VIKTOR AND ROLF",
     "aromas": [
-      "BONBON"
+      { "name": "BONBON", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "VILHEM PARFUMERIE",
     "aromas": [
-      "DEAR POLLY",
-      "MANGO SKIN",
-      "MANGO SKIN"
+      { "name": "DEAR POLLY", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANGO SKIN", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "XERJOFF",
     "aromas": [
-      "1861 BNAXOS",
-      "CASAMORATI GRAN BALLO",
-      "CASAMORATI MEFISTO"
+      { "name": "1861 BNAXOS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CASAMORATI GRAN BALLO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CASAMORATI MEFISTO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "YVES SAINT LAUREN",
     "aromas": [
-      "BLACK OPIUM",
-      "BLACK OPIUM",
-      "BLACK OPIUM",
-      "BLACK OPIUM OVER RED",
-      "CINEMA",
-      "ELLE",
-      "LA NUIT DE L'HOMME",
-      "LIBRE",
-      "LIBRE INTENSE",
-      "MANIFESTO",
-      "MON PARIS INTENSEMENT",
-      "TUXEDO"
+      { "name": "BLACK OPIUM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK OPIUM OVER RED", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "CINEMA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "ELLE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LA NUIT DE L'HOMME", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LIBRE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LIBRE INTENSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MANIFESTO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MON PARIS INTENSEMENT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "TUXEDO", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ZADIG & VOLTAIRE",
     "aromas": [
-      "THIS IS HER",
-      "THIS IS HIM"
+      { "name": "THIS IS HER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THIS IS HIM", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ZARA",
     "aromas": [
-      "EXOTIC MIMOSA",
-      "HIBISCUS"
+      { "name": "EXOTIC MIMOSA", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "HIBISCUS", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ZARKOPERFUME",
     "aromas": [
-      "MOLECULE 08",
-      "MOLECULE 08",
-      "MOLECULE 090.09",
-      "MOLECULE 090.09",
-      "MOLéCULE 234.38",
-      "PURPLE MOLECULE 070.07",
-      "QUANTUM MOLECULE",
-      "THE MUSE"
+      { "name": "MOLECULE 08", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLECULE 090.09", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "MOLéCULE 234.38", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "PURPLE MOLECULE 070.07", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "QUANTUM MOLECULE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "THE MUSE", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "ZIELINSKI & ROZEN",
     "aromas": [
-      "717",
-      "BLACK PEPPER & AMBER, NEROLI",
-      "LEMONGRASS & VETIVER AMBER",
-      "VANILLA BLEND",
-      "VETIVER & LEMON, BERGAMOT",
-      "VETIVER & LEMON, BERGAMOT"
+      { "name": "717", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "BLACK PEPPER & AMBER, NEROLI", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "LEMONGRASS & VETIVER AMBER", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VANILLA BLEND", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} },
+      { "name": "VETIVER & LEMON, BERGAMOT", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   },
   {
     "name": "MAISON CRIVELLI",
     "aromas": [
-      "OUD MARACUJÁ"
+      { "name": "OUD MARACUJÁ", "description": "placeholder", "aroma_group": "placeholder", "prices": {"30ml": 1800} }
     ]
   }
 ]

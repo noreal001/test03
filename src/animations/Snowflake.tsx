@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const Snowflake: React.FC = () => {
+const Snowflake = () => {
   return (
     <Box
       sx={{
