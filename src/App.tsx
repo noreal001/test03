@@ -1,29 +1,51 @@
-import React, { useState, useEffect, useContext, ChangeEvent } from 'react';
-import { Box, List, ListItemButton, ListItemText, Typography, Paper, IconButton, TextField, InputAdornment, Avatar, useMediaQuery, useTheme, Button, Switch, ListItem, ListItemAvatar, Card, CardMedia, CardContent, Slider } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-import PersonIcon from '@mui/icons-material/Person';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
+import React, { useState, useEffect, useContext } from 'react';
+import { 
+  Box, 
+  List, 
+  ListItemButton, 
+  ListItemText, 
+  Typography, 
+  Paper, 
+  IconButton, 
+  TextField, 
+  InputAdornment, 
+  Avatar, 
+  useMediaQuery, 
+  useTheme, 
+  Button, 
+  Switch, 
+  ListItem, 
+  ListItemAvatar, 
+  Card, 
+  CardContent, 
+  Slider 
+} from '@mui/material';
+import { 
+  Close, 
+  MenuOpen, 
+  Menu, 
+  Search, 
+  LocalFlorist, 
+  Person, 
+  ShoppingCart 
+} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { ThemeContext } from './index'; // Import ThemeContext
+import { ThemeContext } from './index';
 
-// Mock info for all aromas (можно расширить под каждый аромат)
-const aromaInfo = {
-  price: '1 800 ₽ — 38 000 ₽',
-  quality: 'TOP',
-  volumes: ['30 гр', '50 гр', '500 гр', '1 кг'],
-  factory: 'Eps',
+// Типы и интерфейсы
+type Brand = { 
+  name: string; 
+  aromas: Aroma[] 
 };
 
-type Brand = { name: string; aromas: Aroma[] };
-type Aroma = { name: string; description: string; aroma_group: string; prices: { [key: string]: number }; image?: string; brand?: string };
+type Aroma = { 
+  name: string; 
+  description: string; 
+  aroma_group: string; 
+  prices: { [key: string]: number }; 
+  image?: string; 
+  brand?: string 
+};
 
 interface Order {
   id: string;
@@ -33,78 +55,86 @@ interface Order {
   receiptAttached: boolean;
   history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[];
   awaitingManagerReply: boolean;
-  address?: string; // New: Add address to Order type
-  phone?: string;   // New: Add phone to Order type
+  address?: string;
+  phone?: string;
 }
 
+interface User {
+  name: string;
+  balance: string;
+  avatar: string;
+  orders: Order[];
+  address: string;
+  phone: string;
+}
+
+// Константы
+const AROMA_INFO = {
+  price: '1 800 ₽ — 38 000 ₽',
+  quality: 'TOP',
+  factory: 'Eps',
+};
+
+const EMOJIS = ['✨', '🎉', '🚀', '💫', '💯', '✅'];
+
 const App = () => {
+  // Хуки и контекст
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   const themeContext = useContext(ThemeContext);
   if (!themeContext) {
     throw new Error('App must be used within a ThemeProvider');
   }
   const { themeMode, toggleTheme } = themeContext;
 
+  // Состояния
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [brandsMenuOpen, setBrandsMenuOpen] = useState(true);
   const [search, setSearch] = useState('');
-  // Отладочный лог для brandsMenuOpen
-  useEffect(() => {
-    console.log("Текущее состояние brandsMenuOpen (useEffect):", brandsMenuOpen);
-  }, [brandsMenuOpen]);
-  // Сохраняем выбранный объём для каждого аромата (по имени)
   const [selectedVolumes, setSelectedVolumes] = useState<{ [aroma: string]: number }>({});
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const handleVolumeSlider = (aroma: string, _: any, value: number) => {
-    setSelectedVolumes((prev) => ({ ...prev, [aroma]: value }));
-  };
-
   const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string }[]>([]);
-  const [aromaView] = useState<'cards' | 'list'>('cards'); 
   const [profileTab, setProfileTab] = useState<'data' | 'orders'>('data');
-  const [checkoutStep, setCheckoutStep] = useState<null | 'form' | 'payment' | 'orderDetail'> (null); // Changed to step-based
-  const [currentOrder, setCurrentOrder] = useState<number | null>(null); // New state for selected order detail
-  const [orderComment, setOrderComment] = useState<string>(''); // New state for order comment
-  const [commentFile, setCommentFile] = useState<File | null>(null); // New state for comment file attachment
-  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null); // New state to track which comment is being edited
-  const [cartFlash, setCartFlash] = useState(false); // New state for cart flash animation
-  const [emojiParticles, setEmojiParticles] = useState<Array<{ id: number; emoji: string; x: number; y: number; opacity: number }>>([]);
-  const [isProfileFullScreen, setIsProfileFullScreen] = useState(false); // New state for full-screen profile
-  const [isCartFullScreen, setIsCartFullScreen] = useState(false); // New state for full-screen cart
-  const [selectedAromaFromCart, setSelectedAromaFromCart] = useState<string | null>(null); // New state to hold the aroma selected from cart
-  const [isAromaDetailDialogOpen, setIsAromaDetailDialogOpen] = useState(false); // New state for aroma detail dialog
-  const [selectedAromaDetail] = useState<{ aroma: string; brand: string; volume: string } | null>(null); // New state for selected aroma detail
+  const [checkoutStep, setCheckoutStep] = useState<null | 'form' | 'payment' | 'orderDetail'>(null);
+  const [currentOrder, setCurrentOrder] = useState<number | null>(null);
+  const [orderComment, setOrderComment] = useState<string>('');
+  const [commentFile, setCommentFile] = useState<File | null>(null);
+  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null);
+  const [cartFlash, setCartFlash] = useState(false);
+  const [emojiParticles, setEmojiParticles] = useState<
+    Array<{ id: number; emoji: string; x: number; y: number; opacity: number }>
+  >([]);
+  const [isProfileFullScreen, setIsProfileFullScreen] = useState(false);
+  const [isCartFullScreen, setIsCartFullScreen] = useState(false);
+  const [selectedAromaFromCart, setSelectedAromaFromCart] = useState<string | null>(null);
+  const [isAromaDetailDialogOpen, setIsAromaDetailDialogOpen] = useState(false);
 
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState<User>(() => {
     const savedName = localStorage.getItem('userName') || '';
     const savedPhone = localStorage.getItem('userPhone') || '';
     return {
       name: savedName,
       balance: '12 500 ₽',
       avatar: '',
-      orders: [] as Order[], // Use defined Order type
+      orders: [],
       address: '',
       phone: savedPhone,
     };
   });
 
-  /* const [suggestions, setSuggestions] = useState<({ type: 'brand'; name: string; index: number } | { type: 'aroma'; name: string; brand: string; aroma: Aroma })[]>([]); */
-  /* const searchInputRef = React.useRef<HTMLInputElement>(null); */ // Ref for TextField
-
+  // Эффекты
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        // Изменено: указываем полный URL с портом 3002
-        const response = await fetch('http://localhost:3002/brands.json');
+        const response = await fetch('/brands.json');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: Brand[] = await response.json();
         const sorted = data.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru'));
         setBrands(sorted);
-        console.log("Загруженные бренды в useEffect:", sorted); // Отладочный лог
       } catch (error) {
         console.error("Ошибка при загрузке брендов:", error);
       }
@@ -121,7 +151,7 @@ const App = () => {
       const lastRegistrationTime = localStorage.getItem('lastRegistrationTime');
       const lastSkipTime = localStorage.getItem('lastSkipTime');
 
-      const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const fiveMinutes = 5 * 60 * 1000;
       const now = new Date().getTime();
 
       const registered = userRegistered === 'true' && !!userName && !!userPhone;
@@ -131,16 +161,14 @@ const App = () => {
       if (registered) {
         setUser(prev => ({ ...prev, name: userName!, phone: userPhone! }));
       } else if (!skippedRecently && !registeredRecently) {
-        // User is not registered and has not recently skipped or registered
         navigate('/start');
       }
     };
 
-    // Initial check and setup interval
     checkRegistrationStatus();
-    const intervalId = setInterval(checkRegistrationStatus, 5 * 60 * 1000); // Check every 5 minutes
+    const intervalId = setInterval(checkRegistrationStatus, 5 * 60 * 1000);
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
+    return () => clearInterval(intervalId);
   }, [navigate]);
 
   useEffect(() => {
@@ -148,113 +176,105 @@ const App = () => {
       const element = document.getElementById(`aroma-${selectedAromaFromCart}`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setSelectedAromaFromCart(null); // Сбросить состояние после прокрутки
+        setSelectedAromaFromCart(null);
       }
     }
-  }, [selectedAromaFromCart, selectedIndex]); // Зависимости: когда меняется выбранный аромат или выбранный бренд
+  }, [selectedAromaFromCart, selectedIndex]);
 
+  // Обработчики событий
   const handleBrandClick = (index: number) => {
     setSelectedIndex(index);
-    setIsProfileFullScreen(false); // Закрываем профиль при выборе бренда
-    setSearch(''); // Очищаем строку поиска при выборе бренда
-    /* setSuggestions([]); */ // Очищаем предложения при выборе бренда
-    console.log("Выбран бренд с индексом:", index, "Объект бренда:", brands[index]); // Отладочный лог здесь
+    setIsProfileFullScreen(false);
+    setSearch('');
   };
 
   const handleToggleBrandsMenu = () => {
-    setBrandsMenuOpen((prev) => !prev);
-    console.log("brandsMenuOpen после переключения:", !brandsMenuOpen); // Отладочный лог
+    setBrandsMenuOpen(prev => !prev);
   };
 
-  const handleOpenAromaDetail = (aroma: string, brand: string, volume: string) => {
-    setIsAromaDetailDialogOpen(true);
+  const handleVolumeSlider = (aroma: string, _: any, value: number) => {
+    setSelectedVolumes(prev => ({ ...prev, [aroma]: value }));
   };
 
-  const handleCloseAromaDetailDialog = () => {
-    setIsAromaDetailDialogOpen(false);
-  };
+  const handleAddToCart = (aromaName: string, brandName: string, volume: number) => {
+    setCart(prev => [...prev, { 
+      aroma: aromaName, 
+      brand: brandName, 
+      volume: `${volume} гр` 
+    }]);
+    
+    setCartFlash(true);
+    setTimeout(() => setCartFlash(false), 300);
 
-  const handleAddToCart = (aromaName: string, brandName: string, volumeIndex: number) => {
-    setCart(prev => [...prev, { aroma: aromaName, brand: brandName, volume: aromaInfo.volumes[volumeIndex] }]);
-    setCartFlash(true); // Trigger flash animation
-    setTimeout(() => {
-      setCartFlash(false); // Reset flash after a short delay
-    }, 300);
-
-    // Trigger emoji explosion
-    const emojis = ['✨', '🎉', '🚀', '💫', '💯', '✅'];
-    const newParticle = { // Create only one particle
+    // Эффект эмодзи
+    const newParticle = {
       id: Date.now(),
-      emoji: emojis[Math.floor(Math.random() * emojis.length)],
-      x: 0, // Start exactly at the center (0 offset from 50% left)
-      y: 0, // Start exactly at the center (0 offset from 50% top)
+      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      x: 0,
+      y: 0,
       opacity: 1,
     };
-    setEmojiParticles([newParticle]); // Set only this new particle
 
-    // Fade out and remove the particle after a delay
+    setEmojiParticles([newParticle]);
+
     setTimeout(() => {
-      setEmojiParticles(prev => prev.map(p => p.id === newParticle.id ? { ...p, opacity: 0 } : p));
+      setEmojiParticles(prev => 
+        prev.map(p => p.id === newParticle.id ? { ...p, opacity: 0 } : p)
+      );
       setTimeout(() => {
-        setEmojiParticles(prev => prev.filter(p => p.id !== newParticle.id));
-      }, 500); // Remove after fade out
-    }, 100); // Start fade out after 100ms
+        setEmojiParticles(prev => 
+          prev.filter(p => p.id !== newParticle.id)
+        );
+      }, 500);
+    }, 100);
 
-    // Play sound effect
-    const audioPath = '/voice/voice1.mp3';
-    const audio = new Audio(audioPath); // Make sure you have voice1.mp3 in your public/voice folder
-    audio.play()
-      .then(() => {
-      })
-      .catch(e => {
-        if (e.name === 'NotAllowedError') {
-          console.warn('Audio autoplay was prevented by the browser. User interaction might be required first.');
-        } else if (e.name === 'DOMException' && e.message.includes('The play() request was interrupted')) {
-          console.warn('Audio playback was interrupted. This can happen if the audio source changes rapidly.');
-        }
+    // Воспроизведение звука
+    const audio = new Audio('/voice/voice1.mp3');
+    audio.play().catch(e => {
+      console.warn('Audio playback failed:', e);
       });
   };
+
   const handleRemoveFromCart = (idx: number) => {
-    setCart(prev => prev.filter((_: any, i: number) => i !== idx)); // Explicitly typed _ as any and i as number
+    setCart(prev => prev.filter((_, i) => i !== idx));
   };
-
-  const handleAromaClickFromCart = (aromaName: string, brandName: string, volume: string) => {
-    // Logic to navigate to the aroma detail, or open a dialog
-    // For now, let's assume it opens the aroma detail dialog
-    // You might want to scroll to the aroma in the main view or open a specific dialog
-    console.log(`Clicked on aroma: ${aromaName} from brand: ${brandName}, volume: ${volume}`);
-    setSelectedAromaFromCart(aromaName);
-    // If you want to show aroma details in a modal, you would open that modal here
-    handleOpenAromaDetail(aromaName, brandName, volume);
-  };
-
-  /* const handlePlaceOrder = () => { setCheckoutStep('form'); }; */ // Simplified and kept
 
   const handleSendOrderDetails = () => {
-    // Here you would typically send address and phone to backend
-    // For now, move to payment step
     setCheckoutStep('payment');
   };
 
   const handlePaymentComplete = () => {
     const newOrderId = `ORD-${Date.now()}`;
-    const newOrder = { id: newOrderId, date: new Date().toLocaleDateString(), items: [...cart], comment: '', receiptAttached: false, history: [], awaitingManagerReply: false };
-    setUser(prevUser => ({...prevUser, orders: [...prevUser.orders, newOrder]})); // Update user orders
-    setCart([]); // Clear cart
+    const newOrder = { 
+      id: newOrderId, 
+      date: new Date().toLocaleDateString(), 
+      items: [...cart], 
+      comment: '', 
+      receiptAttached: false, 
+      history: [], 
+      awaitingManagerReply: false 
+    };
+    
+    setUser(prev => ({
+      ...prev, 
+      orders: [...prev.orders, newOrder]
+    }));
+    
+    setCart([]);
     setCheckoutStep('orderDetail'); 
-    setIsCartFullScreen(false); // Close full screen cart
-    setCurrentOrder(user.orders.length); // Select the newly created order (length is the index of the new item)
+    setIsCartFullScreen(false);
+    setCurrentOrder(user.orders.length);
   };
 
   const handleCloseCheckoutDialog = () => {
     setCheckoutStep(null);
-    setOrderComment(''); // Clear order comment input
-    setCommentFile(null); // Clear comment file on dialog close
-    setEditingCommentIndex(null); // Clear editing index
-    setIsCartFullScreen(false); // Close full screen cart
+    setOrderComment('');
+    setCommentFile(null);
+    setEditingCommentIndex(null);
+    setIsCartFullScreen(false);
   };
 
-  const handleOrderCommentChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleOrderCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrderComment(e.target.value);
   };
 
@@ -264,110 +284,66 @@ const App = () => {
       return;
     }
 
-    setUser(prevUser => {
-      const updatedOrders = [...prevUser.orders];
+    setUser(prev => {
+      const updatedOrders = [...prev.orders];
       const currentOrderData = { ...updatedOrders[currentOrder!] };
 
       if (editingCommentIndex !== null) {
-        // User is editing an existing comment
         currentOrderData.history[editingCommentIndex] = {
           ...currentOrderData.history[editingCommentIndex],
           text: orderComment,
-          file: commentFile ? { name: commentFile.name, url: URL.createObjectURL(commentFile) } : undefined,
+          file: commentFile ? { 
+            name: commentFile.name, 
+            url: URL.createObjectURL(commentFile) 
+          } : undefined,
         };
-        setEditingCommentIndex(null); // Clear editing index after saving
+        setEditingCommentIndex(null);
       } else {
-        // User is sending a new comment
-        const newComment: { text: string; sender: 'user' | 'manager'; file?: { name: string; url: string } } = { text: orderComment, sender: 'user' };
-        if (commentFile) {
-          newComment.file = { name: commentFile.name, url: URL.createObjectURL(commentFile) };
-        }
+        const newComment = { 
+          text: orderComment, 
+          sender: 'user' as const,
+          ...(commentFile && {
+            file: { 
+              name: commentFile.name, 
+              url: URL.createObjectURL(commentFile) 
+            }
+          })
+        };
+        
         currentOrderData.history.push(newComment);
         currentOrderData.awaitingManagerReply = true;
-        setOrderComment(''); // Clear input after sending a *new* comment
-        setCommentFile(null); // Clear attached file after sending a *new* comment
+        setOrderComment('');
+        setCommentFile(null);
 
-        // Simulate manager reply after a short delay
         setTimeout(() => {
-          setUser(latestUser => {
-            const latestOrders = [...latestUser.orders];
+          setUser(latest => {
+            const latestOrders = [...latest.orders];
             const latestCurrentOrderData = { ...latestOrders[currentOrder!] };
-            // Prevent duplicate manager replies
-            const lastMessage = latestCurrentOrderData.history[latestCurrentOrderData.history.length - 1];
-            if (!lastMessage || lastMessage.sender !== 'manager') {
-              latestCurrentOrderData.history.push({ text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', sender: 'manager' });
+            
+            if (latestCurrentOrderData.history[latestCurrentOrderData.history.length - 1]?.sender !== 'manager') {
+              latestCurrentOrderData.history.push({ 
+                text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', 
+                sender: 'manager' 
+              });
             }
+            
             latestCurrentOrderData.awaitingManagerReply = false;
             latestOrders[currentOrder!] = latestCurrentOrderData;
-            return { ...latestUser, orders: latestOrders };
+            return { ...latest, orders: latestOrders };
           });
         }, 3000);
       }
 
       updatedOrders[currentOrder!] = currentOrderData;
-      return { ...prevUser, orders: updatedOrders };
+      return { ...prev, orders: updatedOrders };
     });
   };
 
   const handleCommentFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setCommentFile(e.target.files[0]);
     }
   };
-
-  /* const handleEditOrder = () => {
-    if (currentOrder !== null) {
-      alert(`Функция редактирования заказа №${user.orders[currentOrder].id} пока не реализована.`);
-      // Implement actual order editing logic here later
-    }
-  }; */
-
-  /* const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearch(query);
-
-    if (query.length > 1) { // Trigger suggestions after 1 character
-      const lowerCaseQuery = query.toLowerCase();
-      const newSuggestions: ({ type: 'brand'; name: string; index: number } | { type: 'aroma'; name: string; brand: string; aroma: Aroma })[] = [];
-
-      // Filter brands
-      brands.forEach((brand, index) => {
-        if (brand.name.toLowerCase().includes(lowerCaseQuery)) {
-          newSuggestions.push({ type: 'brand', name: brand.name, index: index });
-        }
-        // Filter aromas within brands
-        brand.aromas.forEach(aroma => {
-          if (aroma.name.toLowerCase().includes(lowerCaseQuery)) {
-            newSuggestions.push({ type: 'aroma', name: aroma.name, brand: brand.name, aroma: aroma });
-          }
-        });
-      });
-      setSuggestions(newSuggestions.slice(0, 10)); // Limit to 10 suggestions
-    } else {
-      setSuggestions([]);
-    }
-  }; */
-
-  /* const handleSuggestionClick = (suggestion: { type: 'brand' | 'aroma'; name: string; index?: number; brand?: string; aroma?: Aroma }) => {
-    setSearch(suggestion.name); // Set search input to selected suggestion
-    setSuggestions([]); // Clear suggestions
-
-    if (suggestion.type === 'brand' && typeof suggestion.index === 'number') {
-      handleBrandClick(suggestion.index);
-    } else if (suggestion.type === 'aroma' && suggestion.aroma) {
-      // For aroma, you might want to navigate to a detail page or highlight it
-      console.log(`Clicked on aroma suggestion: ${suggestion.name} from brand: ${suggestion.brand}`);
-      // Example: If you have a way to navigate directly to aroma detail
-      // navigate(`/aroma/${suggestion.brand}/${suggestion.name}`);
-      // Or open a dialog with aroma details
-      handleOpenAromaDetail(suggestion.aroma.name, suggestion.aroma.brand || '', Object.keys(suggestion.aroma.prices)[0] || ''); // Pass first volume as example
-    }
-  }; */
-
-  /* const handleAddMessageToOrder = (orderIndex: number | null, comment: string, file: File | null) => {
-    console.log(`Adding message to order ${orderIndex}: ${comment}`);
-    handleSendComment(); // Call the unified send/save function
-  }; */
 
   const handleCancelEditComment = () => {
     setEditingCommentIndex(null);
@@ -375,54 +351,83 @@ const App = () => {
     setCommentFile(null);
   };
 
-  /* const handleSaveEditedComment = () => { handleSendComment(); }; */ // Simplified and kept
-
-  return (
-    <Box sx={{ minHeight: '100vh', width: '100vw', bgcolor: 'background.paper', color: 'text.primary', display: 'flex', flexDirection: 'column', transition: 'background-color 0.3s ease-in-out' }}>
-      {/* Main content area (left menu, central content, right panels) */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: isMobile ? 'column' : 'row', p: 0, pt: 0, overflowX: 'hidden', alignItems: 'stretch' }}>
-
-        {/* Меню брендов слева */}
-        {brandsMenuOpen && (
-          <Paper elevation={0} sx={{ width: 340, minWidth: 340, maxWidth: 340, bgcolor: 'background.paper', p: 2, pr: 2, pb: 0, mr: 0, mb: isMobile ? 2 : 0, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', height: '100%', justifyContent: 'flex-start', borderTopRightRadius: 0, borderBottomRightRadius: 0, boxShadow: 'none', boxSizing: 'border-box', bottom: 0, borderRight: '1px solid rgba(0, 0, 0, 0.12)', zIndex: 2 }}>
-            {/* Кнопка сворачивания меню */}
+  // Рендер компонентов
+  const renderBrandsMenu = () => (
+    <Paper elevation={0} sx={{
+      width: 340,
+      minWidth: 340,
+      maxWidth: 340,
+      bgcolor: 'background.paper',
+      p: 2,
+      pr: 2,
+      pb: 0,
+      mr: 0,
+      mb: isMobile ? 2 : 0,
+      flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      position: 'relative',
+      height: '100%',
+      justifyContent: 'flex-start',
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
+      boxShadow: 'none',
+      boxSizing: 'border-box',
+      bottom: 0,
+      borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+      zIndex: 2
+    }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', mb: 1 }}>
               <IconButton onClick={handleToggleBrandsMenu} sx={{ mr: 1 }}>
-                <MenuOpenIcon />
+          <MenuOpen />
               </IconButton>
-              <IconButton onClick={() => setSelectedIndex(null)} sx={{ mb: 1, ml: 1 }}> {/* Изменено: при нажатии на поиск скрываем выбранный бренд */}
-                <SearchIcon />
+        <IconButton onClick={() => setSelectedIndex(null)} sx={{ mb: 1, ml: 1 }}>
+          <Search />
               </IconButton>
-              {/* Consolidated PersonIcon now directly opens profile */}
               <IconButton
                 sx={{ color: 'text.primary', mb: 1, ml: 1 }}
                 onClick={() => {
-                  setIsProfileFullScreen(true); // Always open profile full screen
-                  setIsCartFullScreen(false); // Ensure cart full screen is off
+            setIsProfileFullScreen(true);
+            setIsCartFullScreen(false);
                 }}
               >
-                <PersonIcon sx={{ fontSize: 28 }} />
+          <Person sx={{ fontSize: 28 }} />
               </IconButton>
-              {/* Cart Button - Relocated */}
               <IconButton
                 sx={{
                   color: 'text.primary',
                   position: 'relative',
-                  bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent', // Flash effect
+            bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent',
                   transition: 'background-color 0.3s ease-in-out',
                   ml: 2
                 }}
                 onClick={() => {
-                  setIsCartFullScreen(!isCartFullScreen); // Toggle full screen mode for cart
-                  setIsProfileFullScreen(false); // Ensure profile full screen is off
+            setIsCartFullScreen(!isCartFullScreen);
+            setIsProfileFullScreen(false);
                 }}
               >
-                <ShoppingCartIcon sx={{ fontSize: 28 }} />
+          <ShoppingCart sx={{ fontSize: 28 }} />
                 {cart.length > 0 && (
-                  <Box sx={{ position: 'absolute', top: -5, right: -5, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
+            <Box sx={{ 
+              position: 'absolute', 
+              top: -5, 
+              right: -5, 
+              bgcolor: 'error.main', 
+              color: '#fff', 
+              borderRadius: '50%', 
+              width: 18, 
+              height: 18, 
+              fontSize: 12, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontWeight: 700 
+            }}>
+              {cart.length}
+            </Box>
                 )}
               </IconButton>
-              {/* Theme Toggle Switch - Relocated */}
               <Switch
                 checked={themeMode === 'dark'}
                 onChange={toggleTheme}
@@ -431,16 +436,19 @@ const App = () => {
                 sx={{ ml: 1 }}
               />
             </Box>
-            {/* Заголовок */}
-            <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', textAlign: 'center', width: '100%', fontSize: 17, letterSpacing: 1, color: 'text.primary' /*, fontFamily: 'Pensile Round, sans-serif'*/ }}>
+      <Typography variant="h6" sx={{ 
+        mb: 1, 
+        fontWeight: 'bold', 
+        textAlign: 'center', 
+        width: '100%', 
+        fontSize: 17, 
+        letterSpacing: 1, 
+        color: 'text.primary'
+      }}>
               БРЕНДЫ
             </Typography>
-            {/* Список брендов */}
             <List sx={{ width: '100%', height: '100%', overflowY: 'auto', pb: 8 }}>
-              {(brands.filter(brand => {
-                if (!brand || typeof brand.name === 'undefined' || brand.name === null) return false; // Дополнительная проверка
-                return brand.name.toLowerCase().includes(search.toLowerCase());
-              }))
+        {brands.filter(brand => brand?.name?.toLowerCase().includes(search.toLowerCase()))
                 .map((brand, index) => (
                   <ListItemButton
                     key={brand.name}
@@ -453,18 +461,18 @@ const App = () => {
                 ))}
             </List>
           </Paper>
-        )}
+  );
 
-        {!brandsMenuOpen && (
+  const renderCollapsedMenu = () => (
           <Box sx={{
             width: 66,
             minWidth: 66,
             maxWidth: 66,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+      alignItems: 'center',
             justifyContent: 'flex-start',
-            height: '100vh', // Changed to 100vh for full screen height
+      height: '100vh',
             bgcolor: 'background.paper',
             opacity: 0.96,
             pt: 2,
@@ -473,270 +481,567 @@ const App = () => {
             zIndex: 2
           }}>
             <IconButton onClick={handleToggleBrandsMenu} sx={{ mb: 1, ml: 1 }}>
-              <MenuIcon />
+        <Menu />
             </IconButton>
-            <IconButton onClick={() => setSelectedIndex(null)} sx={{ mb: 1, ml: 1 }}> {/* Изменено: при нажатии на поиск скрываем выбранный бренд */}
-              <SearchIcon />
+      <IconButton onClick={() => setSelectedIndex(null)} sx={{ mb: 1, ml: 1 }}>
+        <Search />
             </IconButton>
-            {/* Consolidated PersonIcon now directly opens profile */}
             <IconButton
               sx={{ color: 'text.primary', mb: 1, ml: 1 }}
               onClick={() => {
-                setIsProfileFullScreen(true); // Always open profile full screen
-                setIsCartFullScreen(false); // Ensure cart full screen is off
+          setIsProfileFullScreen(true);
+          setIsCartFullScreen(false);
               }}
             >
-              <PersonIcon sx={{ fontSize: 28 }} />
+        <Person sx={{ fontSize: 28 }} />
             </IconButton>
-            {/* Cart Button - Relocated */}
             <IconButton
               sx={{
                 color: 'text.primary',
                 position: 'relative',
-                bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent', // Flash effect
+          bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent',
                 transition: 'background-color 0.3s ease-in-out',
-                ml: 'auto', mr: 'auto', // Center the cart button
+          ml: 'auto',
+          mr: 'auto',
                 mb: 1
               }}
               onClick={() => {
-                setIsCartFullScreen(!isCartFullScreen); // Toggle full screen mode for cart
-                setIsProfileFullScreen(false); // Ensure profile full screen is off
+          setIsCartFullScreen(!isCartFullScreen);
+          setIsProfileFullScreen(false);
               }}
             >
-              <ShoppingCartIcon sx={{ fontSize: 28 }} />
+        <ShoppingCart sx={{ fontSize: 28 }} />
               {cart.length > 0 && (
-                <Box sx={{ position: 'absolute', top: -5, right: -5, bgcolor: 'error.main', color: '#fff', borderRadius: '50%', width: 18, height: 18, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{cart.length}</Box>
+          <Box sx={{ 
+            position: 'absolute', 
+            top: -5, 
+            right: -5, 
+            bgcolor: 'error.main', 
+            color: '#fff', 
+            borderRadius: '50%', 
+            width: 18, 
+            height: 18, 
+            fontSize: 12, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontWeight: 700 
+          }}>
+            {cart.length}
+          </Box>
               )}
             </IconButton>
-            {/* Theme Toggle Switch - Relocated */}
             <Switch
               checked={themeMode === 'dark'}
               onChange={toggleTheme}
               color="default"
               inputProps={{ 'aria-label': 'theme switch' }}
-              sx={{ ml: 'auto', mr: 'auto', mb: 1 }} // Center the theme switch
+        sx={{ ml: 'auto', mr: 'auto', mb: 1 }}
             />
           </Box>
-        )}
+  );
 
-        {/* Центральная панель (ароматы/поиск) - теперь без полноэкранных профиля/корзины */}
-        {!isProfileFullScreen && !isCartFullScreen && (
-        <Box 
-          sx={{
+  const renderMainContent = () => (
+    <Box sx={{
             flex: 1, 
-              minWidth: 0, // Ensure it can shrink
+      minWidth: 0,
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center', 
             justifyContent: 'flex-start', 
             height: '100%', 
-            position: 'relative', // Needed for absolute positioning of emojis
+      position: 'relative',
             top: 0, 
-            bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper', // Flash effect on central panel
+      bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.1)' : 'background.paper',
             transition: 'background-color 0.3s ease-in-out',
             zIndex: 1, 
             px: 0, 
             borderTopLeftRadius: 0, 
             borderBottomLeftRadius: 0, 
             boxSizing: 'border-box'
-          }}
-        >
-          {/* Emoji explosion particles */}
+    }}>
           {emojiParticles.map(particle => (
-            <Box
+        <Box
               key={particle.id}
-              sx={{
+          sx={{
                 position: 'absolute',
-                fontSize: '24px',
+            fontSize: '24px',
                 opacity: particle.opacity,
-                transform: `translate(${particle.x}px, ${particle.y}px)`,
-                zIndex: 1000,
-                pointerEvents: 'none',
+            transform: `translate(${particle.x}px, ${particle.y}px)`,
+            zIndex: 1000,
+            pointerEvents: 'none',
               }}
             >
               {particle.emoji}
-            </Box>
+        </Box>
           ))}
-            {selectedIndex === null ? (
-              // Show search input when no brand is selected
-              <Box sx={{ width: '95%', mt: 2, mb: 2, /* bgcolor: 'background.paper', borderRadius: 1, p: 2, boxShadow: 1 */ maxWidth: 600, mx: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <TextField
-                  label="Поиск ароматов и брендов"
-                  variant="outlined"
-                  fullWidth
-                  value={search}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ mb: 1 }}
-                />
 
-                {/* Suggested Search Results */}
-                {search && ( // Show suggestions only when search input is not empty
-                  <Paper elevation={0} sx={{ width: '100%', maxWidth: 600, overflowY: 'auto', borderTop: '1px solid rgba(0, 0, 0, 0.12)', mt: 1 }}>
-                    <List>
-                      {/* suggestions.map((s, index) => (
-                        <ListItemButton key={index} onClick={() => handleSuggestionClick(s)}>
-                          <ListItemText primary={s.name} secondary={s.type === 'aroma' ? `(${s.brand})` : null} />
-                        </ListItemButton>
-                      )) */} 
-                    </List>
-                  </Paper>
-                )}
-              </Box>
-            ) : (
-              // Show aromas when a brand is selected
-              <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', overflowY: 'auto', pb: 2, pt: 0, px: 2 }}>
-                <Typography variant="h5" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
-                  Ароматы {brands[selectedIndex]?.name}
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: aromaView === 'cards' ? 'row' : 'column', flexWrap: 'wrap', gap: 2, justifyContent: aromaView === 'cards' ? 'center' : 'flex-start', width: '100%' }}>
-                  {(brands[selectedIndex!]?.aromas || [])
-                    .filter((aroma: Aroma) => {
-                      if (!aroma || typeof aroma.name === 'undefined' || aroma.name === null) return false;
-                      return aroma.name.toLowerCase().includes(search.toLowerCase());
-                    })
-                    .map((aroma: Aroma, aromaIdx: number) => (
-                      <Card key={aroma.name} sx={{
-                        width: aromaView === 'cards' ? 200 : '100%',
-                        mb: aromaView === 'list' ? 2 : 0,
-                        boxShadow: 'none',
-                        border: '1px solid rgba(0, 0, 0, 0.12)',
-                        bgcolor: 'background.paper',
-                        color: 'text.primary',
-                        flexShrink: 0,
-                        display: 'flex',
-                        flexDirection: aromaView === 'list' ? 'row' : 'column',
-                        alignItems: aromaView === 'list' ? 'flex-start' : 'center',
-                        gap: aromaView === 'list' ? 2 : 0,
-                        p: aromaView === 'list' ? 2 : 0,
-                        position: 'relative',
-                      }} id={`aroma-${aroma.name}`}>
-                        {aromaView === 'cards' && (
-                          <CardMedia
-                            component="img"
-                            height="140"
-                            image={aroma.image || 'https://via.placeholder.com/150'}
-                            alt={aroma.name}
-                            sx={{ width: '100%', objectFit: 'cover', borderRadius: 1, mb: 1 }}
-                          />
-                        )}
-                        <CardContent sx={{ p: aromaView === 'list' ? 0 : 2, textAlign: aromaView === 'cards' ? 'center' : 'left', flexGrow: 1, width: '100%' }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>{aroma.name}</Typography>
-                          {aromaView === 'list' && (
-                            <Typography variant="body2" color="text.secondary">{aroma.description}</Typography>
-                          )}
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{brands[selectedIndex!]?.name}</Typography>
-                          <Box sx={{ display: 'flex', justifyContent: aromaView === 'cards' ? 'center' : 'flex-start', alignItems: 'center', gap: 1, mb: 1 }}>
-                            <LocalFloristIcon sx={{ fontSize: 16, color: 'secondary.main' }} />
-                            <Typography variant="body2">{aroma.aroma_group}</Typography>
-                          </Box>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                            {Object.keys(aroma.prices).map((volume) => (
-                              `${volume}ml: ${aroma.prices[volume]} ₽`
-                            )).join(' / ')}
-                          </Typography>
-                          {/* Volume Slider */}
-                          <Box sx={{ width: '100%', px: 2, mt: 2 }}>
-                            <Slider
-                              aria-label="Объем"
-                              defaultValue={0}
-                              step={1}
-                              marks
-                              min={0}
-                              max={Object.keys(aroma.prices).length - 1}
-                              value={selectedVolumes[aroma.name] || 0}
-                              onChange={(_: any, value: number) => handleVolumeSlider(aroma.name, _, value)}
-                              valueLabelFormat={(value: number) => Object.keys(aroma.prices)[value]}
-                              valueLabelDisplay="auto"
-                              sx={{
-                                color: 'primary.main',
-                                '& .MuiSlider-thumb': {
-                                  width: 16,
-                                  height: 16,
-                                },
-                                '& .MuiSlider-track': {
-                                  height: 4,
-                                },
-                                '& .MuiSlider-rail': {
-                                  height: 4,
-                                },
-                              }}
-                            />
-                            <Typography variant="caption" sx={{ textAlign: 'center', width: '100%', display: 'block' }}>
-                              Объем: {Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]}ml
-                            </Typography>
-                          </Box>
-
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{ mt: 2 }}
-                            onClick={() => handleAddToCart(aroma.name, brands[selectedIndex!]?.name || '', Object.keys(aroma.prices).indexOf(Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]))}
-                          >
-                            Добавить в корзину
-                          </Button>
-
-                        </CardContent>
-                        <IconButton
-                          sx={{
-                            position: 'absolute',
-                            bottom: aromaView === 'cards' ? 10 : '50%',
-                            right: aromaView === 'cards' ? 10 : 10,
-                            transform: aromaView === 'list' ? 'translateY(-50%)' : 'none',
-                            bgcolor: 'primary.main',
-                            color: 'primary.contrastText',
-                            '&:hover': { bgcolor: 'primary.dark' },
-                          }}
-                          onClick={() => handleAddToCart(aroma.name, brands[selectedIndex!]?.name || '', Object.keys(aroma.prices).indexOf(Object.keys(aroma.prices)[selectedVolumes[aroma.name] || 0]))}
-                        >
-                          <ShoppingCartIcon />
-                        </IconButton>
-                      </Card>
-                    ))}
+      {selectedIndex === null ? (
+        <Box sx={{ 
+          width: '95%', 
+                          mt: 2,
+          mb: 2,
+          maxWidth: 600, 
+          mx: 'auto', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center' 
+        }}>
+                      <TextField
+            label="Поиск ароматов и брендов"
+            variant="outlined"
+                        fullWidth
+            value={search}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ mb: 1 }}
+          />
+        </Box>
+      ) : (
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          width: '100%', 
+          overflowY: 'auto', 
+          pb: 2, 
+          pt: 0, 
+          px: 2 
+        }}>
+          <Typography variant="h5" sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}>
+            Ароматы {brands[selectedIndex]?.name}
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            flexWrap: 'wrap', 
+            gap: 2, 
+            justifyContent: 'center', 
+            width: '100%' 
+          }}>
+            {(brands[selectedIndex]?.aromas || [])
+              .filter((aroma: Aroma) => 
+                aroma?.name?.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((aroma: Aroma, aromaIdx: number) => (
+                <Card key={aroma.name} sx={{
+                  width: 200,
+                  boxShadow: 'none',
+                  border: '1px solid rgba(0, 0, 0, 0.12)',
+                  bgcolor: 'background.paper',
+                  color: 'text.primary',
+                  flexShrink: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }} id={`aroma-${aroma.name}`}>
+                  <CardContent sx={{ 
+                    p: 2, 
+                    textAlign: 'center', 
+                    flexGrow: 1, 
+                    width: '100%' 
+                  }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      {aroma.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      {brands[selectedIndex]?.name}
+                    </Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                      gap: 1, 
+                      mb: 1 
+                    }}>
+                      <LocalFlorist sx={{ fontSize: 16, color: 'secondary.main' }} />
+                      <Typography variant="body2">{aroma.aroma_group}</Typography>
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                      {`${selectedVolumes[aroma.name] || 30} гр: ${aroma.prices[selectedVolumes[aroma.name] || 30]} ₽`}
+                    </Typography>
+                    <Box sx={{ width: '100%', px: 2, mt: 2 }}>
+                      <Slider
+                        aria-label="Объем"
+                        defaultValue={30}
+                        step={5}
+                        marks
+                        min={30}
+                        max={1000}
+                        value={selectedVolumes[aroma.name] || 30}
+                        onChange={(_: any, value: number | number[]) => {
+                          handleVolumeSlider(aroma.name, _, Array.isArray(value) ? value[0] : value);
+                        }}
+                        valueLabelFormat={(value: number) => 
+                          `${value} гр`
+                        }
+                        valueLabelDisplay="auto"
+                        sx={{
+                          color: 'primary.main',
+                          '& .MuiSlider-thumb': { width: 16, height: 16 },
+                          '& .MuiSlider-track': { height: 4 },
+                          '& .MuiSlider-rail': { height: 4 },
+                        }}
+                      />
+                      <Typography variant="caption" sx={{ 
+                        textAlign: 'center', 
+                        width: '100%', 
+                        display: 'block' 
+                      }}>
+                        Объем: {selectedVolumes[aroma.name] || 30}гр
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+                          ))}
+          </Box>
+                    </Box>
+                  )}
                 </Box>
+  );
+
+  const renderProfileFullScreen = () => (
+    <Paper
+      elevation={0}
+      sx={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: brandsMenuOpen ? 340 : 66,
+        bgcolor: 'background.default',
+        color: 'text.primary',
+        p: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)',
+        borderRadius: 0,
+        boxShadow: 'none',
+        zIndex: 3,
+        overflowX: 'hidden'
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
+        <IconButton onClick={() => setIsProfileFullScreen(false)} sx={{ color: 'text.secondary' }}>
+          <Close />
+                </IconButton>
+              </Box>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+        <Box sx={{ 
+          width: 120, 
+          borderRight: '1px solid #333', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          py: 2 
+        }}>
+          <List disablePadding>
+            <ListItemButton 
+              selected={profileTab === 'data'} 
+              onClick={() => setProfileTab('data')} 
+              sx={{ px: 2, py: 1 }}
+            >
+              Данные
+                    </ListItemButton>
+            <ListItemButton 
+              selected={profileTab === 'orders'} 
+              onClick={() => setProfileTab('orders')} 
+              sx={{ px: 2, py: 1 }}
+            >
+              Заказы
+                      </ListItemButton>
+                  </List>
+                </Box>
+                </Box>
+                        </Paper>
+                      );
+
+  const renderCartFullScreen = () => (
+    <Paper
+      elevation={0}
+      sx={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: brandsMenuOpen ? 340 : 66,
+        bgcolor: 'background.default',
+        color: 'text.primary',
+        p: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)',
+        borderRadius: 0,
+        boxShadow: 'none',
+        zIndex: 3,
+        overflowX: 'hidden'
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
+        <IconButton onClick={() => setIsCartFullScreen(false)} sx={{ color: 'text.secondary' }}>
+          <Close />
+        </IconButton>
+                  </Box>
+      
+      {checkoutStep === null && (
+                          <Box>
+          <Typography variant="h5" sx={{ mb: 2 }}>Ваша корзина</Typography>
+          {cart.length === 0 ? (
+            <Typography>Ваша корзина пуста.</Typography>
+          ) : (
+            <List>
+              {cart.map((item, index) => (
+                <ListItem 
+                  key={index} 
+                  secondaryAction={
+                    <IconButton 
+                      edge="end" 
+                      aria-label="delete" 
+                      onClick={() => handleRemoveFromCart(index)}
+                    >
+                      <Close />
+                            </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar>
+                      <LocalFlorist />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={`${item.brand} - ${item.aroma} (${item.volume})`}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                </ListItem>
+              ))}
+                  </List>
+                )}
+          {cart.length > 0 && (
+            <Button 
+              variant="contained" 
+              sx={{ mt: 2 }} 
+              onClick={() => setCheckoutStep('form')}
+            >
+              Перейти к оформлению
+            </Button>
+          )}
+        </Box>
+      )}
+
+            {checkoutStep === 'form' && (
+        <Box>
+          <Typography variant="h5" sx={{ mb: 2 }}>Оформление заказа</Typography>
+                <TextField
+                  label="Адрес доставки"
+                  fullWidth
+            sx={{ mb: 2 }}
+                  value={user.address}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+              setUser(prev => ({ ...prev, address: e.target.value }))
+            }
+                />
+                <TextField
+            label="Контактный телефон"
+                  fullWidth
+            sx={{ mb: 2 }}
+                  value={user.phone}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+              setUser(prev => ({ ...prev, phone: e.target.value }))
+            }
+                />
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => setCheckoutStep(null)}
+            >
+              Назад в корзину
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={handleSendOrderDetails}
+            >
+              Далее
+            </Button>
+          </Box>
+        </Box>
+            )}
+      
+            {checkoutStep === 'payment' && (
+              <Box>
+          <Typography variant="h5" sx={{ mb: 2 }}>Оплата</Typography>
+          <Typography sx={{ mb: 2 }}>Здесь будет логика оплаты...</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => setCheckoutStep('form')}
+            >
+              Назад к адресу
+            </Button>
+            <Button 
+              variant="contained" 
+              onClick={handlePaymentComplete}
+            >
+              Оплатить
+            </Button>
+          </Box>
               </Box>
             )}
+      
+            {checkoutStep === 'orderDetail' && currentOrder !== null && (
+              <Box>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Детали заказа №{user.orders[currentOrder].id}
+          </Typography>
+          <Typography>Дата: {user.orders[currentOrder].date}</Typography>
+          <Typography>Адрес: {user.orders[currentOrder].address || 'Не указан'}</Typography>
+          <Typography>Телефон: {user.orders[currentOrder].phone || 'Не указан'}</Typography>
+          
+          <Typography sx={{ mt: 2, fontWeight: 'bold' }}>Товары:</Typography>
+                <List>
+            {user.orders[currentOrder].items.map((item, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={`${item.brand} - ${item.aroma} (${item.volume})`} />
+              </ListItem>
+                  ))}
+                </List>
+          
+          <Typography sx={{ mt: 2, fontWeight: 'bold' }}>История сообщений:</Typography>
+          <Box sx={{ 
+            border: '1px solid #ccc', 
+            borderRadius: 1, 
+            p: 2, 
+            mt: 1, 
+            maxHeight: 200, 
+            overflowY: 'auto' 
+          }}>
+                  {user.orders[currentOrder].history.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                Нет сообщений.
+              </Typography>
+                  ) : (
+              user.orders[currentOrder].history.map((msg, index) => (
+                <Box 
+                  key={index} 
+                  sx={{ 
+                    mb: 1, 
+                    p: 1, 
+                    borderRadius: 1, 
+                    bgcolor: msg.sender === 'user' ? 'primary.light' : 'grey.200', 
+                    ml: msg.sender === 'user' ? 'auto' : 0, 
+                    mr: msg.sender === 'user' ? 0 : 'auto', 
+                    maxWidth: '80%' 
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {msg.sender === 'user' ? 'Вы:' : 'Менеджер:'}
+                  </Typography>
+                  <Typography variant="body2">{msg.text}</Typography>
+                          {msg.file && (
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      Файл: <Box component="a" href={msg.file.url} target="_blank" rel="noopener noreferrer">{msg.file.name}</Box>
+                            </Typography>
+                          )}
+                        {msg.sender === 'user' && (
+                    <Button 
+                      size="small" 
+                      onClick={() => { 
+                        setEditingCommentIndex(index); 
+                            setOrderComment(msg.text);
+                        setCommentFile(msg.file ? new File([], msg.file.name) : null); 
+                      }}
+                    >
+                      Редактировать
+                    </Button>
+                        )}
+                      </Box>
+                    ))
+                  )}
+                </Box>
+          
+                <TextField
+                  label="Комментарий к заказу"
+                  fullWidth
+                  multiline
+                  rows={3}
+            sx={{ mt: 2, mb: 1 }}
+                  value={orderComment}
+                  onChange={handleOrderCommentChange}
+          />
+          
+          <Box 
+            component="input" 
+                    type="file"
+                    onChange={handleCommentFileUpload}
+            sx={{ display: 'block', mb: 1 }} 
+          />
+          
+          {commentFile && (
+            <Typography variant="body2">
+              Прикреплен файл: {commentFile.name}
+            </Typography>
+          )}
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Button 
+              variant="outlined" 
+              onClick={handleCancelEditComment}
+            >
+              Отмена
+                    </Button>
+            <Button 
+              variant="contained" 
+              onClick={handleSendComment}
+            >
+              {editingCommentIndex !== null ? 'Сохранить изменения' : 'Отправить комментарий'}
+                </Button>
+              </Box>
+          
+              <Button
+                variant="contained"
+                fullWidth
+            sx={{ mt: 2 }} 
+            onClick={handleCloseCheckoutDialog}
+              >
+            Закрыть
+              </Button>
+        </Box>
+            )}
+    </Paper>
+  );
 
-          </Box>
-        )}
+  return (
+    <Box sx={{ 
+      minHeight: '100vh', 
+      width: '100vw', 
+      bgcolor: 'background.paper', 
+      color: 'text.primary', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      transition: 'background-color 0.3s ease-in-out' 
+    }}>
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row', 
+        p: 0, 
+        pt: 0, 
+        overflowX: 'hidden', 
+        alignItems: 'stretch' 
+      }}>
+        {brandsMenuOpen ? renderBrandsMenu() : renderCollapsedMenu()}
+        
+        {!isProfileFullScreen && !isCartFullScreen && renderMainContent()}
+        {isProfileFullScreen && renderProfileFullScreen()}
+        {isCartFullScreen && renderCartFullScreen()}
+      </Box>
+    </Box>
+  );
+};
 
-        {/* Полноэкранный профиль */}
-        {isProfileFullScreen && (
-          <Paper
-            elevation={0}
-            sx={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: brandsMenuOpen ? 340 : 66, // Dynamic left based on menu state
-              bgcolor: 'background.default',
-              color: 'text.primary',
-              p: 3,
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)', // Explicit width
-              borderRadius: 0,
-              boxShadow: 'none',
-              zIndex: 3, // Higher zIndex to be on top
-              overflowX: 'hidden'
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, justifyContent: 'flex-end' }}>
-              <IconButton onClick={() => setIsProfileFullScreen(false)} sx={{ color: 'text.secondary' }}>
-                <CloseIcon />
-              </IconButton>
-            </Box>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                {/* Menu profile on the left */}
-                <Box sx={{ width: 120, borderRight: '1px solid #333', display: 'flex', flexDirection: 'column', py: 2 }}>
-                  <List disablePadding>
-                    <ListItemButton selected={profileTab==='data'} onClick={()=>setProfileTab('data')} sx={{ px: 2, py: 1 }}>Данные</ListItemButton>
-                    <ListItemButton selected={profileTab==='orders'} onClick={()=>setProfileTab('orders')} sx={{ px: 2, py: 1 }}>Заказы</ListItemB
+export default App;
