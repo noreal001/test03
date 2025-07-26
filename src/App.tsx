@@ -149,23 +149,16 @@ const App = () => {
       const deltaX = e.clientX - dragStart.x;
       const deltaY = e.clientY - dragStart.y;
       
-      // Обновляем позицию кнопки (ограничено пределами шкалы)
-      const newX = (knobPosition.x + deltaX * 0.5);
-      const newY = (knobPosition.y + deltaY * 0.5);
-      
-      // Ограничиваем движение кнопки пределами шкалы
-      const limitedX = Math.max(-200, Math.min(200, newX)); // горизонтальные пределы
-      const limitedY = Math.max(-80, Math.min(80, newY));   // вертикальные пределы (не слишком выше/ниже шкалы)
-      
+      // Обновляем позицию кнопки (еще медленнее, свободное движение)
       setKnobPosition({
-        x: limitedX,
-        y: limitedY
+        x: Math.max(-80, Math.min(80, deltaX * 0.15)), // Еще медленнее по X, больше диапазон
+        y: Math.max(-80, Math.min(80, deltaY * 0.1))   // Еще медленнее по Y, больше диапазон
       });
       
-      // Обновляем значение объема на основе горизонтального движения (более отзывчиво)
+      // Обновляем значение объема на основе горизонтального движения (очень медленно)
       const volumeRange = 1000 - 30;
       const newVolume = Math.max(30, Math.min(1000, 
-        dragStart.volume + (deltaX * volumeRange) / 800
+        dragStart.volume + (deltaX * volumeRange) / 1200
       ));
       
       // Округляем до ближайшего кратного 5
@@ -206,39 +199,26 @@ const App = () => {
     return basePercentage + 8; // +8% минимального заполнения
   };
 
-  // Функция для определения изгиба шкалы при приближении кнопки (как на фото)
+  // Функция для определения близости кнопки к шкале и создания изгиба
   const getLineBendAndGlow = () => {
-    if (!selectedAromaForVolume) return { shouldBend: false, bendPosition: 50, bendIntensity: 0, glowIntensity: 0, knobDistance: 0, isContact: false };
+    if (!selectedAromaForVolume) return { shouldBend: false, bendPosition: 50, bendIntensity: 0, glowIntensity: 0 };
     
     const knobPositionPercent = ((volumeSliderValue - 30) / (1000 - 30)) * 100;
-    const actualKnobX = knobPositionPercent + (knobPosition.x / 5);
+    const actualKnobX = knobPositionPercent + (knobPosition.x / 3);
     const knobY = Math.abs(knobPosition.y);
     
-    // Определяем состояния как на фото:
-    // Фото 1: приближение (20-40px от шкалы) - слабое свечение
-    // Фото 2: контакт (0-15px от шкалы) - яркое свечение
-    const isContact = knobY <= 15;           // прямой контакт со шкалой
-    const isApproaching = knobY > 15 && knobY <= 50; // приближение к шкале
-    const shouldShow = isContact || isApproaching;
+    // Проверяем приближение кнопки к линии шкалы (когда кнопка движется вверх к шкале)
+    const nearScale = knobY > 20; // кнопка приближается к шкале
+    const nearEdge = actualKnobX < 15 || actualKnobX > 85; // близость к краям
     
-    // Интенсивность свечения как на фото
-    let glowIntensity = 0;
-    if (isContact) {
-      glowIntensity = 1.0; // максимальное свечение при контакте
-    } else if (isApproaching) {
-      glowIntensity = Math.max(0.2, (50 - knobY) / 35); // слабое свечение при приближении
-    }
-    
-    // Изгиб шкалы
-    const bendIntensity = isContact ? 8 : (isApproaching ? 3 : 0);
+    // Показываем изгиб при приближении к шкале или к краям
+    const shouldShow = nearScale || nearEdge;
     
     return {
       shouldBend: shouldShow,
-      bendPosition: Math.max(10, Math.min(90, actualKnobX)),
-      bendIntensity: bendIntensity,
-      glowIntensity: glowIntensity,
-      knobDistance: knobY,
-      isContact: isContact
+      bendPosition: actualKnobX,
+      bendIntensity: nearScale ? Math.min(15, knobY / 3) : (nearEdge ? 10 : 0),
+      glowIntensity: nearScale ? Math.min(1, knobY / 40) : (nearEdge ? 0.7 : 0)
     };
   };
 
@@ -1229,28 +1209,7 @@ const App = () => {
               </Box>
 
               {/* Шкала и шарик (профессиональный стиль) */}
-              <Box sx={{ position: 'relative', mx: 4, mb: 4 }}
-                onClick={(e) => {
-                  // Клик в любом месте области шкалы перемещает кнопку
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const relativeX = e.clientX - rect.left - rect.width / 2;
-                  const relativeY = e.clientY - rect.top - rect.height / 2;
-                  
-                  // Ограничиваем позицию пределами шкалы
-                  const limitedX = Math.max(-200, Math.min(200, relativeX));
-                  const limitedY = Math.max(-80, Math.min(80, relativeY));
-                  
-                  setKnobPosition({
-                    x: limitedX,
-                    y: limitedY
-                  });
-                  
-                  // Обновляем объем на основе X позиции
-                  const percentageX = (limitedX + 200) / 400; // нормализуем -200..200 в 0..1
-                  const newVolume = 30 + (1000 - 30) * Math.max(0, Math.min(1, percentageX));
-                  const roundedVolume = Math.round(newVolume / 5) * 5;
-                  setVolumeSliderValue(roundedVolume);
-                }}>
+              <Box sx={{ position: 'relative', mx: 4, mb: 4 }}>
                 {/* Шкала с делениями сверху */}
                 <Box sx={{ 
                   display: 'flex', 
@@ -1270,24 +1229,15 @@ const App = () => {
                     zIndex: 1
                   }}>
                     <svg width="100%" height="20" style={{ overflow: 'visible' }}>
-                                             <defs>
-                         <filter id="greenGlow" x="-50%" y="-50%" width="200%" height="200%">
-                           <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                           <feMerge> 
-                             <feMergeNode in="coloredBlur"/>
-                             <feMergeNode in="SourceGraphic"/>
-                           </feMerge>
-                         </filter>
-                         <filter id="voltGlow" x="-100%" y="-100%" width="300%" height="300%">
-                           <feGaussianBlur stdDeviation="8" result="bigBlur"/>
-                           <feGaussianBlur stdDeviation="2" result="smallBlur"/>
-                           <feMerge> 
-                             <feMergeNode in="bigBlur"/>
-                             <feMergeNode in="smallBlur"/>
-                             <feMergeNode in="SourceGraphic"/>
-                           </feMerge>
-                         </filter>
-                       </defs>
+                      <defs>
+                        <filter id="greenGlow" x="-50%" y="-50%" width="200%" height="200%">
+                          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                          <feMerge> 
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                          </feMerge>
+                        </filter>
+                      </defs>
                                              {(() => {
                          const bendData = getLineBendAndGlow();
                          const baseY = 10;
@@ -1296,60 +1246,47 @@ const App = () => {
  
                         
                                                                           if (bendData.shouldBend) {
-                           // Изогнутая линия с Volt свечением в противоположную сторону
-                           const bendX = bendData.bendPosition;
-                           const bendY = baseY - bendData.bendIntensity; // изгиб в противоположную сторону
-                           const bendWidth = 20; // ширина изгиба
-                           
+                           // Изогнутая линия с Volt свечением 
+                           const bendX = Math.max(10, Math.min(90, bendData.bendPosition));
+                           const bendWidth = 15; // ширина изгиба
                            return (
                              <>
-                               {/* Полная линия с изгибом */}
+                               {/* Левый сегмент */}
+                               <line 
+                                 x1="0%" 
+                                 y1={baseY} 
+                                 x2={`${Math.max(0, bendX - bendWidth)}%`} 
+                                 y2={baseY}
+                                 stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
+                                 strokeWidth="2"
+                               />
+                               {/* Изогнутый сегмент с Volt свечением */}
                                <path 
-                                 d={`M 0% ${baseY} Q ${bendX}% ${bendY} 100% ${baseY}`}
+                                 d={`M ${Math.max(0, bendX - bendWidth)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth)}% ${baseY}`}
+                                 stroke="#CEFF00"
+                                 strokeWidth="5"
+                                 fill="none"
+                                 filter="url(#greenGlow)"
+                                 opacity={Math.max(0.8, bendData.glowIntensity)}
+                               />
+                               <path 
+                                 d={`M ${Math.max(0, bendX - bendWidth)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth)}% ${baseY}`}
                                  stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
                                  strokeWidth="2"
                                  fill="none"
                                />
-                               {/* Volt свечение в области изгиба */}
-                               <path 
-                                 d={`M ${Math.max(0, bendX - bendWidth)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth)}% ${baseY}`}
-                                 stroke="#CEFF00"
-                                 strokeWidth={bendData.isContact ? "10" : "6"}
-                                 fill="none"
-                                 filter="url(#greenGlow)"
-                                 opacity={bendData.glowIntensity}
+                               {/* Правый сегмент */}
+                               <line 
+                                 x1={`${Math.min(100, bendX + bendWidth)}%`} 
+                                 y1={baseY} 
+                                 x2="100%" 
+                                 y2={baseY}
+                                 stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
+                                 strokeWidth="2"
                                />
-                               {/* Дополнительное яркое свечение при контакте */}
-                               {bendData.isContact && (
-                                 <path 
-                                   d={`M ${Math.max(0, bendX - bendWidth * 1.5)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth * 1.5)}% ${baseY}`}
-                                   stroke="#CEFF00"
-                                   strokeWidth="15"
-                                   fill="none"
-                                   filter="url(#voltGlow)"
-                                   opacity={bendData.glowIntensity * 0.6}
-                                 />
-                               )}
-                               {/* Дополнительное Volt свечение */}
-                               <circle
-                                 cx={`${bendX}%`}
-                                 cy={bendY}
-                                 r="15"
-                                 fill="#CEFF00"
-                                 opacity={bendData.glowIntensity * 0.2}
-                                 filter="url(#voltGlow)"
-                               />
-                               <circle
-                                 cx={`${bendX}%`}
-                                 cy={bendY}
-                                 r="6"
-                                 fill="#CEFF00"
-                                 opacity={bendData.glowIntensity * 0.5}
-                                 filter="url(#greenGlow)"
-                               />
-                                                            </>
-                             );
-                         } else {
+                             </>
+                           );
+                        } else {
                           // Прямая линия
                           return (
                             <line 
@@ -1366,17 +1303,10 @@ const App = () => {
                     </svg>
                   </Box>
                   
-                  {/* Деления и подписи через 10 с изгибом */}
+                  {/* Деления и подписи через 10 */}
                   {Array.from({length: 101}, (_, i) => 30 + i * 10).filter(v => v <= 1000).map((value, index) => {
                     const isMainMark = value % 100 === 0 || value === 30 || value === 1000;
                     const isMediumMark = value % 50 === 0;
-                    
-                    // Рассчитываем изгиб для этого деления
-                    const bendData = getLineBendAndGlow();
-                    const valuePercent = ((value - 30) / (1000 - 30)) * 100;
-                    const distanceFromBend = Math.abs(valuePercent - bendData.bendPosition);
-                    const bendEffect = bendData.shouldBend && distanceFromBend < 20 ? 
-                      (20 - distanceFromBend) / 20 * bendData.bendIntensity / 3 : 0;
                     
                     return (
                       <Box key={value} sx={{ 
@@ -1384,39 +1314,24 @@ const App = () => {
                         flexDirection: 'column', 
                         alignItems: 'center',
                         position: 'relative',
-                        zIndex: 2,
-                        transform: `translateY(${-bendEffect}px)`,
-                        transition: 'transform 0.2s ease'
+                        zIndex: 2
                       }}>
                         {/* Деление */}
                         <Box sx={{
-                          width: '2px',
-                          height: isMainMark ? '20px' : isMediumMark ? '15px' : '10px',
-                          background: bendData.shouldBend && distanceFromBend < 20 ? 
-                            `linear-gradient(to bottom, #CEFF00, ${theme.palette.mode === 'dark' ? '#666' : '#999'})` :
-                            theme.palette.mode === 'dark' ? '#666' : '#999',
-                          mb: 0.5,
-                          boxShadow: bendData.shouldBend && distanceFromBend < 20 ? 
-                            bendData.isContact ? 
-                              `0 0 20px rgba(206, 255, 0, ${bendData.glowIntensity})` : // яркое при контакте
-                              `0 0 8px rgba(206, 255, 0, ${bendData.glowIntensity * 0.3})` : // слабое при приближении
-                            'none'
+                                                   width: '2px',
+                         height: isMainMark ? '20px' : isMediumMark ? '15px' : '10px',
+                         background: theme.palette.mode === 'dark' ? '#666' : '#999',
+                          mb: 0.5
                         }} />
                         
                         {/* Подпись только для основных меток */}
                         {isMainMark && (
-                          <Typography sx={{
-                            fontSize: '11px',
-                            color: bendData.shouldBend && distanceFromBend < 20 ? 
-                              '#CEFF00' : theme.palette.mode === 'dark' ? '#999' : '#666',
-                            fontWeight: 600,
-                            fontFamily: '"Kollektif", sans-serif',
-                            textShadow: bendData.shouldBend && distanceFromBend < 20 ? 
-                              bendData.isContact ? 
-                                `0 0 15px rgba(206, 255, 0, ${bendData.glowIntensity})` : // яркое при контакте
-                                `0 0 6px rgba(206, 255, 0, ${bendData.glowIntensity * 0.4})` : // слабое при приближении
-                              'none'
-                          }}>
+                                                     <Typography sx={{
+                             fontSize: '11px',
+                             color: theme.palette.mode === 'dark' ? '#999' : '#666',
+                             fontWeight: 600,
+                             fontFamily: '"Kollektif", sans-serif'
+                           }}>
                             {value}
                           </Typography>
                         )}
@@ -1439,20 +1354,6 @@ const App = () => {
                    <Box 
                      onMouseDown={(e) => {
                        setIsDragging(true);
-                       
-                       // Получаем позицию клика относительно контейнера шкалы
-                       const rect = e.currentTarget.parentElement?.getBoundingClientRect();
-                       if (rect) {
-                         const relativeX = e.clientX - rect.left - rect.width / 2;
-                         const relativeY = e.clientY - rect.top - rect.height / 2;
-                         
-                         // Устанавливаем кнопку в место клика
-                         setKnobPosition({
-                           x: relativeX,
-                           y: relativeY
-                         });
-                       }
-                       
                        setDragStart({
                          x: e.clientX,
                          y: e.clientY,
@@ -1467,17 +1368,7 @@ const App = () => {
                        width: 90,
                        height: 90,
                        borderRadius: '50%',
-                       background: (() => {
-                         const bendData = getLineBendAndGlow();
-                         if (bendData.isContact) {
-                           // Синяя подсветка при контакте как на фото
-                           return 'radial-gradient(circle at 30% 30%, #1e40af 0%, #1e3a8a 30%, #111 60%, #000 100%)';
-                         } else if (bendData.shouldBend) {
-                           // Слабая подсветка при приближении
-                           return 'radial-gradient(circle at 30% 30%, #374151 0%, #1f2937 50%, #000 100%)';
-                         }
-                         return 'radial-gradient(circle at 30% 30%, #222 0%, #111 50%, #000 100%)';
-                       })(),
+                       background: 'radial-gradient(circle at 30% 30%, #222 0%, #111 50%, #000 100%)',
                        boxShadow: isDragging ? `
                          inset 0 4px 8px rgba(0,0,0,0.9),
                          inset 0 2px 4px rgba(0,0,0,0.8),
@@ -1536,7 +1427,7 @@ const App = () => {
                      )}
                      
                      {/* Цифры рядом с кнопкой при движении */}
-                     {(isDragging || Math.abs(knobPosition.x) > 10 || Math.abs(knobPosition.y) > 10) && (
+                     {(isDragging || Math.abs(knobPosition.x) > 5 || Math.abs(knobPosition.y) > 5) && (
                        <Box sx={{
                          position: 'absolute',
                          top: '-50px',
