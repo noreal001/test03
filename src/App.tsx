@@ -731,45 +731,50 @@ const App = () => {
           width: '100%', 
           overflowY: 'auto',
           overflowX: 'hidden',
-          pb: 2, 
+          pb: isMobile ? 1 : 2, 
           pt: 0, 
-          px: 2 
+          px: isMobile ? 1 : 2 
         }}>
           <Box 
             onWheel={(e) => {
-              // Горизонтальный скролл колесиком мыши
-              const container = e.currentTarget;
-              container.scrollLeft += e.deltaY * 2; // Умножаем для более быстрого скролла
-              e.preventDefault();
-              e.stopPropagation();
+              if (!isMobile) {
+                // Горизонтальный скролл колесиком мыши только на десктопе
+                const container = e.currentTarget;
+                container.scrollLeft += e.deltaY * 2;
+                e.preventDefault();
+                e.stopPropagation();
+              }
             }}
             sx={{ 
               display: 'flex', 
-              flexDirection: 'row', 
-              gap: 6, 
-              width: 'max-content',
-              px: 2,
-              py: 3,
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              // Полностью убираем все скроллбары
-              scrollbarWidth: 'none', /* Firefox */
-              '-ms-overflow-style': 'none', /* Internet Explorer 10+ */
-              '&::-webkit-scrollbar': {
-                display: 'none',
-                width: '0px',
-                height: '0px',
-                background: 'transparent'
-              },
-              '&::-webkit-scrollbar-track': {
-                display: 'none'
-              },
-              '&::-webkit-scrollbar-thumb': {
-                display: 'none'
-              },
-              '&::-webkit-scrollbar-corner': {
-                display: 'none'
-              }
+              flexDirection: isMobile ? 'column' : 'row',
+              flexWrap: isMobile ? 'nowrap' : 'nowrap',
+              gap: isMobile ? 3 : 6, 
+              width: isMobile ? '100%' : 'max-content',
+              px: isMobile ? 0 : 2,
+              py: isMobile ? 1 : 3,
+              overflowX: isMobile ? 'visible' : 'auto',
+              overflowY: isMobile ? 'visible' : 'hidden',
+              // Скрываем скроллбары только на десктопе
+              ...(isMobile ? {} : {
+                scrollbarWidth: 'none',
+                '-ms-overflow-style': 'none',
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                  width: '0px',
+                  height: '0px',
+                  background: 'transparent'
+                },
+                '&::-webkit-scrollbar-track': {
+                  display: 'none'
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  display: 'none'
+                },
+                '&::-webkit-scrollbar-corner': {
+                  display: 'none'
+                }
+              })
             }}>
             {(brands[selectedIndex]?.aromas || [])
               .filter((aroma: Aroma) => 
@@ -809,8 +814,9 @@ const App = () => {
 
                     }}
                     sx={{
-                      width: 240,
-                      height: 440,
+                      width: isMobile ? '100%' : 240,
+                      maxWidth: isMobile ? 320 : 240,
+                      height: isMobile ? 360 : 440,
                       borderRadius: 4,
                       background: 'transparent',
                       position: 'relative',
@@ -823,11 +829,12 @@ const App = () => {
                       border: theme.palette.mode === 'dark' 
                         ? '1px solid #333'
                         : '1px solid #ddd',
+                      mx: isMobile ? 'auto' : 0,
                       perspective: '1000px',
                       zIndex: 1,
                       '&:hover': {
                         zIndex: 10,
-                        transform: 'scale(1.02)',
+                        transform: isMobile ? 'none' : 'scale(1.02)',
                       },
                       '&:hover .flip-card-inner': {
                         transform: 'rotateY(180deg)'
@@ -864,8 +871,7 @@ const App = () => {
                                      radial-gradient(circle at 100% 80%, transparent 8px, transparent 8px)`,
                         transition: 'background 0.3s ease',
                         zIndex: -2,
-                      },
-
+                      }
                     }}
                   >
                     {/* Flip Card Container */}
@@ -1337,15 +1343,16 @@ const App = () => {
                     
                     {/* Полное название под карточкой */}
                     <Typography sx={{
-                      mt: 2,
-                      fontSize: '14px',
+                      mt: isMobile ? 1.5 : 2,
+                      fontSize: isMobile ? '12px' : '14px',
                       fontWeight: 600,
                       color: theme.palette.mode === 'dark' ? '#fff' : '#000',
                       fontFamily: '"Kollektif", sans-serif',
                       textAlign: 'center',
                       lineHeight: 1.3,
-                      maxWidth: 240,
-                      wordBreak: 'break-word'
+                      maxWidth: isMobile ? 320 : 240,
+                      wordBreak: 'break-word',
+                      px: isMobile ? 1 : 0
                     }}>
                       {aroma.name}
                     </Typography>
@@ -1762,14 +1769,14 @@ const App = () => {
         top: 0,
         bottom: 0,
         right: 0,
-        left: brandsMenuOpen ? 340 : 66,
+        left: isMobile ? 0 : (brandsMenuOpen ? 340 : 66),
         bgcolor: 'background.default',
         color: 'text.primary',
-        p: 3,
+        p: isMobile ? 2 : 3,
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)',
+        width: isMobile ? '100vw' : (brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)'),
         borderRadius: 0,
         boxShadow: 'none',
         zIndex: 10,
@@ -2049,14 +2056,14 @@ const App = () => {
         top: 0,
         bottom: 0,
         right: 0,
-        left: brandsMenuOpen ? 340 : 66,
+        left: isMobile ? 0 : (brandsMenuOpen ? 340 : 66),
         bgcolor: 'background.default',
         color: 'text.primary',
-        p: 3,
+        p: isMobile ? 2 : 3,
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        width: brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)',
+        width: isMobile ? '100vw' : (brandsMenuOpen ? 'calc(100vw - 340px)' : 'calc(100vw - 66px)'),
         borderRadius: 0,
         boxShadow: 'none',
         zIndex: 3,
@@ -2344,10 +2351,123 @@ const App = () => {
         p: 0,
         pt: 0,
         overflowX: 'hidden', 
-        alignItems: 'stretch' 
+        alignItems: 'stretch',
+        height: isMobile ? 'auto' : '100vh'
       }}>
-        {brandsMenuOpen ? renderBrandsMenu() : renderCollapsedMenu()}
+        {/* Мобильное меню сверху или обычное меню слева */}
+        {isMobile ? (
+          <Box sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            p: 1,
+            bgcolor: 'background.paper',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            position: 'sticky',
+            top: 0,
+            zIndex: 100
+          }}>
+            <IconButton onClick={handleToggleBrandsMenu}>
+              <MenuOpen />
+            </IconButton>
+            <IconButton onClick={() => setSelectedIndex(null)}>
+              <Search />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                setIsProfileFullScreen(true);
+                setIsCartFullScreen(false);
+              }}
+            >
+              <Person sx={{ fontSize: 28 }} />
+            </IconButton>
+            <IconButton
+              sx={{
+                position: 'relative',
+                bgcolor: cartFlash ? 'rgba(0, 255, 0, 0.2)' : 'transparent',
+                transition: 'background-color 0.3s ease-in-out'
+              }}
+              onClick={() => {
+                setIsCartFullScreen(!isCartFullScreen);
+                setIsProfileFullScreen(false);
+              }}
+            >
+              <ShoppingCart sx={{ fontSize: 28 }} />
+              {cart.length > 0 && (
+                <Box sx={{ 
+                  position: 'absolute', 
+                  top: -5, 
+                  right: -5, 
+                  bgcolor: 'error.main', 
+                  color: '#fff', 
+                  borderRadius: '50%', 
+                  width: 18, 
+                  height: 18, 
+                  fontSize: 12, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontWeight: 700 
+                }}>
+                  {cart.length}
+                </Box>
+              )}
+            </IconButton>
+            <Switch
+              checked={themeMode === 'dark'}
+              onChange={toggleTheme}
+              color="default"
+              inputProps={{ 'aria-label': 'theme switch' }}
+            />
+          </Box>
+        ) : null}
         
+        {/* Мобильное меню брендов (показывается поверх контента) */}
+        {isMobile && brandsMenuOpen && (
+          <Box sx={{
+            position: 'fixed',
+            top: 60,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: 'background.paper',
+            zIndex: 200,
+            overflowY: 'auto',
+            p: 2
+          }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: 17, letterSpacing: 1 }}>
+                БРЕНДЫ
+              </Typography>
+              <IconButton onClick={handleToggleBrandsMenu}>
+                <Close />
+              </IconButton>
+            </Box>
+            <List sx={{ width: '100%' }}>
+              {brands.filter(brand => brand?.name?.toLowerCase().includes(search.toLowerCase()))
+                .map((brand, index) => (
+                  <ListItemButton
+                    key={brand.name}
+                    selected={selectedIndex === index}
+                    onClick={() => {
+                      handleBrandClick(index);
+                      setBrandsMenuOpen(false); // Закрываем меню после выбора
+                    }}
+                    sx={{ mb: 0.5, borderRadius: 1 }}
+                  >
+                    <ListItemText primary={brand.name} />
+                  </ListItemButton>
+                ))}
+            </List>
+          </Box>
+        )}
+        
+        {/* Меню брендов */}
+        {!isMobile && (brandsMenuOpen ? renderBrandsMenu() : renderCollapsedMenu())}
+        
+        {/* Основной контент */}
         {!isProfileFullScreen && !isCartFullScreen && renderMainContent()}
         {isProfileFullScreen && renderProfileFullScreen()}
         {isCartFullScreen && renderCartFullScreen()}
