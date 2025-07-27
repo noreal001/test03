@@ -149,19 +149,19 @@ const App = () => {
       const deltaX = e.clientX - dragStart.x;
       const deltaY = e.clientY - dragStart.y;
       
-      // Обновляем позицию кнопки (еще медленнее, свободное движение)
-      setKnobPosition({
-        x: Math.max(-80, Math.min(80, deltaX * 0.15)), // Еще медленнее по X, больше диапазон
-        y: Math.max(-80, Math.min(80, deltaY * 0.1))   // Еще медленнее по Y, больше диапазон
-      });
-      
-      // Обновляем значение объема на основе горизонтального движения (очень медленно)
+      // Рассчитываем новое значение объема (строго 30-1000)
       const volumeRange = 1000 - 30;
       const newVolume = Math.max(30, Math.min(1000, 
-        dragStart.volume + (deltaX * volumeRange) / 1200
+        dragStart.volume + (deltaX * volumeRange) / 400
       ));
       
-      // Округляем до ближайшего кратного 5
+      // Простое смещение кнопки (ограничения применяются в CSS)
+      setKnobPosition({
+        x: deltaX * 0.5, // Еще более ослабленная чувствительность
+        y: Math.max(-60, Math.min(60, deltaY * 1.0)) // Вертикальное движение
+      });
+      
+      // Округляем до ближайшего кратного 5 и устанавливаем значение объема
       const roundedVolume = Math.round(newVolume / 5) * 5;
       setVolumeSliderValue(roundedVolume);
     };
@@ -188,9 +188,9 @@ const App = () => {
     };
   }, [isDragging, dragStart]);
 
-  // Функция для получения Volt цвета для заполнения
+  // Функция для получения неон грин цвета для заполнения
   const getDarkerFillColor = (volume: number) => {
-    return '#CEFF00'; // Всегда используем Volt цвет
+    return '#39FF14'; // Неон грин цвет
   };
 
   // Функция для получения процента заполнения карточки снизу вверх (30гр = 8% заполнения)
@@ -781,12 +781,10 @@ const App = () => {
                       width: 240,
                       height: 440,
                       borderRadius: 4,
-                      background: theme.palette.mode === 'dark' 
-                        ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%)'
-                        : 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)',
+                      background: 'transparent',
                       position: 'relative',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.3s ease',
                       boxShadow: theme.palette.mode === 'dark'
                         ? '0 4px 20px rgba(0, 0, 0, 0.5)'
                         : '0 4px 20px rgba(0, 0, 0, 0.15)',
@@ -795,6 +793,7 @@ const App = () => {
                         ? '1px solid #333'
                         : '1px solid #ddd',
                       '&:hover': {
+                        background: 'linear-gradient(135deg, #FFB608 0%, #FF2553 50%, #00103C 100%)',
                         transform: 'translateY(-2px)',
                         boxShadow: theme.palette.mode === 'dark'
                           ? '0 8px 30px rgba(0, 0, 0, 0.7)'
@@ -822,15 +821,26 @@ const App = () => {
                         left: 0,
                         right: 0,
                         height: '100%',
-                        background: `radial-gradient(circle at 0% 20%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 0% 40%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 0% 60%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 0% 80%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 100% 20%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 100% 40%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                     radial-gradient(circle at 100% 60%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px),
-                                                                          radial-gradient(circle at 100% 80%, transparent 8px, ${theme.palette.mode === 'dark' ? '#1a1a1a' : '#f8f9fa'} 8px)`,
-                         zIndex: -2,
+                        background: `radial-gradient(circle at 0% 20%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 0% 40%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 0% 60%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 0% 80%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 100% 20%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 100% 40%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 100% 60%, transparent 8px, transparent 8px),
+                                     radial-gradient(circle at 100% 80%, transparent 8px, transparent 8px)`,
+                        transition: 'background 0.3s ease',
+                        zIndex: -2,
+                      },
+                      '&:hover::before': {
+                        background: `radial-gradient(circle at 0% 20%, transparent 8px, #FFB608 8px),
+                                     radial-gradient(circle at 0% 40%, transparent 8px, #FFB608 8px),
+                                     radial-gradient(circle at 0% 60%, transparent 8px, #FF2553 8px),
+                                     radial-gradient(circle at 0% 80%, transparent 8px, #FF2553 8px),
+                                     radial-gradient(circle at 100% 20%, transparent 8px, #FFB608 8px),
+                                     radial-gradient(circle at 100% 40%, transparent 8px, #FFB608 8px),
+                                     radial-gradient(circle at 100% 60%, transparent 8px, #00103C 8px),
+                                     radial-gradient(circle at 100% 80%, transparent 8px, #00103C 8px)`,
                       }
                     }}
                   >
@@ -1138,15 +1148,15 @@ const App = () => {
               mt: 4,
               p: 4,
               background: theme.palette.mode === 'dark' 
-                ? 'rgba(26, 26, 26, 0.3)'
-                : 'rgba(248, 249, 250, 0.3)',
+                ? 'rgba(26, 26, 26, 0.15)'
+                : 'rgba(248, 249, 250, 0.15)',
               borderRadius: 3,
-              border: theme.palette.mode === 'dark' ? '1px solid rgba(51, 51, 51, 0.3)' : '1px solid rgba(221, 221, 221, 0.3)',
+              border: theme.palette.mode === 'dark' ? '1px solid rgba(51, 51, 51, 0.2)' : '1px solid rgba(221, 221, 221, 0.2)',
               boxShadow: theme.palette.mode === 'dark'
-                ? '0 8px 32px rgba(0, 0, 0, 0.3)'
-                : '0 8px 32px rgba(0, 0, 0, 0.05)',
+                ? '0 8px 32px rgba(0, 0, 0, 0.15)'
+                : '0 8px 32px rgba(0, 0, 0, 0.03)',
               mx: 2,
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(8px)'
             }}>
               {/* Заголовок */}
               <Box sx={{ 
@@ -1245,50 +1255,9 @@ const App = () => {
                          
  
                         
-                                                                          if (bendData.shouldBend) {
-                           // Изогнутая линия с Volt свечением 
-                           const bendX = Math.max(10, Math.min(90, bendData.bendPosition));
-                           const bendWidth = 15; // ширина изгиба
-                           return (
-                             <>
-                               {/* Левый сегмент */}
-                               <line 
-                                 x1="0%" 
-                                 y1={baseY} 
-                                 x2={`${Math.max(0, bendX - bendWidth)}%`} 
-                                 y2={baseY}
-                                 stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
-                                 strokeWidth="2"
-                               />
-                               {/* Изогнутый сегмент с Volt свечением */}
-                               <path 
-                                 d={`M ${Math.max(0, bendX - bendWidth)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth)}% ${baseY}`}
-                                 stroke="#CEFF00"
-                                 strokeWidth="5"
-                                 fill="none"
-                                 filter="url(#greenGlow)"
-                                 opacity={Math.max(0.8, bendData.glowIntensity)}
-                               />
-                               <path 
-                                 d={`M ${Math.max(0, bendX - bendWidth)}% ${baseY} Q ${bendX}% ${bendY} ${Math.min(100, bendX + bendWidth)}% ${baseY}`}
-                                 stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
-                                 strokeWidth="2"
-                                 fill="none"
-                               />
-                               {/* Правый сегмент */}
-                               <line 
-                                 x1={`${Math.min(100, bendX + bendWidth)}%`} 
-                                 y1={baseY} 
-                                 x2="100%" 
-                                 y2={baseY}
-                                 stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
-                                 strokeWidth="2"
-                               />
-                             </>
-                           );
-                        } else {
-                          // Прямая линия
-                          return (
+                                                                          // Основная прямая линия - всегда видна
+                        const baseElements = (
+                          <>
                             <line 
                               x1="0%" 
                               y1={baseY} 
@@ -1297,8 +1266,26 @@ const App = () => {
                               stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
                               strokeWidth="2"
                             />
-                          );
-                        }
+                            
+                            {/* Эффекты изгиба и свечения поверх основной линии */}
+                            {bendData.shouldBend && (
+                              <>
+                                {/* Изогнутый сегмент с Volt свечением */}
+                                <path 
+                                  d={`M 20% ${baseY} Q 50% ${bendY} 80% ${baseY}`}
+                                  stroke="#CEFF00"
+                                  strokeWidth="5"
+                                  fill="none"
+                                  filter="url(#greenGlow)"
+                                  opacity={Math.max(0.8, bendData.glowIntensity)}
+                                />
+
+                              </>
+                            )}
+                          </>
+                        );
+                        
+                        return baseElements;
                       })()}
                     </svg>
                   </Box>
@@ -1354,16 +1341,21 @@ const App = () => {
                    <Box 
                      onMouseDown={(e) => {
                        setIsDragging(true);
+                       // Рассчитываем относительную позицию клика от центра кнопки
+                       const rect = e.currentTarget.getBoundingClientRect();
+                       const centerX = rect.left + rect.width / 2;
+                       const centerY = rect.top + rect.height / 2;
+                       
                        setDragStart({
-                         x: e.clientX,
-                         y: e.clientY,
+                         x: centerX, // Используем центр кнопки, а не позицию клика
+                         y: centerY, // Используем центр кнопки, а не позицию клика
                          volume: volumeSliderValue
                        });
                        e.preventDefault();
                      }}
                      sx={{
                        position: 'absolute',
-                       left: `calc(${((volumeSliderValue - 30) / (1000 - 30)) * 100}% - 45px + ${knobPosition.x}px)`,
+                       left: `calc(${Math.max(0, Math.min(100, ((volumeSliderValue - 30) / (1000 - 30)) * 100 + (knobPosition.x / 3)))}% - 45px)`,
                        top: `calc(50% - 45px + ${knobPosition.y}px)`,
                        width: 90,
                        height: 90,
@@ -1380,7 +1372,7 @@ const App = () => {
                          inset 0 -3px 6px rgba(0,0,0,0.9)
                        `,
                        cursor: isDragging ? 'grabbing' : 'grab',
-                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                       transition: isDragging ? 'none' : 'all 0.1s ease-out',
                        zIndex: 10,
                        display: 'flex',
                        alignItems: 'center',
@@ -1426,37 +1418,24 @@ const App = () => {
                        </Box>
                      )}
                      
-                     {/* Цифры рядом с кнопкой при движении */}
-                     {(isDragging || Math.abs(knobPosition.x) > 5 || Math.abs(knobPosition.y) > 5) && (
+                     {/* Темные цифры объема снизу кнопки только при движении */}
+                     {isDragging && (
                        <Box sx={{
                          position: 'absolute',
-                         top: '-50px',
+                         bottom: '-30px',
                          left: '50%',
                          transform: 'translateX(-50%)',
-                         background: 'rgba(0, 0, 0, 0.8)',
-                         color: '#CEFF00',
-                         px: 2,
-                         py: 1,
-                         borderRadius: 2,
-                         fontSize: '18px',
+                         fontSize: '20px',
+                         color: '#333',
                          fontWeight: 'bold',
                          fontFamily: '"Kollektif", sans-serif',
-                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
-                         zIndex: 11,
-                         '&::after': {
-                           content: '""',
-                           position: 'absolute',
-                           bottom: '-8px',
-                           left: '50%',
-                           transform: 'translateX(-50%)',
-                           borderLeft: '8px solid transparent',
-                           borderRight: '8px solid transparent',
-                           borderTop: '8px solid rgba(0, 0, 0, 0.8)'
-                         }
+                         userSelect: 'none',
+                         zIndex: 2
                        }}>
-                         {volumeSliderValue}г
+                         {volumeSliderValue}
                        </Box>
                      )}
+
                    </Box>
 
                    {/* Скрытый input для базового управления */}
