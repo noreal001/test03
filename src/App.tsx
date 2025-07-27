@@ -731,22 +731,46 @@ const App = () => {
           width: '100%', 
           overflowY: 'auto',
           overflowX: 'hidden',
-          overscrollBehavior: 'none',
           pb: 2, 
           pt: 0, 
           px: 2 
         }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'row', 
-            flexWrap: 'wrap', 
-            gap: 3, 
-            justifyContent: 'center', 
-            width: '100%',
-            px: 2,
-            py: 3,
-            overflowX: 'hidden'
-          }}>
+          <Box 
+            onWheel={(e) => {
+              // Горизонтальный скролл колесиком мыши
+              const container = e.currentTarget;
+              container.scrollLeft += e.deltaY * 2; // Умножаем для более быстрого скролла
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            sx={{ 
+              display: 'flex', 
+              flexDirection: 'row', 
+              gap: 6, 
+              width: 'max-content',
+              px: 2,
+              py: 3,
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              // Полностью убираем все скроллбары
+              scrollbarWidth: 'none', /* Firefox */
+              '-ms-overflow-style': 'none', /* Internet Explorer 10+ */
+              '&::-webkit-scrollbar': {
+                display: 'none',
+                width: '0px',
+                height: '0px',
+                background: 'transparent'
+              },
+              '&::-webkit-scrollbar-track': {
+                display: 'none'
+              },
+              '&::-webkit-scrollbar-thumb': {
+                display: 'none'
+              },
+              '&::-webkit-scrollbar-corner': {
+                display: 'none'
+              }
+            }}>
             {(brands[selectedIndex]?.aromas || [])
               .filter((aroma: Aroma) => 
                 aroma?.name?.toLowerCase().includes(search.toLowerCase())
@@ -767,7 +791,14 @@ const App = () => {
                 return (
                   <Box
                     key={aroma.name}
-                    id={`aroma-${aroma.name}`}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Box
+                      id={`aroma-${aroma.name}`}
                     onClick={() => {
                       // При клике показываем ползунок выбора объема
                       setSelectedAromaForVolume({
@@ -784,7 +815,7 @@ const App = () => {
                       background: 'transparent',
                       position: 'relative',
                       cursor: 'pointer',
-                      transition: 'all 0.3s ease',
+                      transition: 'all 0.3s ease, z-index 0.1s ease',
                       boxShadow: theme.palette.mode === 'dark'
                         ? '0 4px 20px rgba(0, 0, 0, 0.5)'
                         : '0 4px 20px rgba(0, 0, 0, 0.15)',
@@ -792,12 +823,14 @@ const App = () => {
                       border: theme.palette.mode === 'dark' 
                         ? '1px solid #333'
                         : '1px solid #ddd',
+                      perspective: '1000px',
+                      zIndex: 1,
                       '&:hover': {
-                        background: 'linear-gradient(135deg, #FFB608 0%, #FF2553 50%, #00103C 100%)',
-                        transform: 'translateY(-2px)',
-                        boxShadow: theme.palette.mode === 'dark'
-                          ? '0 8px 30px rgba(0, 0, 0, 0.7)'
-                          : '0 8px 30px rgba(0, 0, 0, 0.2)',
+                        zIndex: 10,
+                        transform: 'scale(1.02)',
+                      },
+                      '&:hover .flip-card-inner': {
+                        transform: 'rotateY(180deg)'
                       },
                       // Эффект заполнения снизу вверх для выбранной карточки
                       '&::after': selectedAromaForVolume?.aroma.name === aroma.name ? {
@@ -832,18 +865,27 @@ const App = () => {
                         transition: 'background 0.3s ease',
                         zIndex: -2,
                       },
-                      '&:hover::before': {
-                        background: `radial-gradient(circle at 0% 20%, transparent 8px, #FFB608 8px),
-                                     radial-gradient(circle at 0% 40%, transparent 8px, #FFB608 8px),
-                                     radial-gradient(circle at 0% 60%, transparent 8px, #FF2553 8px),
-                                     radial-gradient(circle at 0% 80%, transparent 8px, #FF2553 8px),
-                                     radial-gradient(circle at 100% 20%, transparent 8px, #FFB608 8px),
-                                     radial-gradient(circle at 100% 40%, transparent 8px, #FFB608 8px),
-                                     radial-gradient(circle at 100% 60%, transparent 8px, #00103C 8px),
-                                     radial-gradient(circle at 100% 80%, transparent 8px, #00103C 8px)`,
-                      }
+
                     }}
                   >
+                    {/* Flip Card Container */}
+                    <Box 
+                      className="flip-card-inner"
+                      sx={{
+                        position: 'relative',
+                        width: '100%',
+                        height: '100%',
+                        transition: 'transform 0.8s ease-in-out',
+                        transformStyle: 'preserve-3d',
+                      }}
+                    >
+                      {/* Передняя сторона */}
+                      <Box sx={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        backfaceVisibility: 'hidden',
+                      }}>
                     {/* Верхняя секция */}
                     <Box sx={{
                       position: 'absolute',
@@ -1136,6 +1178,176 @@ const App = () => {
                       borderRadius: 1
                     }}>
                       {aroma.prices[30] || 1800}₽
+                    </Typography>
+                      </Box> {/* Закрытие передней стороны */}
+
+                      {/* Задняя сторона - описание */}
+                      <Box sx={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        backfaceVisibility: 'hidden',
+                        background: 'transparent',
+                        borderRadius: 4,
+                        border: theme.palette.mode === 'dark' ? '2px solid #444' : '2px solid #ccc',
+                        transform: 'rotateY(180deg)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
+                        padding: 2,
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        boxSizing: 'border-box',
+                        boxShadow: theme.palette.mode === 'dark'
+                          ? '0 8px 30px rgba(0, 0, 0, 0.7)'
+                          : '0 8px 30px rgba(0, 0, 0, 0.2)',
+                        // Скрываем scrollbar
+                        '&::-webkit-scrollbar': {
+                          width: '4px'
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: 'transparent'
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+                          borderRadius: '2px'
+                        },
+                        '&::-webkit-scrollbar-thumb:hover': {
+                          background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
+                        }
+                      }}>
+                        {/* Название аромата */}
+                        <Typography sx={{
+                          fontSize: '16px',
+                          fontWeight: 900,
+                          color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mb: 1.5,
+                          textAlign: 'center',
+                          lineHeight: 1.2,
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          {aroma.name}
+                        </Typography>
+
+                        {/* Детальная информация */}
+                        <Typography sx={{
+                          fontSize: '12px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mb: 0.8,
+                          opacity: 0.9,
+                          textAlign: 'left',
+                          lineHeight: 1.2,
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>🏷️ Бренд:</strong> {aromaData.brand}
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '12px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mb: 0.8,
+                          opacity: 0.9,
+                          textAlign: 'left',
+                          lineHeight: 1.2,
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>🌍 Страна:</strong> {aromaData.country} {aromaData.flag}
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '12px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mb: 0.8,
+                          opacity: 0.9,
+                          textAlign: 'left',
+                          lineHeight: 1.2,
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>👤 Пол:</strong> {aromaData.gender}
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '12px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mb: 0.8,
+                          opacity: 0.9,
+                          textAlign: 'left',
+                          lineHeight: 1.2,
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>⭐ Рейтинг:</strong> {aromaData.rating}/5
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '10px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mt: 0.8,
+                          opacity: 0.8,
+                          lineHeight: 1.2,
+                          textAlign: 'left',
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>🌸 Верхние:</strong> {aromaData.topNotes}
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '10px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mt: 0.5,
+                          opacity: 0.8,
+                          lineHeight: 1.2,
+                          textAlign: 'left',
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>💖 Средние:</strong> {aromaData.middleNotes}
+                        </Typography>
+
+                        <Typography sx={{
+                          fontSize: '10px',
+                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
+                          fontFamily: '"Kollektif", sans-serif',
+                          mt: 0.5,
+                          mb: 0.8,
+                          opacity: 0.8,
+                          lineHeight: 1.2,
+                          textAlign: 'left',
+                          width: '100%',
+                          maxWidth: '100%'
+                        }}>
+                          <strong>🌿 Базовые:</strong> {aromaData.baseNotes}
+                        </Typography>
+                      </Box>
+                    </Box> {/* Закрытие flip-card-inner */}
+                    </Box>
+                    
+                    {/* Полное название под карточкой */}
+                    <Typography sx={{
+                      mt: 2,
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+                      fontFamily: '"Kollektif", sans-serif',
+                      textAlign: 'center',
+                      lineHeight: 1.3,
+                      maxWidth: 240,
+                      wordBreak: 'break-word'
+                    }}>
+                      {aroma.name}
                     </Typography>
                   </Box>
                 );
