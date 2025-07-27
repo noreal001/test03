@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -55,15 +55,7 @@ const RootComponent: React.FC = () => {
     });
   };
 
-  const handleRegisterSuccess = (name: string, phone: string) => {
-    localStorage.setItem('user_name', name);
-    localStorage.setItem('user_phone', phone);
-    // Additional logic if needed after registration
-  };
 
-  const handleContinueWithoutRegistration = () => {
-    // Additional logic if needed after skipping
-  };
 
   return (
     <ThemeProvider theme={currentTheme}>

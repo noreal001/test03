@@ -15,9 +15,7 @@ import {
   Button, 
   Switch, 
   ListItem, 
-  ListItemAvatar, 
-  Card, 
-  CardContent
+  ListItemAvatar
 } from '@mui/material';
 import { 
   Close, 
@@ -28,67 +26,25 @@ import {
   Person, 
   ShoppingCart 
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+
 import { ThemeContext } from './index';
+import { 
+  Brand, 
+  Aroma, 
+  Order,
+  ProfileTab, 
+  CheckoutStep, 
+  AromaForVolume
+} from './types';
+import { useCart, useUser, useVolumeSlider } from './hooks';
+import { AromaCard, VolumeSlider } from './components';
+import { loadBrandsData } from './utils';
 
 
-// Типы и интерфейсы
-type Brand = { 
-  name: string; 
-  aromas: Aroma[] 
-};
-
-type Aroma = { 
-  name: string; 
-  description: string; 
-  aroma_group: string; 
-  prices: { [key: string]: number }; 
-  image?: string; 
-  brand?: string;
-  country?: string;
-  flag?: string;
-  gender?: string;
-  rating?: number;
-  topNotes?: string;
-  middleNotes?: string;
-  baseNotes?: string;
-};
-
-interface Order {
-  id: string;
-  date: string;
-  items: { aroma: string; brand: string; volume: string; price: number }[];
-  comment: string;
-  receiptAttached: boolean;
-  history: {text: string, sender: 'user' | 'manager'; file?: {name: string, url: string}}[];
-  awaitingManagerReply: boolean;
-  address?: string;
-  phone?: string;
-  total: number;
-}
-
-interface User {
-  name: string;
-  balance: string;
-  avatar: string;
-  orders: Order[];
-  address: string;
-  phone: string;
-  inviteCode: string;
-}
-
-// Константы
-const AROMA_INFO = {
-  price: '1 800 ₽ — 38 000 ₽',
-  quality: 'TOP',
-  factory: 'Eps',
-};
-
-const EMOJIS = ['✨', '🎉', '🚀', '💫', '💯', '✅'];
+// Основной компонент приложения
 
 const App = () => {
   // Хуки и контекст
-  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -98,177 +54,52 @@ const App = () => {
   }
   const { themeMode, toggleTheme } = themeContext;
 
-  // Состояния
+  // Кастомные хуки
+  const { 
+    cart, 
+    cartFlash, 
+    emojiParticles, 
+    addToCart, 
+    removeFromCart, 
+    clearCart
+  } = useCart();
+  
+  const { 
+    user, 
+    updateUserField, 
+    addOrder, 
+    updateOrderHistory 
+  } = useUser();
+
+  // Локальные состояния
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [brandsMenuOpen, setBrandsMenuOpen] = useState(true);
   const [search, setSearch] = useState('');
-  const [selectedVolumes, setSelectedVolumes] = useState<{ [aroma: string]: number }>({});
-  const [cart, setCart] = useState<{ aroma: string; brand: string; volume: string; price: number }[]>([]);
-  const [profileTab, setProfileTab] = useState<'data' | 'orders'>('data');
-  const [checkoutStep, setCheckoutStep] = useState<null | 'form' | 'payment' | 'orderDetail'>(null);
+  const [profileTab, setProfileTab] = useState<ProfileTab>('data');
+  const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>(null);
   const [currentOrder, setCurrentOrder] = useState<number | null>(null);
   const [selectedOrderForDetail, setSelectedOrderForDetail] = useState<Order | null>(null);
   const [orderComment, setOrderComment] = useState<string>('');
   const [commentFile, setCommentFile] = useState<File | null>(null);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null);
-  const [cartFlash, setCartFlash] = useState(false);
-  const [emojiParticles, setEmojiParticles] = useState<
-    Array<{ id: number; emoji: string; x: number; y: number; opacity: number }>
-  >([]);
   const [isProfileFullScreen, setIsProfileFullScreen] = useState(false);
   const [isCartFullScreen, setIsCartFullScreen] = useState(false);
-  const [selectedAromaForVolume, setSelectedAromaForVolume] = useState<{aroma: Aroma, brand: string} | null>(null);
-  const [volumeSliderValue, setVolumeSliderValue] = useState(30);
-  const [knobPosition, setKnobPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0, volume: 0 });
+  const [selectedAromaForVolume, setSelectedAromaForVolume] = useState<AromaForVolume | null>(null);
   const [selectedAromaFromCart, setSelectedAromaFromCart] = useState<string | null>(null);
-  const [isAromaDetailDialogOpen, setIsAromaDetailDialogOpen] = useState(false);
 
-  const [user, setUser] = useState<User>(() => {
-    const savedName = localStorage.getItem('userName') || '';
-    const savedPhone = localStorage.getItem('userPhone') || '';
-    const savedInviteCode = localStorage.getItem('inviteCode') || '';
-    return {
-      name: savedName,
-      balance: '12 500 ₽',
-      avatar: '',
-      orders: [],
-      address: '',
-      phone: savedPhone,
-      inviteCode: savedInviteCode,
-    };
-  });
-
-  // Обработка 2D перетаскивания шарика
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      
-      const deltaX = e.clientX - dragStart.x;
-      const deltaY = e.clientY - dragStart.y;
-      
-      // Рассчитываем новое значение объема (строго 30-1000)
-      const volumeRange = 1000 - 30;
-      const newVolume = Math.max(30, Math.min(1000, 
-        dragStart.volume + (deltaX * volumeRange) / 400
-      ));
-      
-      // Простое смещение кнопки (ограничения применяются в CSS)
-      setKnobPosition({
-        x: deltaX * 0.5, // Еще более ослабленная чувствительность
-        y: Math.max(-60, Math.min(60, deltaY * 1.0)) // Вертикальное движение
-      });
-      
-      // Округляем до ближайшего кратного 5 и устанавливаем значение объема
-      const roundedVolume = Math.round(newVolume / 5) * 5;
-      setVolumeSliderValue(roundedVolume);
-    };
-
-    const handleMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
-        // Кнопка остается в текущем положении (не возвращается в центр)
-      }
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = 'grabbing';
-      document.body.style.userSelect = 'none';
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-  }, [isDragging, dragStart]);
-
-  // Функция для получения неон грин цвета для заполнения
-  const getDarkerFillColor = (volume: number) => {
-    return '#39FF14'; // Неон грин цвет
-  };
-
-  // Функция для получения процента заполнения карточки снизу вверх (30гр = 8% заполнения)
-  const getFillPercentage = (volume: number) => {
-    const basePercentage = ((volume - 30) / (1000 - 30)) * 92; // 92% вместо 100%
-    return basePercentage + 8; // +8% минимального заполнения
-  };
-
-  // Функция для определения близости кнопки к шкале и создания изгиба
-  const getLineBendAndGlow = () => {
-    if (!selectedAromaForVolume) return { shouldBend: false, bendPosition: 50, bendIntensity: 0, glowIntensity: 0 };
-    
-    const knobPositionPercent = ((volumeSliderValue - 30) / (1000 - 30)) * 100;
-    const actualKnobX = knobPositionPercent + (knobPosition.x / 3);
-    const knobY = Math.abs(knobPosition.y);
-    
-    // Проверяем приближение кнопки к линии шкалы (когда кнопка движется вверх к шкале)
-    const nearScale = knobY > 20; // кнопка приближается к шкале
-    const nearEdge = actualKnobX < 15 || actualKnobX > 85; // близость к краям
-    
-    // Показываем изгиб при приближении к шкале или к краям
-    const shouldShow = nearScale || nearEdge;
-    
-    return {
-      shouldBend: shouldShow,
-      bendPosition: actualKnobX,
-      bendIntensity: nearScale ? Math.min(15, knobY / 3) : (nearEdge ? 10 : 0),
-      glowIntensity: nearScale ? Math.min(1, knobY / 40) : (nearEdge ? 0.7 : 0)
-    };
-  };
+  // Хук для слайдера объема (используется в компоненте VolumeSlider)
+  const volumeSliderHook = useVolumeSlider();
 
   // Эффекты
   useEffect(() => {
     const fetchBrands = async () => {
-      try {
-        const response = await fetch('/brands.json');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Brand[] = await response.json();
-        const sorted = data.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-        setBrands(sorted);
-      } catch (error) {
-        console.error("Ошибка при загрузке брендов:", error);
-      }
+      const data = await loadBrandsData();
+      setBrands(data);
     };
 
     fetchBrands();
   }, []);
-
-  useEffect(() => {
-    const checkRegistrationStatus = () => {
-      const userRegistered = localStorage.getItem('userRegistered');
-      const userName = localStorage.getItem('userName');
-      const userPhone = localStorage.getItem('userPhone');
-      const lastRegistrationTime = localStorage.getItem('lastRegistrationTime');
-      const lastSkipTime = localStorage.getItem('lastSkipTime');
-
-      const fiveMinutes = 5 * 60 * 1000;
-      const now = new Date().getTime();
-
-      const registered = userRegistered === 'true' && !!userName && !!userPhone;
-      const skippedRecently = lastSkipTime && (now - parseInt(lastSkipTime) < fiveMinutes);
-      const registeredRecently = lastRegistrationTime && (now - parseInt(lastRegistrationTime) < fiveMinutes);
-
-      if (registered) {
-        const savedInviteCode = localStorage.getItem('inviteCode') || '';
-        setUser(prev => ({ ...prev, name: userName!, phone: userPhone!, inviteCode: savedInviteCode }));
-      } else if (!skippedRecently && !registeredRecently) {
-        navigate('/start');
-      }
-    };
-
-    checkRegistrationStatus();
-    const intervalId = setInterval(checkRegistrationStatus, 5 * 60 * 1000);
-
-    return () => clearInterval(intervalId);
-  }, [navigate]);
 
   useEffect(() => {
     if (selectedAromaFromCart) {
@@ -291,57 +122,13 @@ const App = () => {
     setBrandsMenuOpen(prev => !prev);
   };
 
-  const handleVolumeSlider = (aroma: string, _: any, value: number) => {
-    setSelectedVolumes(prev => ({ ...prev, [aroma]: value }));
-  };
-
   const handleAddToCart = (aromaName: string, brandName: string, volume: number) => {
-    // Находим цену аромата
-    const selectedBrand = brands[selectedIndex!];
-    const selectedAroma = selectedBrand?.aromas.find(aroma => aroma.name === aromaName);
-    const price = selectedAroma?.prices[volume] || 0;
-
-    setCart(prev => [...prev, { 
-      aroma: aromaName, 
-      brand: brandName, 
-      volume: `${volume} гр`,
-      price: price
-    }]);
-    
-    setCartFlash(true);
-    setTimeout(() => setCartFlash(false), 300);
-
-    // Эффект эмодзи
-    const newParticle = {
-      id: Date.now(),
-      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-      x: 0,
-      y: 0,
-      opacity: 1,
-    };
-
-    setEmojiParticles([newParticle]);
-
-    setTimeout(() => {
-      setEmojiParticles(prev => 
-        prev.map(p => p.id === newParticle.id ? { ...p, opacity: 0 } : p)
-      );
-      setTimeout(() => {
-        setEmojiParticles(prev => 
-          prev.filter(p => p.id !== newParticle.id)
-        );
-      }, 500);
-    }, 100);
-
-    // Воспроизведение звука
-    const audio = new Audio('/voice/voice1.mp3');
-    audio.play().catch(e => {
-      console.warn('Audio playback failed:', e);
-      });
+    addToCart(aromaName, brandName, volume, brands, selectedIndex!);
+    setSelectedAromaForVolume(null);
   };
 
   const handleRemoveFromCart = (idx: number) => {
-    setCart(prev => prev.filter((_, i) => i !== idx));
+    removeFromCart(idx);
   };
 
   const handleSendOrderDetails = () => {
@@ -349,34 +136,22 @@ const App = () => {
   };
 
   const handlePaymentComplete = () => {
-    const newOrderId = `ORD-${Date.now()}`;
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    const newOrder = { 
-      id: newOrderId, 
-      date: new Date().toLocaleDateString('ru-RU'), 
-      items: [...cart], 
-      comment: '', 
-      receiptAttached: false, 
-      history: [], 
-      awaitingManagerReply: false,
-      address: user.address,
-      phone: user.phone,
-      total: total
-    };
-    
-    setUser(prev => ({
-      ...prev, 
-      orders: [...prev.orders, newOrder]
-    }));
-    
-    setCart([]);
+    addOrder(cart, user.address, user.phone);
+    clearCart();
     setCheckoutStep('orderDetail'); 
     setIsCartFullScreen(false);
     setCurrentOrder(user.orders.length);
   };
 
   const handleRepeatOrder = (order: Order) => {
-    setCart([...order.items]);
+    clearCart();
+    order.items.forEach(item => {
+      const brandIndex = brands.findIndex(b => b.name === item.brand);
+      if (brandIndex !== -1) {
+        const volume = parseInt(item.volume.replace(' гр', ''));
+        addToCart(item.aroma, item.brand, volume, brands, brandIndex);
+      }
+    });
     setSelectedOrderForDetail(null);
     setIsProfileFullScreen(false);
   };
@@ -403,59 +178,43 @@ const App = () => {
       return;
     }
 
-    setUser(prev => {
-      const updatedOrders = [...prev.orders];
-      const currentOrderData = { ...updatedOrders[currentOrder!] };
+    const newComment = { 
+      text: orderComment, 
+      sender: 'user' as const,
+      ...(commentFile && {
+        file: { 
+          name: commentFile.name, 
+          url: URL.createObjectURL(commentFile) 
+        }
+      })
+    };
 
-      if (editingCommentIndex !== null) {
-        currentOrderData.history[editingCommentIndex] = {
-          ...currentOrderData.history[editingCommentIndex],
-          text: orderComment,
-          file: commentFile ? { 
-            name: commentFile.name, 
-            url: URL.createObjectURL(commentFile) 
-          } : undefined,
+    if (editingCommentIndex !== null) {
+      const updatedHistory = [...user.orders[currentOrder].history];
+      updatedHistory[editingCommentIndex] = newComment;
+      updateOrderHistory(currentOrder, { history: updatedHistory });
+      setEditingCommentIndex(null);
+    } else {
+      const updatedHistory = [...user.orders[currentOrder].history, newComment];
+      updateOrderHistory(currentOrder, { 
+        history: updatedHistory,
+        awaitingManagerReply: true 
+      });
+      setOrderComment('');
+      setCommentFile(null);
+
+      setTimeout(() => {
+        const managerReply = { 
+          text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', 
+          sender: 'manager' as const
         };
-        setEditingCommentIndex(null);
-      } else {
-        const newComment = { 
-          text: orderComment, 
-          sender: 'user' as const,
-          ...(commentFile && {
-            file: { 
-              name: commentFile.name, 
-              url: URL.createObjectURL(commentFile) 
-            }
-          })
-        };
-        
-        currentOrderData.history.push(newComment);
-        currentOrderData.awaitingManagerReply = true;
-        setOrderComment('');
-        setCommentFile(null);
-
-        setTimeout(() => {
-          setUser(latest => {
-            const latestOrders = [...latest.orders];
-            const latestCurrentOrderData = { ...latestOrders[currentOrder!] };
-            
-            if (latestCurrentOrderData.history[latestCurrentOrderData.history.length - 1]?.sender !== 'manager') {
-              latestCurrentOrderData.history.push({ 
-                text: 'Менеджер: Спасибо за ваш комментарий! Мы его рассмотрим.', 
-                sender: 'manager' 
-              });
-            }
-            
-            latestCurrentOrderData.awaitingManagerReply = false;
-            latestOrders[currentOrder!] = latestCurrentOrderData;
-            return { ...latest, orders: latestOrders };
-          });
-        }, 3000);
-      }
-
-      updatedOrders[currentOrder!] = currentOrderData;
-      return { ...prev, orders: updatedOrders };
-    });
+        const finalHistory = [...updatedHistory, managerReply];
+        updateOrderHistory(currentOrder, { 
+          history: finalHistory,
+          awaitingManagerReply: false 
+        });
+      }, 3000);
+    }
   };
 
   const handleCommentFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -780,981 +539,31 @@ const App = () => {
               .filter((aroma: Aroma) => 
                 aroma?.name?.toLowerCase().includes(search.toLowerCase())
               )
-              .map((aroma: Aroma, aromaIdx: number) => {
-                // Примерные данные для ароматов в стиле FIFA
-                const aromaData = {
-                  rating: aroma.rating || (85 + Math.floor(Math.random() * 10)),
-                  brand: aroma.brand || brands[selectedIndex]?.name || 'AJMAL',
-                  country: aroma.country || 'ОАЭ',
-                  flag: aroma.flag || '🇦🇪',
-                  gender: aroma.gender || 'Унисекс',
-                  topNotes: aroma.topNotes || 'корица, кардамон, цветок апельсина и бергамот',
-                  middleNotes: aroma.middleNotes || 'бурбонская ваниль и элеми',
-                  baseNotes: aroma.baseNotes || 'пралине, мускус, ambroxan, гваяк'
-                };
-
-                return (
-                  <Box
-                    key={aroma.name}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <Box
-                      id={`aroma-${aroma.name}`}
-                    onClick={() => {
-                      // При клике показываем ползунок выбора объема
-                      setSelectedAromaForVolume({
-                        aroma: aroma,
-                        brand: brands[selectedIndex]?.name || ''
-                      });
-                      setVolumeSliderValue(30);
-
-                    }}
-                    sx={{
-                      width: isMobile ? '100%' : 240,
-                      maxWidth: isMobile ? 320 : 240,
-                      height: isMobile ? 360 : 440,
-                      borderRadius: 4,
-                      background: 'transparent',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease, z-index 0.1s ease',
-                      boxShadow: theme.palette.mode === 'dark'
-                        ? '0 4px 20px rgba(0, 0, 0, 0.5)'
-                        : '0 4px 20px rgba(0, 0, 0, 0.15)',
-                      overflow: 'hidden',
-                      border: theme.palette.mode === 'dark' 
-                        ? '1px solid #333'
-                        : '1px solid #ddd',
-                      mx: isMobile ? 'auto' : 0,
-                      perspective: '1000px',
-                      zIndex: 1,
-                      '&:hover': {
-                        zIndex: 10,
-                        transform: isMobile ? 'none' : 'scale(1.02)',
-                      },
-                      '&:hover .flip-card-inner': {
-                        transform: 'rotateY(180deg)'
-                      },
-                      // Эффект заполнения снизу вверх для выбранной карточки
-                      '&::after': selectedAromaForVolume?.aroma.name === aroma.name ? {
-                        content: '""',
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: `${getFillPercentage(volumeSliderValue)}%`,
-                        background: `linear-gradient(to top, ${getDarkerFillColor(volumeSliderValue)} 0%, ${getDarkerFillColor(volumeSliderValue)}CC 30%, ${getDarkerFillColor(volumeSliderValue)}88 60%, ${getDarkerFillColor(volumeSliderValue)}44 85%, transparent 100%)`,
-                        borderRadius: '0 0 16px 16px',
-                        transition: 'height 0.3s ease, background 0.3s ease',
-                        zIndex: 1,
-                        pointerEvents: 'none'
-                      } : {},
-                      // Вырезы по краям как у билета
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: '100%',
-                        background: `radial-gradient(circle at 0% 20%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 0% 40%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 0% 60%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 0% 80%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 100% 20%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 100% 40%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 100% 60%, transparent 8px, transparent 8px),
-                                     radial-gradient(circle at 100% 80%, transparent 8px, transparent 8px)`,
-                        transition: 'background 0.3s ease',
-                        zIndex: -2,
-                      }
-                    }}
-                  >
-                    {/* Flip Card Container */}
-                    <Box 
-                      className="flip-card-inner"
-                      sx={{
-                        position: 'relative',
-                        width: '100%',
-                        height: '100%',
-                        transition: 'transform 0.8s ease-in-out',
-                        transformStyle: 'preserve-3d',
-                      }}
-                    >
-                      {/* Передняя сторона */}
-                      <Box sx={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        backfaceVisibility: 'hidden',
-                      }}>
-                    {/* Верхняя секция */}
-                    <Box sx={{
-                      position: 'absolute',
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                      height: 60,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      zIndex: 2
-                    }}>
-                      {/* MRVV эквивалент */}
-                      <Box sx={{
-                        background: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                        color: theme.palette.mode === 'dark' ? '#000' : '#fff',
-                        px: 2,
-                        py: 1,
-                        borderRadius: 1,
-                        fontWeight: 900,
-                        fontSize: '16px',
-                        fontFamily: '"Kollektif", sans-serif'
-                      }}>
-                        {aromaData.brand.substring(0, 4).toUpperCase()}
-                      </Box>
-
-                      {/* Штрих-код справа */}
-                      <Box sx={{
-                        width: 80,
-                        height: 50,
-                        background: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                        borderRadius: 1,
-                        position: 'relative',
-                        overflow: 'hidden'
-                      }}>
-                        <Box sx={{
-                          position: 'absolute',
-                          top: 4,
-                          left: 4,
-                          right: 4,
-                          bottom: 4,
-                          background: 'repeating-linear-gradient(to right, transparent 0px, transparent 1px, ' + (theme.palette.mode === 'dark' ? '#000' : '#fff') + ' 1px, ' + (theme.palette.mode === 'dark' ? '#000' : '#fff') + ' 2px)',
-                        }} />
-                        <Typography sx={{
-                          position: 'absolute',
-                          bottom: 2,
-                          right: 4,
-                          fontSize: '6px',
-                          color: theme.palette.mode === 'dark' ? '#000' : '#fff',
-                          fontFamily: 'monospace',
-                          transform: 'rotate(90deg)',
-                          transformOrigin: 'bottom right'
-                        }}>
-                          {aromaData.rating}52279
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    {/* Текст CHECK-IN слева */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 100,
-                      right: 16,
-                      fontSize: '8px',
-                      color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                      fontWeight: 600,
-                      transform: 'rotate(90deg)',
-                      transformOrigin: 'center',
-                      letterSpacing: '1px',
-                      zIndex: 2
-                    }}>
-                      CHECK-IN
-                    </Typography>
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 120,
-                      right: 16,
-                      fontSize: '8px',
-                      color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                      fontWeight: 600,
-                      transform: 'rotate(90deg)',
-                      transformOrigin: 'center',
-                      letterSpacing: '1px',
-                      zIndex: 2
-                    }}>
-                      ORDER IN
-                    </Typography>
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 140,
-                      right: 16,
-                      fontSize: '8px',
-                      color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                      fontWeight: 600,
-                      transform: 'rotate(90deg)',
-                      transformOrigin: 'center',
-                      letterSpacing: '1px',
-                      zIndex: 2
-                    }}>
-                      МИРЕ
-                    </Typography>
-
-                    {/* Номер заказа */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 100,
-                      left: 16,
-                      fontSize: '10px',
-                      color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                      fontWeight: 600,
-                      zIndex: 2
-                    }}>
-                      067638
-                    </Typography>
-
-                    {/* Главное название */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 140,
-                      left: 16,
-                      right: 40,
-                      fontSize: '48px',
-                      fontWeight: 900,
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      fontFamily: '"Kollektif", sans-serif',
-                      lineHeight: 0.8,
-                      letterSpacing: '-1px',
-                      textTransform: 'uppercase',
-                      zIndex: 2
-                    }}>
-                      {aroma.name.split(' ').slice(0, 2).join(' ')}
-                    </Typography>
-
-                    {/* Год */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 240,
-                      right: 16,
-                      fontSize: '20px',
-                      fontWeight: 700,
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      fontFamily: '"Kollektif", sans-serif',
-                      zIndex: 2
-                    }}>
-                      2024
-                    </Typography>
-
-                    {/* ПАРФЮМ *** */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 270,
-                      left: 16,
-                      fontSize: '24px',
-                      fontWeight: 700,
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      fontFamily: '"Kollektif", sans-serif',
-                      letterSpacing: '1px',
-                      zIndex: 2
-                    }}>
-                      ПАРФЮМ ***
-                    </Typography>
-
-                    {/* Нижняя информация */}
-                    <Box sx={{
-                      position: 'absolute',
-                      bottom: 80,
-                      left: 16,
-                      right: 16,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-end',
-                      zIndex: 2
-                    }}>
-                      <Box>
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontWeight: 600
-                        }}>
-                          date
-                        </Typography>
-                        <Typography sx={{
-                          fontSize: '14px',
-                          fontWeight: 700,
-                          color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                        }}>
-                          08/06
-                        </Typography>
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontWeight: 600,
-                          mt: 1
-                        }}>
-                          passenger
-                        </Typography>
-                        <Typography sx={{
-                          fontSize: '14px',
-                          fontWeight: 700,
-                          color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                        }}>
-                          {aromaData.brand.substring(0, 3).toUpperCase()}
-                        </Typography>
-                      </Box>
-
-                      <Box sx={{ textAlign: 'right' }}>
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontWeight: 600
-                        }}>
-                          cabin
-                        </Typography>
-                        <Typography sx={{
-                          fontSize: '14px',
-                          fontWeight: 700,
-                          color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                        }}>
-                          PERFUME CLASS
-                        </Typography>
-                        
-                        {/* Иконка */}
-                        <Box sx={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: '50%',
-                          background: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          mt: 1,
-                          ml: 'auto'
-                        }}>
-                          <Typography sx={{
-                            fontSize: '12px',
-                            color: theme.palette.mode === 'dark' ? '#000' : '#fff'
-                          }}>
-                            ★
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Box>
-
-                    {/* Штрих-код внизу */}
-                    <Box sx={{
-                      position: 'absolute',
-                      bottom: 16,
-                      left: 16,
-                      right: 16,
-                      height: 40,
-                      background: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      zIndex: 2,
-                      borderRadius: 1,
-                      overflow: 'hidden'
-                    }}>
-                      <Box sx={{
-                        width: '100%',
-                        height: '100%',
-                        background: 'repeating-linear-gradient(to right, transparent 0px, transparent 1px, ' + (theme.palette.mode === 'dark' ? '#000' : '#fff') + ' 1px, ' + (theme.palette.mode === 'dark' ? '#000' : '#fff') + ' 2px)',
-                        position: 'relative'
-                      }}>
-                        {/* Вырезы в штрих-коде */}
-                        <Box sx={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 20,
-                          right: 20,
-                          height: 8,
-                          background: `radial-gradient(circle at 10% 100%, transparent 4px, ${theme.palette.mode === 'dark' ? '#000' : '#fff'} 4px),
-                                       radial-gradient(circle at 30% 100%, transparent 4px, ${theme.palette.mode === 'dark' ? '#000' : '#fff'} 4px),
-                                       radial-gradient(circle at 50% 100%, transparent 4px, ${theme.palette.mode === 'dark' ? '#000' : '#fff'} 4px),
-                                       radial-gradient(circle at 70% 100%, transparent 4px, ${theme.palette.mode === 'dark' ? '#000' : '#fff'} 4px),
-                                       radial-gradient(circle at 90% 100%, transparent 4px, ${theme.palette.mode === 'dark' ? '#000' : '#fff'} 4px)`
-                        }} />
-                      </Box>
-                    </Box>
-
-                    {/* Цена */}
-                    <Typography sx={{
-                      position: 'absolute',
-                      top: 16,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
-                      px: 1,
-                      py: 0.5,
-                      borderRadius: 1
-                    }}>
-                      {aroma.prices[30] || 1800}₽
-                    </Typography>
-                      </Box> {/* Закрытие передней стороны */}
-
-                      {/* Задняя сторона - описание */}
-                      <Box sx={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        backfaceVisibility: 'hidden',
-                        background: 'transparent',
-                        borderRadius: 4,
-                        border: theme.palette.mode === 'dark' ? '2px solid #444' : '2px solid #ccc',
-                        transform: 'rotateY(180deg)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        padding: 2,
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                        boxSizing: 'border-box',
-                        boxShadow: theme.palette.mode === 'dark'
-                          ? '0 8px 30px rgba(0, 0, 0, 0.7)'
-                          : '0 8px 30px rgba(0, 0, 0, 0.2)',
-                        // Скрываем scrollbar
-                        '&::-webkit-scrollbar': {
-                          width: '4px'
-                        },
-                        '&::-webkit-scrollbar-track': {
-                          background: 'transparent'
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                          background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
-                          borderRadius: '2px'
-                        },
-                        '&::-webkit-scrollbar-thumb:hover': {
-                          background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
-                        }
-                      }}>
-                        {/* Название аромата */}
-                        <Typography sx={{
-                          fontSize: '16px',
-                          fontWeight: 900,
-                          color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mb: 1.5,
-                          textAlign: 'center',
-                          lineHeight: 1.2,
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          {aroma.name}
-                        </Typography>
-
-                        {/* Детальная информация */}
-                        <Typography sx={{
-                          fontSize: '12px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mb: 0.8,
-                          opacity: 0.9,
-                          textAlign: 'left',
-                          lineHeight: 1.2,
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>🏷️ Бренд:</strong> {aromaData.brand}
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '12px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mb: 0.8,
-                          opacity: 0.9,
-                          textAlign: 'left',
-                          lineHeight: 1.2,
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>🌍 Страна:</strong> {aromaData.country} {aromaData.flag}
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '12px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mb: 0.8,
-                          opacity: 0.9,
-                          textAlign: 'left',
-                          lineHeight: 1.2,
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>👤 Пол:</strong> {aromaData.gender}
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '12px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mb: 0.8,
-                          opacity: 0.9,
-                          textAlign: 'left',
-                          lineHeight: 1.2,
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>⭐ Рейтинг:</strong> {aromaData.rating}/5
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mt: 0.8,
-                          opacity: 0.8,
-                          lineHeight: 1.2,
-                          textAlign: 'left',
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>🌸 Верхние:</strong> {aromaData.topNotes}
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mt: 0.5,
-                          opacity: 0.8,
-                          lineHeight: 1.2,
-                          textAlign: 'left',
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>💖 Средние:</strong> {aromaData.middleNotes}
-                        </Typography>
-
-                        <Typography sx={{
-                          fontSize: '10px',
-                          color: theme.palette.mode === 'dark' ? '#ccc' : '#666',
-                          fontFamily: '"Kollektif", sans-serif',
-                          mt: 0.5,
-                          mb: 0.8,
-                          opacity: 0.8,
-                          lineHeight: 1.2,
-                          textAlign: 'left',
-                          width: '100%',
-                          maxWidth: '100%'
-                        }}>
-                          <strong>🌿 Базовые:</strong> {aromaData.baseNotes}
-                        </Typography>
-                      </Box>
-                    </Box> {/* Закрытие flip-card-inner */}
-                    </Box>
-                    
-                    {/* Полное название под карточкой */}
-                    <Typography sx={{
-                      mt: isMobile ? 1.5 : 2,
-                      fontSize: isMobile ? '12px' : '14px',
-                      fontWeight: 600,
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      fontFamily: '"Kollektif", sans-serif',
-                      textAlign: 'center',
-                      lineHeight: 1.3,
-                      maxWidth: isMobile ? 320 : 240,
-                      wordBreak: 'break-word',
-                      px: isMobile ? 1 : 0
-                    }}>
-                      {aroma.name}
-                    </Typography>
-                  </Box>
-                );
-              })}
+              .map((aroma: Aroma, aromaIdx: number) => (
+                <AromaCard
+                  key={aroma.name}
+                  aroma={aroma}
+                  brandName={brands[selectedIndex]?.name || ''}
+                  isMobile={isMobile}
+                  selectedAromaForVolume={selectedAromaForVolume}
+                  volumeSliderValue={volumeSliderHook.volumeSliderValue}
+                  getFillPercentage={volumeSliderHook.getFillPercentage}
+                  getDarkerFillColor={volumeSliderHook.getDarkerFillColor}
+                  onCardClick={(aroma, brand) => {
+                    setSelectedAromaForVolume({ aroma, brand });
+                    volumeSliderHook.resetSlider();
+                  }}
+                />
+              ))}
           </Box>
 
           {/* Компонент выбора объема под карточками */}
           {selectedAromaForVolume && (
-                        <Box sx={{
-              mt: 4,
-              p: 4,
-              background: theme.palette.mode === 'dark' 
-                ? 'rgba(26, 26, 26, 0.15)'
-                : 'rgba(248, 249, 250, 0.15)',
-              borderRadius: 3,
-              border: theme.palette.mode === 'dark' ? '1px solid rgba(51, 51, 51, 0.2)' : '1px solid rgba(221, 221, 221, 0.2)',
-              boxShadow: theme.palette.mode === 'dark'
-                ? '0 8px 32px rgba(0, 0, 0, 0.15)'
-                : '0 8px 32px rgba(0, 0, 0, 0.03)',
-              mx: 2,
-              backdropFilter: 'blur(8px)'
-            }}>
-              {/* Заголовок */}
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                mb: 4
-              }}>
-                <Box>
-                  <Typography sx={{
-                    fontSize: '20px',
-                    fontWeight: 700,
-                    color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                    fontFamily: '"Kollektif", sans-serif'
-                  }}>
-                    {selectedAromaForVolume.aroma.name}
-                  </Typography>
-                  <Typography sx={{
-                    fontSize: '14px',
-                    color: theme.palette.mode === 'dark' ? '#999' : '#666',
-                    fontWeight: 600
-                  }}>
-                    {selectedAromaForVolume.brand}
-                  </Typography>
-                </Box>
-                
-                <IconButton 
-                  onClick={() => setSelectedAromaForVolume(null)}
-                  sx={{ 
-                    color: theme.palette.mode === 'dark' ? '#999' : '#666',
-                    '&:hover': { 
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000'
-                    }
-                  }}
-                >
-                  ✕
-                </IconButton>
-              </Box>
-
-              {/* Большое значение объема */}
-              <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography sx={{
-                  fontSize: '48px',
-                  fontWeight: 900,
-                  color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                  fontFamily: '"Kollektif", sans-serif',
-                  lineHeight: 1
-                }}>
-                  {volumeSliderValue}
-                </Typography>
-                <Typography sx={{
-                  fontSize: '16px',
-                  color: theme.palette.mode === 'dark' ? '#999' : '#666',
-                  fontWeight: 600,
-                  mt: -1,
-                  fontFamily: '"Kollektif", sans-serif'
-                }}>
-                  грамм
-                </Typography>
-              </Box>
-
-              {/* Шкала и шарик (профессиональный стиль) */}
-              <Box sx={{ position: 'relative', mx: 4, mb: 4 }}>
-                {/* Шкала с делениями сверху */}
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  mb: 3,
-                  px: 2,
-                  position: 'relative'
-                }}>
-                  {/* Горизонтальная линия шкалы с изгибом и свечением */}
-                  <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: 0,
-                    right: 0,
-                    height: '20px',
-                    marginTop: '-10px',
-                    zIndex: 1
-                  }}>
-                    <svg width="100%" height="20" style={{ overflow: 'visible' }}>
-                      <defs>
-                        <filter id="greenGlow" x="-50%" y="-50%" width="200%" height="200%">
-                          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                          <feMerge> 
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                          </feMerge>
-                        </filter>
-                      </defs>
-                                             {(() => {
-                         const bendData = getLineBendAndGlow();
-                         const baseY = 10;
-                         const bendY = baseY + (bendData.shouldBend ? bendData.bendIntensity : 0);
-                         
- 
-                        
-                                                                          // Основная прямая линия - всегда видна
-                        const baseElements = (
-                          <>
-                            <line 
-                              x1="0%" 
-                              y1={baseY} 
-                              x2="100%" 
-                              y2={baseY}
-                              stroke={theme.palette.mode === 'dark' ? '#666' : '#999'}
-                              strokeWidth="2"
-                            />
-                            
-                            {/* Эффекты изгиба и свечения поверх основной линии */}
-                            {bendData.shouldBend && (
-                              <>
-                                {/* Изогнутый сегмент с Volt свечением */}
-                                <path 
-                                  d={`M 20% ${baseY} Q 50% ${bendY} 80% ${baseY}`}
-                                  stroke="#CEFF00"
-                                  strokeWidth="5"
-                                  fill="none"
-                                  filter="url(#greenGlow)"
-                                  opacity={Math.max(0.8, bendData.glowIntensity)}
-                                />
-
-                              </>
-                            )}
-                          </>
-                        );
-                        
-                        return baseElements;
-                      })()}
-                    </svg>
-                  </Box>
-                  
-                  {/* Деления и подписи через 10 */}
-                  {Array.from({length: 101}, (_, i) => 30 + i * 10).filter(v => v <= 1000).map((value, index) => {
-                    const isMainMark = value % 100 === 0 || value === 30 || value === 1000;
-                    const isMediumMark = value % 50 === 0;
-                    
-                    return (
-                      <Box key={value} sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        alignItems: 'center',
-                        position: 'relative',
-                        zIndex: 2
-                      }}>
-                        {/* Деление */}
-                        <Box sx={{
-                                                   width: '2px',
-                         height: isMainMark ? '20px' : isMediumMark ? '15px' : '10px',
-                         background: theme.palette.mode === 'dark' ? '#666' : '#999',
-                          mb: 0.5
-                        }} />
-                        
-                        {/* Подпись только для основных меток */}
-                        {isMainMark && (
-                                                     <Typography sx={{
-                             fontSize: '11px',
-                             color: theme.palette.mode === 'dark' ? '#999' : '#666',
-                             fontWeight: 600,
-                             fontFamily: '"Kollektif", sans-serif'
-                           }}>
-                            {value}
-                          </Typography>
-                        )}
-                      </Box>
-                    );
-                  })}
-                </Box>
-
-                {/* Пространство между шкалой и шариком */}
-                <Box sx={{ height: 20 }} />
-
-                                 {/* Область для шарика с 2D управлением */}
-                 <Box sx={{ 
-                   position: 'relative',
-                   height: 80,
-                   mx: 2,
-                   overflow: 'visible'
-                 }}>
-                   {/* Матовая черная круглая кнопка со стрелочками */}
-                   <Box 
-                     onMouseDown={(e) => {
-                       setIsDragging(true);
-                       // Рассчитываем относительную позицию клика от центра кнопки
-                       const rect = e.currentTarget.getBoundingClientRect();
-                       const centerX = rect.left + rect.width / 2;
-                       const centerY = rect.top + rect.height / 2;
-                       
-                       setDragStart({
-                         x: centerX, // Используем центр кнопки, а не позицию клика
-                         y: centerY, // Используем центр кнопки, а не позицию клика
-                         volume: volumeSliderValue
-                       });
-                       e.preventDefault();
-                     }}
-                     sx={{
-                       position: 'absolute',
-                       left: `calc(${Math.max(0, Math.min(100, ((volumeSliderValue - 30) / (1000 - 30)) * 100 + (knobPosition.x / 3)))}% - 45px)`,
-                       top: `calc(50% - 45px + ${knobPosition.y}px)`,
-                       width: 90,
-                       height: 90,
-                       borderRadius: '50%',
-                       background: 'radial-gradient(circle at 30% 30%, #222 0%, #111 50%, #000 100%)',
-                       boxShadow: isDragging ? `
-                         inset 0 4px 8px rgba(0,0,0,0.9),
-                         inset 0 2px 4px rgba(0,0,0,0.8),
-                         0 2px 8px rgba(0,0,0,0.6)
-                       ` : `
-                         0 8px 20px rgba(0,0,0,0.8),
-                         0 4px 12px rgba(0,0,0,0.6),
-                         inset 0 1px 3px rgba(255,255,255,0.05),
-                         inset 0 -3px 6px rgba(0,0,0,0.9)
-                       `,
-                       cursor: isDragging ? 'grabbing' : 'grab',
-                       transition: isDragging ? 'none' : 'all 0.1s ease-out',
-                       zIndex: 10,
-                       display: 'flex',
-                       alignItems: 'center',
-                       justifyContent: 'center',
-                       // Матовая поверхность
-                       '&::before': {
-                         content: '""',
-                         position: 'absolute',
-                         top: 0,
-                         left: 0,
-                         right: 0,
-                         bottom: 0,
-                         borderRadius: '50%',
-                         background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
-                         pointerEvents: 'none'
-                       },
-                       '&:hover': !isDragging ? {
-                         transform: 'scale(1.1)',
-                         boxShadow: `
-                           0 6px 18px rgba(0,0,0,0.9),
-                           0 3px 8px rgba(0,0,0,0.5),
-                           inset 0 1px 2px rgba(255,255,255,0.08),
-                           inset 0 -2px 4px rgba(0,0,0,0.9)
-                         `
-                       } : {}
-                     }}
-                   >
-                     {/* Стрелочки при нажатии */}
-                     {isDragging && (
-                       <Box sx={{
-                         display: 'flex',
-                         alignItems: 'center',
-                         justifyContent: 'space-between',
-                         width: '60%',
-                         fontSize: '20px',
-                         color: '#333',
-                         fontWeight: 'bold',
-                         userSelect: 'none',
-                         zIndex: 1
-                       }}>
-                         <span>◀</span>
-                         <span>▶</span>
-                       </Box>
-                     )}
-                     
-                     {/* Темные цифры объема снизу кнопки только при движении */}
-                     {isDragging && (
-                       <Box sx={{
-                         position: 'absolute',
-                         bottom: '-30px',
-                         left: '50%',
-                         transform: 'translateX(-50%)',
-                         fontSize: '20px',
-                         color: '#333',
-                         fontWeight: 'bold',
-                         fontFamily: '"Kollektif", sans-serif',
-                         userSelect: 'none',
-                         zIndex: 2
-                       }}>
-                         {volumeSliderValue}
-                       </Box>
-                     )}
-
-                   </Box>
-
-                   {/* Скрытый input для базового управления */}
-                   <input
-                     type="range"
-                     min={30}
-                     max={1000}
-                     step={5}
-                     value={volumeSliderValue}
-                     onChange={(e) => {
-                       if (!isDragging) {
-                         setVolumeSliderValue(Number(e.target.value));
-                       }
-                     }}
-                     style={{
-                       position: 'absolute',
-                       top: 0,
-                       left: 0,
-                       width: '100%',
-                       height: '100%',
-                       opacity: 0,
-                       cursor: 'pointer',
-                       zIndex: 5,
-                       pointerEvents: isDragging ? 'none' : 'auto'
-                     }}
-                   />
-                 </Box>
-              </Box>
-
-              {/* Цена */}
-              <Box sx={{ textAlign: 'center', mb: 3 }}>
-                <Typography sx={{
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                  fontFamily: '"Kollektif", sans-serif'
-                }}>
-                  {selectedAromaForVolume.aroma.prices[volumeSliderValue] || Math.round((selectedAromaForVolume.aroma.prices[30] || 1800) * (volumeSliderValue / 30))} ₽
-                </Typography>
-              </Box>
-
-              {/* Кнопки действий */}
-              <Box sx={{ 
-                display: 'flex', 
-                gap: 2, 
-                justifyContent: 'center'
-              }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => setSelectedAromaForVolume(null)}
-                  sx={{
-                    color: theme.palette.mode === 'dark' ? '#999' : '#666',
-                    borderColor: theme.palette.mode === 'dark' ? '#333' : '#ccc',
-                    px: 4,
-                    py: 1.5,
-                    fontWeight: 600,
-                    '&:hover': {
-                      color: theme.palette.mode === 'dark' ? '#fff' : '#000',
-                      borderColor: theme.palette.mode === 'dark' ? '#555' : '#999'
-                    }
-                  }}
-                >
-                  Отмена
-                </Button>
-                
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    handleAddToCart(
-                      selectedAromaForVolume.aroma.name,
-                      selectedAromaForVolume.brand,
-                      volumeSliderValue
-                    );
-                    setSelectedAromaForVolume(null);
-                  }}
-                  sx={{
-                    background: theme.palette.mode === 'dark' 
-                      ? 'linear-gradient(135deg, #333 0%, #1a1a1a 100%)'
-                      : 'linear-gradient(135deg, #000 0%, #333 100%)',
-                    color: '#fff',
-                    px: 4,
-                    py: 1.5,
-                    fontWeight: 700,
-                    boxShadow: theme.palette.mode === 'dark'
-                      ? '0 4px 20px rgba(0, 0, 0, 0.8)'
-                      : '0 4px 20px rgba(0, 0, 0, 0.4)',
-                    '&:hover': {
-                      background: theme.palette.mode === 'dark'
-                        ? 'linear-gradient(135deg, #444 0%, #222 100%)'
-                        : 'linear-gradient(135deg, #111 0%, #444 100%)',
-                      boxShadow: theme.palette.mode === 'dark'
-                        ? '0 6px 30px rgba(0, 0, 0, 0.9)'
-                        : '0 6px 30px rgba(0, 0, 0, 0.6)'
-                    }
-                  }}
-                >
-                  Добавить в корзину
-                </Button>
-              </Box>
-            </Box>
+            <VolumeSlider
+              selectedAromaForVolume={selectedAromaForVolume}
+              onCancel={() => setSelectedAromaForVolume(null)}
+              onAddToCart={handleAddToCart}
+            />
           )}
         </Box>
       )}
@@ -2153,8 +962,8 @@ const App = () => {
                   fullWidth
             sx={{ mb: 2 }}
                   value={user.address}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-              setUser(prev => ({ ...prev, address: e.target.value }))
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+              updateUserField('address', e.target.value)
             }
                 />
                 <TextField
@@ -2163,7 +972,7 @@ const App = () => {
             sx={{ mb: 2 }}
                   value={user.phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-              setUser(prev => ({ ...prev, phone: e.target.value }))
+              updateUserField('phone', e.target.value)
             }
                 />
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
